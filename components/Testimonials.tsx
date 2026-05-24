@@ -146,7 +146,7 @@ export function Testimonials() {
   return (
     <section
       ref={sectionRef}
-      className="overflow-hidden bg-white px-5 py-20 lg:px-10"
+      className="overflow-hidden bg-white px-4 py-14 sm:px-5 sm:py-20 lg:px-10"
     >
       <div className="mx-auto max-w-[1068px]">
         {/* Header + controls row */}

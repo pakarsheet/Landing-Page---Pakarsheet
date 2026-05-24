@@ -10,7 +10,7 @@ export function Features() {
   const ref = useGsapReveal<HTMLElement>();
 
   return (
-    <section id="features" ref={ref} className="bg-white px-5 py-20 lg:px-10">
+    <section id="features" ref={ref} className="bg-white px-4 py-14 sm:px-5 sm:py-20 lg:px-10">
       <div className="mx-auto max-w-[1068px]">
         <div className="grid gap-12 lg:grid-cols-[0.78fr_1.22fr]">
           <SectionHeader

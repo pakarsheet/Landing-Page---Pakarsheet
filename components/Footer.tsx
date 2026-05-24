@@ -3,7 +3,7 @@ import { site } from "@/lib/site";
 
 export function Footer() {
   return (
-    <footer className="bg-white px-5 py-10 lg:px-10">
+    <footer className="bg-white px-4 py-10 sm:px-5 lg:px-10">
       <div className="mx-auto flex max-w-[1068px] flex-col gap-8 border-t border-line pt-10 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-3">

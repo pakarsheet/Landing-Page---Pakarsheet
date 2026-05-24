@@ -214,7 +214,7 @@ export function HowItWorks() {
   }, [prefersReducedMotion]);
 
   return (
-    <section id="how-it-works" ref={ref} className="bg-white px-5 py-20 lg:px-10">
+    <section id="how-it-works" ref={ref} className="bg-white px-4 py-14 sm:px-5 sm:py-20 lg:px-10">
       <div className="simplicity-heading mx-auto max-w-[760px] text-center">
         <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 font-secondary text-sm font-semibold leading-none text-cobalt shadow-card">
           <FileSpreadsheet className="h-4 w-4" />

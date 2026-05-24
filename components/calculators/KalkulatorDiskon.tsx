@@ -6,7 +6,7 @@ import { formatRupiah, formatPct, safeNum, safeDivide } from "@/lib/tools";
 import { ResultCard, savingsStatus } from "@/components/ui/ResultCard";
 
 export function KalkulatorDiskon() {
-  const [vals, setVals] = useState({
+  const defaultVals = {
     hargaAwal: "250000",
     d1: "20",
     d2: "10",
@@ -15,7 +15,11 @@ export function KalkulatorDiskon() {
     cashbackPct: "5",
     ongkir: "12000",
     biayaLayanan: "2000",
-  });
+  };
+
+  const [vals, setVals] = useState(defaultVals);
+
+  const reset = () => setVals(defaultVals);
 
   const hargaAwal    = safeNum(vals.hargaAwal);
   const d1           = Math.min(100, Math.max(0, safeNum(vals.d1)));
@@ -55,9 +59,19 @@ export function KalkulatorDiskon() {
     <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
       {/* ── Inputs ── */}
       <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-        <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
-          Parameter Input
-        </h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
+            Parameter Input
+          </h2>
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
+          >
+            <RotateCcw className="h-3 w-3" />
+            Reset
+          </button>
+        </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "hargaAwal",    label: "Harga Awal Barang",   prefix: "Rp" },

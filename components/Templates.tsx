@@ -87,8 +87,8 @@ export function Templates() {
   }, [prefersReducedMotion]);
 
   return (
-    <section id="templates" ref={ref} className="overflow-hidden bg-white px-5 py-10 lg:px-10">
-      <div className="mx-auto max-w-[1380px] rounded-[32px] bg-ink px-5 py-20 text-white sm:px-8 lg:px-10 lg:py-24">
+    <section id="templates" ref={ref} className="overflow-hidden bg-white px-3 py-6 sm:px-5 sm:py-10 lg:px-10">
+      <div className="mx-auto max-w-[1380px] rounded-[20px] bg-ink px-4 py-14 text-white sm:rounded-[32px] sm:px-8 lg:px-10 lg:py-24">
         <SectionHeader
           eyebrow="Pilihan template"
           icon={FileSpreadsheet}

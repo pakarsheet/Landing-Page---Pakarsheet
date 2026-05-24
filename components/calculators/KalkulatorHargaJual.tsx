@@ -20,15 +20,19 @@ const platforms: Platform[] = [
 ];
 
 export function KalkulatorHargaJual() {
-  const [platformIdx, setPlatformIdx] = useState(0);
-  const [vals, setVals] = useState({
+  const defaultVals = {
     modalHpp: "50000",
     targetMargin: "20",
     subsidiOngkir: "0",
     biayaPack: "2000",
     customService: "0",
     customAdmin: "0",
-  });
+  };
+
+  const [platformIdx, setPlatformIdx] = useState(0);
+  const [vals, setVals] = useState(defaultVals);
+
+  const reset = () => { setVals(defaultVals); setPlatformIdx(0); };
 
   const isCustom = platformIdx === platforms.length - 1;
   const platform = platforms[platformIdx];
@@ -59,9 +63,19 @@ export function KalkulatorHargaJual() {
     <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
       {/* ── Inputs ── */}
       <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-        <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
-          Parameter Input
-        </h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
+            Parameter Input
+          </h2>
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
+          >
+            <RotateCcw className="h-3 w-3" />
+            Reset
+          </button>
+        </div>
 
         {/* Platform selector */}
         <div className="mt-5">

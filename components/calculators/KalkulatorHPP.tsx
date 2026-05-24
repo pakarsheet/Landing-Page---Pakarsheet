@@ -6,13 +6,17 @@ import { formatRupiah, formatPct, safeNum, safeDivide } from "@/lib/tools";
 import { ResultCard, marginStatus } from "@/components/ui/ResultCard";
 
 export function KalkulatorHPP() {
-  const [vals, setVals] = useState({
+  const defaultVals = {
     bahanBaku: "30000",
     tenagaKerja: "10000",
     overhead: "5000",
     targetMargin: "30",
     qtyProduksi: "1",
-  });
+  };
+
+  const [vals, setVals] = useState(defaultVals);
+
+  const reset = () => setVals(defaultVals);
 
   const bahanBaku    = safeNum(vals.bahanBaku);
   const tenagaKerja  = safeNum(vals.tenagaKerja);
@@ -41,9 +45,19 @@ export function KalkulatorHPP() {
     <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
       {/* ── Inputs ── */}
       <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-        <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
-          Parameter Input
-        </h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
+            Parameter Input
+          </h2>
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
+          >
+            <RotateCcw className="h-3 w-3" />
+            Reset
+          </button>
+        </div>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "bahanBaku", label: "Biaya Bahan Baku per Unit", prefix: "Rp" },

@@ -7,9 +7,9 @@ export function ShopHero() {
   const total = shopTemplates.length;
 
   return (
-    <section className="bg-white px-5 pb-0 pt-5 lg:px-10">
+    <section className="bg-white px-3 pb-0 pt-3 sm:px-5 sm:pt-5 lg:px-10">
       {/* Gradient panel — same pattern as Hero & Pricing */}
-      <div className="mx-auto max-w-[1380px] rounded-[32px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-5 pb-16 pt-32 sm:px-8 sm:pt-36 lg:px-10 lg:pb-20 lg:pt-[165px]">
+      <div className="mx-auto max-w-[1380px] rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-16 pt-28 sm:rounded-[32px] sm:px-8 sm:pt-36 lg:px-10 lg:pb-20 lg:pt-[165px]">
         <div className="mx-auto flex max-w-[890px] flex-col items-center text-center">
 
           {/* Eyebrow — same pattern as Hero */}

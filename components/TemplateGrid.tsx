@@ -77,7 +77,7 @@ export function TemplateGrid({ templates }: Props) {
 
   return (
     // Section pattern from design system
-    <section id="templates" className="bg-white px-5 py-20 lg:px-10">
+    <section id="templates" className="bg-white px-4 py-14 sm:px-5 sm:py-20 lg:px-10">
       <div className="mx-auto max-w-[1068px]">
         <FilterBar
           activeCategory={activeCategory}

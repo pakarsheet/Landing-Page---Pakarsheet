@@ -33,7 +33,7 @@ export function FAQ() {
   }, [activeIndex, prefersReducedMotion]);
 
   return (
-    <section id="faq" ref={ref} className="bg-white px-5 py-20 lg:px-10">
+    <section id="faq" ref={ref} className="bg-white px-4 py-14 sm:px-5 sm:py-20 lg:px-10">
       <div className="mx-auto grid max-w-[1068px] gap-10 lg:grid-cols-[0.8fr_1.2fr]">
         <SectionHeader
           eyebrow="FAQ"

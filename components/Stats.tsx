@@ -66,7 +66,7 @@ export function Stats() {
   }, [prefersReducedMotion]);
 
   return (
-    <section ref={ref} className="bg-white px-5 py-16 lg:px-10">
+    <section ref={ref} className="bg-white px-4 py-12 sm:px-5 sm:py-16 lg:px-10">
       <div className="mx-auto grid max-w-[1068px] gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
