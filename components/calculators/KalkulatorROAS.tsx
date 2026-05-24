@@ -13,9 +13,17 @@ export function KalkulatorROAS() {
     qtyOrder: "10",
   };
 
-  const [vals, setVals] = useState(defaultVals);
+  const emptyVals = {
+    adSpend: "",
+    revenue: "",
+    hppProduk: "",
+    qtyOrder: "",
+  };
 
-  const reset = () => setVals(defaultVals);
+  const [vals, setVals] = useState(defaultVals);
+  const [resetKey, setResetKey] = useState(0);
+
+  const reset = () => { setVals(emptyVals); setResetKey((k) => k + 1); };
 
   const adSpend   = safeNum(vals.adSpend);
   const revenue   = safeNum(vals.revenue);
@@ -52,7 +60,7 @@ export function KalkulatorROAS() {
             Reset
           </button>
         </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "adSpend",   label: "Budget Iklan",           prefix: "Rp" },
             { id: "revenue",   label: "Revenue dari Iklan",     prefix: "Rp" },

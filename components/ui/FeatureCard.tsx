@@ -11,7 +11,6 @@ type FeatureCardProps = {
 export function FeatureCard({ icon: Icon, title, description, accent, className = "" }: FeatureCardProps) {
   return (
     <article className={`reveal-item group relative overflow-hidden rounded-3xl border border-line bg-white p-6 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-soft ${className}`}>
-      <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-sheet/0 blur-2xl transition duration-500 group-hover:bg-sheet/35" />
       <div className={`mb-6 flex h-12 w-12 items-center justify-center rounded-2xl transition duration-300 group-hover:scale-105 ${accent}`}>
         <Icon className="h-6 w-6 transition duration-300 group-hover:-rotate-6" />
       </div>

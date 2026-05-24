@@ -31,9 +31,17 @@ export function KalkulatorMargin() {
     qty: "100",
   };
 
-  const [vals, setVals] = useState<Record<string, string>>(defaultVals);
+  const emptyVals = {
+    hargaBeli: "",
+    hargaJual: "",
+    biayaOps: "",
+    qty: "",
+  };
 
-  const reset = () => setVals(defaultVals);
+  const [vals, setVals] = useState<Record<string, string>>(defaultVals);
+  const [resetKey, setResetKey] = useState(0);
+
+  const reset = () => { setVals(emptyVals); setResetKey((k) => k + 1); };
 
   const hargaBeli = safeNum(vals.hargaBeli);
   const hargaJual = safeNum(vals.hargaJual);
@@ -67,7 +75,7 @@ export function KalkulatorMargin() {
             Reset
           </button>
         </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {fields.map((f) => (
             <div key={f.id}>
               <label

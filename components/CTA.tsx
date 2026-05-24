@@ -10,7 +10,7 @@ export function CTA({ contactUrl }: { contactUrl?: string }) {
 
   return (
     <section id="cta-section" ref={ref} className="bg-white px-3 py-6 sm:px-5 sm:py-10 lg:px-10">
-      <div className="mx-auto max-w-[1380px] rounded-[20px] bg-ink px-4 py-14 text-center text-white sm:rounded-[32px] sm:px-8 lg:px-10 lg:py-24">
+      <div className="mx-auto max-w-[1380px] rounded-[20px] bg-ink px-6 py-14 text-center text-white sm:rounded-[32px] sm:px-8 sm:py-20 lg:px-10 lg:py-24">
         <p className="reveal-item inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white/75">
           <Sparkles className="h-4 w-4" />
           Spreadsheet bisa lebih rapi mulai hari ini

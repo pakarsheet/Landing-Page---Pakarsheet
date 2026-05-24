@@ -109,14 +109,7 @@ export function ToolsHero() {
                   className="tools-word inline-block origin-bottom pr-[0.18em]"
                 >
                   {isGratis ? (
-                    <span className="relative inline-block">
-                      gratis
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute -bottom-1 left-0 h-[6px] w-full rounded-full bg-sheet"
-                      />
-                      .
-                    </span>
+                    <span>gratis.</span>
                   ) : (
                     word
                   )}

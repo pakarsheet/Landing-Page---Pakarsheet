@@ -18,9 +18,22 @@ export function KalkulatorProfitMarketplace() {
     biayaFixed:      "1000",
   };
 
-  const [vals, setVals] = useState(defaultVals);
+  const emptyVals = {
+    hargaJual:       "",
+    hpp:             "",
+    qty:             "",
+    feePlatformPct:  "",
+    pack:            "",
+    ongkirSeller:    "",
+    voucherSeller:   "",
+    adSpendPerOrder: "",
+    biayaFixed:      "",
+  };
 
-  const reset = () => setVals(defaultVals);
+  const [vals, setVals] = useState(defaultVals);
+  const [resetKey, setResetKey] = useState(0);
+
+  const reset = () => { setVals(emptyVals); setResetKey((k) => k + 1); };
 
   const hargaJual       = safeNum(vals.hargaJual);
   const hpp             = safeNum(vals.hpp);
@@ -76,7 +89,7 @@ export function KalkulatorProfitMarketplace() {
             Reset
           </button>
         </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "hargaJual",       label: "Harga Jual per Unit",         prefix: "Rp" },
             { id: "hpp",             label: "HPP / Modal per Unit",         prefix: "Rp" },

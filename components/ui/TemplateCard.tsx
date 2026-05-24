@@ -26,8 +26,6 @@ export function TemplateCard({ template }: TemplateCardProps) {
 
   return (
     <article className="shop-card group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-soft">
-      {/* Glow — same as FeatureCard */}
-      <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-sheet/0 blur-2xl transition duration-500 group-hover:bg-sheet/35" />
 
       {/* Preview image — 1:1 square */}
       <Link href={`/shop/${slug}`} className="relative block aspect-square overflow-hidden">

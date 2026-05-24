@@ -17,9 +17,21 @@ export function KalkulatorDiskon() {
     biayaLayanan: "2000",
   };
 
-  const [vals, setVals] = useState(defaultVals);
+  const emptyVals = {
+    hargaAwal: "",
+    d1: "",
+    d2: "",
+    d3: "",
+    voucher: "",
+    cashbackPct: "",
+    ongkir: "",
+    biayaLayanan: "",
+  };
 
-  const reset = () => setVals(defaultVals);
+  const [vals, setVals] = useState(defaultVals);
+  const [resetKey, setResetKey] = useState(0);
+
+  const reset = () => { setVals(emptyVals); setResetKey((k) => k + 1); };
 
   const hargaAwal    = safeNum(vals.hargaAwal);
   const d1           = Math.min(100, Math.max(0, safeNum(vals.d1)));
@@ -72,7 +84,7 @@ export function KalkulatorDiskon() {
             Reset
           </button>
         </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "hargaAwal",    label: "Harga Awal Barang",   prefix: "Rp" },
             { id: "d1",           label: "Diskon Pertama (%)",   suffix: "%", max: 100 },

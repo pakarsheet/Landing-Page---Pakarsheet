@@ -14,9 +14,18 @@ export function KalkulatorHPP() {
     qtyProduksi: "1",
   };
 
-  const [vals, setVals] = useState(defaultVals);
+  const emptyVals = {
+    bahanBaku: "",
+    tenagaKerja: "",
+    overhead: "",
+    targetMargin: "",
+    qtyProduksi: "",
+  };
 
-  const reset = () => setVals(defaultVals);
+  const [vals, setVals] = useState(defaultVals);
+  const [resetKey, setResetKey] = useState(0);
+
+  const reset = () => { setVals(emptyVals); setResetKey((k) => k + 1); };
 
   const bahanBaku    = safeNum(vals.bahanBaku);
   const tenagaKerja  = safeNum(vals.tenagaKerja);
@@ -58,7 +67,7 @@ export function KalkulatorHPP() {
             Reset
           </button>
         </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "bahanBaku", label: "Biaya Bahan Baku per Unit", prefix: "Rp" },
             { id: "tenagaKerja", label: "Biaya Tenaga Kerja per Unit", prefix: "Rp" },

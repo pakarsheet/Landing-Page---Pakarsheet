@@ -29,10 +29,20 @@ export function KalkulatorHargaJual() {
     customAdmin: "0",
   };
 
+  const emptyVals = {
+    modalHpp: "",
+    targetMargin: "",
+    subsidiOngkir: "",
+    biayaPack: "",
+    customService: "",
+    customAdmin: "",
+  };
+
   const [platformIdx, setPlatformIdx] = useState(0);
   const [vals, setVals] = useState(defaultVals);
+  const [resetKey, setResetKey] = useState(0);
 
-  const reset = () => { setVals(defaultVals); setPlatformIdx(0); };
+  const reset = () => { setVals(emptyVals); setPlatformIdx(0); setResetKey((k) => k + 1); };
 
   const isCustom = platformIdx === platforms.length - 1;
   const platform = platforms[platformIdx];
@@ -103,7 +113,7 @@ export function KalkulatorHargaJual() {
           )}
         </div>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {[
             { id: "modalHpp", label: "Modal / HPP per Unit", prefix: "Rp" },
             { id: "targetMargin", label: "Target Margin (%)", suffix: "%", max: 90 },

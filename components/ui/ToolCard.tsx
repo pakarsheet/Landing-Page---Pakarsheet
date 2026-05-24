@@ -4,46 +4,12 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { ToolMeta } from "@/lib/tools";
 
-const previewData: Record<string, { label: string; value: string; sub: string }> = {
-  "kalkulator-margin": {
-    label: "Margin Keuntungan",
-    value: "37,5%",
-    sub: "Sangat sehat ↑",
-  },
-  "kalkulator-hpp": {
-    label: "HPP per Unit",
-    value: "Rp 45.000",
-    sub: "Harga jual min Rp 64.286",
-  },
-  "kalkulator-harga-jual": {
-    label: "Harga Jual Min",
-    value: "Rp 73.529",
-    sub: "Fee Shopee 5% sudah dipotong",
-  },
-  "kalkulator-roas": {
-    label: "ROAS",
-    value: "4,00x",
-    sub: "Sangat profitable ↑",
-  },
-  "kalkulator-diskon-bertingkat": {
-    label: "Biaya Efektif",
-    value: "Rp 163.800",
-    sub: "Hemat Rp 86.200 (34,5%)",
-  },
-  "kalkulator-profit-marketplace": {
-    label: "Profit Bersih",
-    value: "Rp 28.500",
-    sub: "Margin 23,8% — Sehat",
-  },
-};
-
 type Props = {
   tool: ToolMeta;
 };
 
 export function ToolCard({ tool }: Props) {
   const Icon = tool.icon;
-  const preview = previewData[tool.slug];
 
   return (
     <Link
@@ -68,19 +34,6 @@ export function ToolCard({ tool }: Props) {
         <p className="mt-1.5 flex-1 font-secondary text-sm leading-[1.56] text-muted">
           {tool.description}
         </p>
-
-        {/* Preview result */}
-        {preview && (
-          <div className="mt-5 rounded-2xl border border-line bg-white px-4 py-3.5 shadow-card">
-            <p className="font-secondary text-[10px] font-bold uppercase tracking-[0.1em] text-muted">
-              {preview.label}
-            </p>
-            <p className="mt-1 font-primary text-[24px] font-semibold leading-none tracking-[-0.8px] text-ink">
-              {preview.value}
-            </p>
-            <p className="mt-1 font-secondary text-[11px] text-muted">{preview.sub}</p>
-          </div>
-        )}
 
         {/* CTA row */}
         <div className="mt-5 flex items-center justify-between">

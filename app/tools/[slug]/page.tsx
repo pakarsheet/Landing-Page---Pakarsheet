@@ -2,6 +2,63 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+
+// ── SheetGrid (mirrors ToolsHero) ────────────────────────────
+const COLS = 9;
+const ROWS = 7;
+const CW = 100 / COLS;
+const CH = 100 / ROWS;
+
+const HIGHLIGHT_CELLS = [
+  { col: 0, row: 0, delay: "0s" },
+  { col: 3, row: 1, delay: "0.8s" },
+  { col: 6, row: 0, delay: "1.6s" },
+  { col: 1, row: 3, delay: "2.0s" },
+  { col: 5, row: 4, delay: "1.1s" },
+  { col: 8, row: 2, delay: "0.4s" },
+  { col: 2, row: 5, delay: "1.8s" },
+];
+
+function SheetGrid() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[32px]"
+    >
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: [
+            `repeating-linear-gradient(to right, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CW}%)`,
+            `repeating-linear-gradient(to bottom, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CH}%)`,
+          ].join(", "),
+        }}
+      />
+      {HIGHLIGHT_CELLS.map(({ col, row, delay }, i) => (
+        <div
+          key={i}
+          className="sheet-cell absolute"
+          style={{
+            left: `${col * CW}%`,
+            top: `${row * CH}%`,
+            width: `${CW}%`,
+            height: `${CH}%`,
+            background: "rgba(139,237,2,0.18)",
+            animationDelay: delay,
+          }}
+        />
+      ))}
+      <div
+        className="sheet-row-sweep absolute inset-x-0"
+        style={{
+          height: `${CH}%`,
+          background:
+            "linear-gradient(90deg, transparent 0%, rgba(139,237,2,0.12) 50%, transparent 100%)",
+        }}
+      />
+    </div>
+  );
+}
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
@@ -64,8 +121,9 @@ export default async function ToolDetailPage({ params }: Props) {
       <main id="main-content" className="bg-white">
 
         {/* ── Hero panel ─────────────────────────────────────────── */}
-        <section className="bg-white px-5 pb-0 pt-5 lg:px-10">
-          <div className="relative mx-auto max-w-[1380px] overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)]">
+        <section className="bg-white px-3 pb-0 pt-3 sm:px-5 sm:pt-5 lg:px-10">
+          <div className="relative mx-auto max-w-[1380px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] sm:rounded-[32px]">
+            <SheetGrid />
 
             <div className="px-5 pb-12 pt-28 sm:px-8 sm:pt-32 lg:px-12 lg:pb-16 lg:pt-36">
               {/* Back link */}
