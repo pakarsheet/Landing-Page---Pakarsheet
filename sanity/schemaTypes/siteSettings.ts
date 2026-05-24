@@ -6,8 +6,6 @@ export const siteSettingsType = defineType({
   title: "Pengaturan Situs",
   type: "document",
   icon: Settings,
-  // Singleton — hanya boleh ada 1 dokumen
-  __experimental_actions: ["update", "publish"],
   fields: [
     defineField({
       name: "whatsappNumber",
