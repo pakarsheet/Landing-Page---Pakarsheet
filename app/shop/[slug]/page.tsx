@@ -9,27 +9,36 @@ import {
   MessageCircle,
   Users,
   Zap,
-  Star,
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
 import { Button } from "@/components/ui/Button";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
-import { shopTemplates } from "@/lib/data";
 import { site } from "@/lib/site";
+import { client } from "@/lib/sanity/client";
+import {
+  allShopSlugsQuery,
+  shopTemplateBySlugQuery,
+  type SanityShopTemplate,
+} from "@/lib/sanity/queries";
+import { adaptSanityTemplate } from "@/lib/sanity/adapter";
+
+export const revalidate = 60;
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return shopTemplates.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  const slugs = await client.fetch<{ slug: string }[]>(allShopSlugsQuery);
+  return slugs.map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const template = shopTemplates.find((t) => t.slug === slug);
-  if (!template) return {};
+  const raw = await client.fetch<SanityShopTemplate | null>(shopTemplateBySlugQuery, { slug });
+  if (!raw) return {};
+  const template = adaptSanityTemplate(raw);
   return {
     title: `${template.title} — ${site.name}`,
     description: template.description,
@@ -44,8 +53,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TemplateDetailPage({ params }: Props) {
   const { slug } = await params;
-  const template = shopTemplates.find((t) => t.slug === slug);
-  if (!template) notFound();
+  const raw = await client.fetch<SanityShopTemplate | null>(shopTemplateBySlugQuery, { slug });
+  if (!raw) notFound();
+
+  const template = adaptSanityTemplate(raw);
 
   const {
     title,
@@ -59,9 +70,9 @@ export default async function TemplateDetailPage({ params }: Props) {
     isNew,
     isBestSeller,
     ctaUrl,
+    priceRaw,
   } = template;
 
-  // Parse harga asli: "Rp149rb" → 149000, "Rp1.499.000" → 1499000
   const parsePrice = (str: string) => {
     const lower = str.toLowerCase().replace(/\./g, "").replace(/\s/g, "");
     const rbMatch = lower.match(/(\d+)rb/);
@@ -70,7 +81,7 @@ export default async function TemplateDetailPage({ params }: Props) {
   };
 
   const discountPct = originalPrice
-    ? Math.round((1 - template.priceRaw / parsePrice(originalPrice)) * 100)
+    ? Math.round((1 - priceRaw / parsePrice(originalPrice)) * 100)
     : null;
 
   return (

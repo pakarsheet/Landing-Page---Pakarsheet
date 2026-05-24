@@ -3,7 +3,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Store } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { shopTemplates, type ShopCategory } from "@/lib/data";
+import { type ShopTemplate, type ShopCategory } from "@/lib/data";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { site } from "@/lib/site";
 import { Button } from "./ui/Button";
@@ -14,14 +14,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 type SortOption = "terbaru" | "terpopuler" | "harga-asc" | "harga-desc";
 
-export function TemplateGrid() {
+type Props = {
+  templates: ShopTemplate[];
+};
+
+export function TemplateGrid({ templates }: Props) {
   const [activeCategory, setActiveCategory] = useState<ShopCategory>("Semua");
   const [activeSort, setActiveSort] = useState<SortOption>("terbaru");
   const gridRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const filtered = useMemo(() => {
-    let list = [...shopTemplates];
+    let list = [...templates];
 
     if (activeCategory !== "Semua") {
       list = list.filter((t) => t.category === activeCategory);

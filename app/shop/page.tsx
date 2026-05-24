@@ -5,6 +5,11 @@ import { ShopHero } from "@/components/ShopHero";
 import { TemplateGrid } from "@/components/TemplateGrid";
 import { BgTransition } from "@/components/BgTransition";
 import { site } from "@/lib/site";
+import { client } from "@/lib/sanity/client";
+import { allShopTemplatesQuery, type SanityShopTemplate } from "@/lib/sanity/queries";
+import { adaptSanityTemplate } from "@/lib/sanity/adapter";
+
+export const revalidate = 60; // ISR: revalidate setiap 60 detik
 
 export const metadata: Metadata = {
   title: `Toko Template — ${site.name}`,
@@ -18,14 +23,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const sanityTemplates = await client.fetch<SanityShopTemplate[]>(allShopTemplatesQuery);
+  const templates = sanityTemplates.map(adaptSanityTemplate);
+
   return (
     <>
       <BgTransition />
       <Navbar />
       <main id="main-content">
         <ShopHero />
-        <TemplateGrid />
+        <TemplateGrid templates={templates} />
       </main>
       <Footer />
     </>
