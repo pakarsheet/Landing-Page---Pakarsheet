@@ -6,17 +6,17 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Global ScrollTrigger performance config — set once here
-ScrollTrigger.config({
-  ignoreMobileResize: true, // skip recalc on mobile address bar resize
-  autoRefreshEvents: "visibilitychange,DOMContentLoaded,load", // remove "resize" to avoid constant recalc
-});
-
 export function BgTransition() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (prefersReducedMotion) return;
+
+    // Global ScrollTrigger performance config — set once, client-side only
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+    });
 
     // Wait one tick so all sections are mounted in DOM
     const timer = setTimeout(() => {

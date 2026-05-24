@@ -11,8 +11,6 @@ type RevealOptions = {
   y?: number;
 };
 
-gsap.registerPlugin(ScrollTrigger);
-
 export function useGsapReveal<T extends HTMLElement>({
   selector = ".reveal-item",
   delay = 0,

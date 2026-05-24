@@ -20,26 +20,30 @@ import { SplitText } from "gsap/SplitText";
 import { TextPlugin } from "gsap/TextPlugin";
 import { RoughEase, ExpoScaleEase, SlowMo } from "gsap/EasePack";
 
-gsap.registerPlugin(
-  CustomBounce,
-  CustomEase,
-  CustomWiggle,
-  Draggable,
-  DrawSVGPlugin,
-  Flip,
-  InertiaPlugin,
-  MotionPathPlugin,
-  Observer,
-  ScrambleTextPlugin,
-  ScrollSmoother,
-  ScrollToPlugin,
-  ScrollTrigger,
-  SplitText,
-  TextPlugin,
-  RoughEase,
-  ExpoScaleEase,
-  SlowMo
-);
+// Guard against SSR — GSAP plugins that touch the DOM crash during
+// Next.js static prerendering where `window` is undefined.
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(
+    CustomBounce,
+    CustomEase,
+    CustomWiggle,
+    Draggable,
+    DrawSVGPlugin,
+    Flip,
+    InertiaPlugin,
+    MotionPathPlugin,
+    Observer,
+    ScrambleTextPlugin,
+    ScrollSmoother,
+    ScrollToPlugin,
+    ScrollTrigger,
+    SplitText,
+    TextPlugin,
+    RoughEase,
+    ExpoScaleEase,
+    SlowMo
+  );
+}
 
 export {
   gsap,
