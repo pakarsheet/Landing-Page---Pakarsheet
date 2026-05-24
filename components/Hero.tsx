@@ -407,6 +407,7 @@ export function Hero({ contactUrl }: { contactUrl?: string }) {
 
   useLayoutEffect(() => {
     if (!rootRef.current || prefersReducedMotion) return;
+    const root = rootRef.current;
 
     const ctx = gsap.context(() => {
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -432,10 +433,10 @@ export function Hero({ contactUrl }: { contactUrl?: string }) {
           trigger: ".dashboard-shell",
           start: "top bottom",
           end: "bottom top",
-          scrub: 0.8,
+          scrub: 1.2,
         },
       });
-    }, rootRef);
+    }, root);
 
     return () => ctx.revert();
   }, [prefersReducedMotion]);

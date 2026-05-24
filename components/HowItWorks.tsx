@@ -133,9 +133,9 @@ export function HowItWorks() {
         }
       );
 
-      const panels = gsap.utils.toArray<HTMLElement>(".simplicity-panel");
+      const panelEls = gsap.utils.toArray<HTMLElement>(".simplicity-panel");
 
-      panels.forEach((panel, index) => {
+      panelEls.forEach((panel, index) => {
         const visual = panel.querySelector(".simplicity-visual");
         const copy = panel.querySelectorAll(".simplicity-copy");
         const points = panel.querySelectorAll(".simplicity-point");
@@ -193,17 +193,16 @@ export function HowItWorks() {
           );
         }
 
-        if (index < panels.length - 1) {
+        if (index < panelEls.length - 1) {
           gsap.to(panel, {
             scale: 0.94 + index * 0.025,
             y: -16,
-            filter: "blur(0.2px)",
             ease: "none",
             scrollTrigger: {
-              trigger: panels[index + 1],
+              trigger: panelEls[index + 1],
               start: "top 78%",
               end: "top 28%",
-              scrub: true
+              scrub: 0.8,
             }
           });
         }

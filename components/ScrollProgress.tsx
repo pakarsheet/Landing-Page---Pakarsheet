@@ -24,7 +24,7 @@ export function ScrollProgress() {
         trigger: document.documentElement,
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.1,
+        scrub: 0.6,
       },
     });
 

@@ -11,6 +11,7 @@ gsap.registerPlugin(ScrollTrigger, Draggable);
 
 export function Templates() {
   const ref = useRef<HTMLElement | null>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useLayoutEffect(() => {
@@ -42,7 +43,7 @@ export function Templates() {
           duration: 0.85,
           stagger: 0.1,
           ease: "power3.out",
-          scrollTrigger: { trigger: ".template-grid", start: "top 80%", once: true }
+          scrollTrigger: { trigger: gridRef.current ?? root, start: "top 80%", once: true }
         }
       );
 
@@ -55,7 +56,7 @@ export function Templates() {
           duration: 0.34,
           stagger: { each: 0.01, from: "random" },
           ease: "power2.out",
-          scrollTrigger: { trigger: ".template-grid", start: "top 72%", once: true }
+          scrollTrigger: { trigger: gridRef.current ?? root, start: "top 72%", once: true }
         }
       );
     }, root);
@@ -97,7 +98,7 @@ export function Templates() {
           align="center"
           theme="dark"
         />
-        <div className="template-grid mx-auto mt-12 max-w-[1068px]">
+        <div ref={gridRef} className="template-grid mx-auto mt-12 max-w-[1068px]">
           {/* Mobile: horizontal drag scroll */}
           <div
             className="mobile-template-track flex gap-5 overflow-x-auto pb-4 md:hidden"

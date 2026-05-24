@@ -98,6 +98,15 @@ button {
 
 .dashboard-shell {
   transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.dashboard-float {
+  will-change: transform;
+}
+
+.dashboard-image {
+  will-change: transform;
 }
 
 .dashboard-scan {
@@ -105,6 +114,14 @@ button {
 }
 
 .template-card {
+  will-change: transform;
+}
+
+.simplicity-panel {
+  will-change: transform;
+}
+
+.simplicity-visual {
   will-change: transform;
 }
 
