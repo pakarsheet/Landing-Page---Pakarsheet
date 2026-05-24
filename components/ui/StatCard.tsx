@@ -9,10 +9,15 @@ type StatCardProps = {
 
 export function StatCard({ value, label, description, icon: Icon }: StatCardProps) {
   return (
-    <article className="reveal-item rounded-3xl border border-line bg-white p-5 shadow-card">
+    <article className="stat-card reveal-item rounded-3xl border border-line bg-white p-5 shadow-card">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <strong className="block font-primary text-3xl font-semibold tracking-[-1px] text-ink">{value}</strong>
+          <strong
+            className="stat-value block font-primary text-3xl font-semibold tracking-[-1px] text-ink"
+            data-value={value}
+          >
+            {value}
+          </strong>
           <span className="mt-2 block font-secondary text-sm font-semibold text-ink">{label}</span>
         </div>
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-leaf text-cobalt">

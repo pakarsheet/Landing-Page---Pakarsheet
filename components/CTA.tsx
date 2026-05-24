@@ -9,7 +9,7 @@ export function CTA() {
   const ref = useGsapReveal<HTMLElement>();
 
   return (
-    <section ref={ref} className="bg-white px-5 py-10 lg:px-10">
+    <section id="cta-section" ref={ref} className="bg-white px-5 py-10 lg:px-10">
       <div className="mx-auto max-w-[1380px] rounded-[32px] bg-ink px-5 py-20 text-center text-white sm:px-8 lg:px-10 lg:py-24">
         <p className="reveal-item inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white/75">
           <Sparkles className="h-4 w-4" />

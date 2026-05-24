@@ -1,6 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* ── Colors ─────────────────────────────────────────────── */
+  --color-ink:    #01112b;
+  --color-muted:  #4c5a73;
+  --color-line:   #d9e2f4;
+  --color-sheet:  #8bed02;
+  --color-cobalt: #023ffc;
+  --color-leaf:   #efffda;
+  --color-coral:  #ff6b6b;
+  --color-blush:  #eaf0ff;
+  --color-sky:    #eaf0ff;
+  --color-lilac:  #f2ffe0;
+
+  /* ── Box Shadows ─────────────────────────────────────────── */
+  --shadow-soft: 0 18px 55px rgba(1, 17, 43, 0.1);
+  --shadow-card: 0 12px 34px rgba(1, 17, 43, 0.07);
+
+  /* ── Border Radius ───────────────────────────────────────── */
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.35rem;
+
+  /* ── Font Families ───────────────────────────────────────── */
+  --font-family-primary:   var(--font-geist-sans), Geist, sans-serif;
+  --font-family-secondary: var(--font-inter), InterDisplay, Verdana, sans-serif;
+  --font-family-sans:      var(--font-inter), InterDisplay, Verdana, sans-serif;
+}
 
 @font-face {
   font-family: "InterDisplay";
@@ -63,6 +88,7 @@ a {
 
 button {
   font: inherit;
+  -webkit-font-smoothing: inherit;
 }
 
 ::selection {
@@ -128,7 +154,6 @@ button {
 }
 
 .sheet-row-sweep {
-  /* top starts above the panel, ends well below it */
   animation: sheet-row-sweep 7s linear infinite;
   top: 0;
 }

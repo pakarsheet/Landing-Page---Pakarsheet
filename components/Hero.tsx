@@ -1,10 +1,11 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
+import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { Button } from "./ui/Button";
+import { MagneticButton } from "./MagneticButton";
 import { site } from "@/lib/site";
 import { audience, trustedBy } from "@/lib/data";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -76,11 +77,14 @@ function SheetGrid() {
 function DashboardMockup() {
   return (
     <div className="relative mx-auto w-full max-w-[1120px]">
-      <div className="dashboard-shell dashboard-float relative overflow-hidden rounded-[2rem] border border-white/80 bg-white p-2 shadow-[0_34px_100px_rgba(1,17,43,0.2)] sm:p-3">
-        <img
-          src="https://cdn.prod.website-files.com/69056cbc60565704e832897d/69056cbc60565704e8328a9a_Dashboard%2520(3)-p-2000.png"
-          alt="Dashboard Pakarsheet"
-          className="dashboard-image block h-auto w-full rounded-[1.45rem]"
+      <div className="dashboard-shell dashboard-float relative overflow-hidden rounded-xl border border-white/80 bg-white p-2 shadow-[0_34px_100px_rgba(1,17,43,0.2)] sm:p-3">
+        <Image
+          src="/dashboard-mockup.png"
+          alt="Tampilan dashboard Pakarsheet — ringkasan data penjualan, cashflow, dan laporan operasional"
+          className="dashboard-image block h-auto w-full rounded-lg"
+          width={3360}
+          height={2100}
+          priority
           draggable={false}
         />
 
@@ -150,12 +154,12 @@ export function Hero() {
             Pakarsheet bantu bisnis naik level dari spreadsheet biasa menjadi sistem kerja yang lebih rapi, otomatis, dan mudah dipantau.
           </p>
           <div className="hero-reveal mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button href={site.templateUrl} size="lg">
+            <MagneticButton href={site.templateUrl} size="lg">
               {site.primaryCta}
-            </Button>
-            <Button href={site.contactUrl} variant="secondary" size="lg">
+            </MagneticButton>
+            <MagneticButton href={site.contactUrl} variant="secondary" size="lg">
               {site.secondaryCta}
-            </Button>
+            </MagneticButton>
           </div>
           <div className="hero-reveal mt-8 flex flex-wrap gap-2">
             {audience.map((item) => (

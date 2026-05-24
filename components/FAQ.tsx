@@ -20,9 +20,12 @@ export function FAQ() {
     answerRefs.current.forEach((answer, index) => {
       if (!answer) return;
 
+      const isOpen = activeIndex === index;
+      const targetHeight = isOpen ? answer.scrollHeight : 0;
+
       gsap.to(answer, {
-        height: activeIndex === index ? "auto" : 0,
-        autoAlpha: activeIndex === index ? 1 : 0,
+        height: targetHeight,
+        autoAlpha: isOpen ? 1 : 0,
         duration: 0.36,
         ease: "power2.out"
       });

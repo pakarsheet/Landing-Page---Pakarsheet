@@ -2,11 +2,8 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { BarChart3, CheckCircle2, FileSpreadsheet, RefreshCw } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger, DrawSVGPlugin } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const panels = [
   {
@@ -33,9 +30,9 @@ const panels = [
 ];
 
 const panelBackgrounds = [
-  "bg-[radial-gradient(circle_at_78%_24%,rgba(255,255,255,0.95),rgba(255,255,255,0.46)_31%,transparent_56%),linear-gradient(180deg,#eaf0ff_0%,#f7fff0_100%)]",
-  "bg-[radial-gradient(circle_at_18%_30%,rgba(255,255,255,0.95),rgba(255,255,255,0.46)_31%,transparent_56%),linear-gradient(180deg,#f2ffe0_0%,#eaf0ff_100%)]",
-  "bg-[radial-gradient(circle_at_78%_24%,rgba(255,255,255,0.95),rgba(255,255,255,0.46)_31%,transparent_56%),linear-gradient(180deg,#eaf0ff_0%,#ffffff_100%)]"
+  "bg-sky",
+  "bg-lilac",
+  "bg-white",
 ];
 
 function SheetMockup() {
@@ -97,8 +94,8 @@ function ChartMockup() {
         <div className="absolute inset-x-4 top-20 h-px bg-line" />
         <div className="absolute inset-x-4 top-32 h-px bg-line" />
         <svg viewBox="0 0 360 170" className="relative h-full w-full overflow-visible">
-          <path className="chart-line" pathLength={1} d="M0 126 C35 112 45 80 82 86 C120 92 115 126 155 118 C202 108 192 46 235 52 C285 58 254 124 360 94" fill="none" stroke="#023ffc" strokeWidth="5" strokeLinecap="round" />
-          <path className="chart-line" pathLength={1} d="M0 145 C38 140 48 132 78 90 C115 38 122 98 160 86 C200 73 206 70 240 80 C290 96 294 62 360 52" fill="none" stroke="#8bed02" strokeWidth="5" strokeLinecap="round" />
+          <path className="chart-line" d="M0 126 C35 112 45 80 82 86 C120 92 115 126 155 118 C202 108 192 46 235 52 C285 58 254 124 360 94" fill="none" stroke="#023ffc" strokeWidth="5" strokeLinecap="round" />
+          <path className="chart-line" d="M0 145 C38 140 48 132 78 90 C115 38 122 98 160 86 C200 73 206 70 240 80 C290 96 294 62 360 52" fill="none" stroke="#8bed02" strokeWidth="5" strokeLinecap="round" />
         </svg>
         <div className="chart-callout absolute left-28 top-16 rounded-2xl border border-line bg-white p-3 shadow-card">
           <p className="text-xs font-bold text-ink">Bulan ini</p>
@@ -179,7 +176,7 @@ export function HowItWorks() {
 
         if (chartLines.length) {
           timeline
-            .fromTo(chartLines, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.9, stagger: 0.12, ease: "power2.out" }, "-=0.34")
+            .fromTo(chartLines, { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.9, stagger: 0.12, ease: "power2.out" }, "-=0.34")
             .fromTo(chartCallout, { autoAlpha: 0, y: 16, scale: 0.9 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.38, ease: "back.out(1.7)" }, "-=0.28");
         }
 

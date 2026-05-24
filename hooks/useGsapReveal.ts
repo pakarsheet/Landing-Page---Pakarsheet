@@ -1,8 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 
 type RevealOptions = {
@@ -28,7 +27,7 @@ export function useGsapReveal<T extends HTMLElement>({
     if (!root || prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      const targets = gsap.utils.toArray<HTMLElement>(selector);
+      const targets = gsap.utils.toArray<HTMLElement>(selector, root);
 
       gsap.fromTo(
         targets,

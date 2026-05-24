@@ -19,7 +19,8 @@ export const navItems = [
   { label: "Template", href: "#templates" },
   { label: "Cara Kerja", href: "#how-it-works" },
   { label: "Harga", href: "#pricing" },
-  { label: "FAQ", href: "#faq" }
+  { label: "FAQ", href: "#faq" },
+  { label: "Tools", href: "/tools" },
 ];
 
 export const stats = [
@@ -154,6 +155,7 @@ export const pricing = [
     description: "Untuk mulai merapikan satu area kerja bisnis.",
     features: ["1 template siap pakai", "Dashboard dasar", "Panduan penggunaan", "Update minor"],
     cta: "Mulai Basic",
+    ctaUrl: "#pricing",
     highlighted: false
   },
   {
@@ -162,6 +164,7 @@ export const pricing = [
     description: "Untuk tim kecil yang butuh laporan dan workflow lebih lengkap.",
     features: ["Template lengkap", "Dashboard premium", "Formula otomatis", "Support setup awal"],
     cta: "Pilih Pro",
+    ctaUrl: "#pricing",
     highlighted: true
   },
   {
@@ -170,6 +173,7 @@ export const pricing = [
     description: "Untuk owner yang ingin beberapa area kerja langsung rapi.",
     features: ["3-5 template pilihan", "Dashboard gabungan", "Prioritas update", "Konsultasi alur"],
     cta: "Ambil Bundle",
+    ctaUrl: "https://wa.me/6280000000000",
     highlighted: false
   }
 ];
@@ -179,13 +183,57 @@ export const testimonials = [
     quote:
       "Dulu laporan bulanan selalu mepet. Sekarang angka penting sudah kelihatan dari dashboard, jadi enak buat cek bisnis.",
     name: "Raka Pratama",
-    role: "Owner toko online"
+    role: "Owner toko online",
+    accent: "bg-leaf"
   },
   {
     quote:
       "Admin baru lebih cepat paham karena format sheet-nya jelas. Tidak banyak tanya kolom ini buat apa.",
     name: "Dina Laras",
-    role: "Finance admin"
+    role: "Finance admin",
+    accent: "bg-sky"
+  },
+  {
+    quote:
+      "Sales pipeline-nya bantu banget. Sekarang bisa lihat mana lead yang udah lama nggak di-follow up tanpa harus buka banyak file.",
+    name: "Bimo Santoso",
+    role: "Sales manager, agency digital",
+    accent: "bg-lilac"
+  },
+  {
+    quote:
+      "Sebelumnya cashflow dicatat manual di notes HP. Sekarang pakai Finance Tracker, semua langsung keliatan di satu tempat.",
+    name: "Sari Wulandari",
+    role: "Owner bisnis kuliner",
+    accent: "bg-leaf"
+  },
+  {
+    quote:
+      "Tim operasional kami jadi lebih tertib. Setiap orang tahu harus isi apa dan kapan, nggak perlu diingatkan terus.",
+    name: "Hendra Kusuma",
+    role: "Manajer operasional, toko retail",
+    accent: "bg-sky"
+  },
+  {
+    quote:
+      "Saya freelancer yang handle beberapa klien sekaligus. Template project-nya bantu saya pantau progress tanpa ribet.",
+    name: "Ayu Permata",
+    role: "Freelance project manager",
+    accent: "bg-lilac"
+  },
+  {
+    quote:
+      "Awalnya ragu karena masih Google Sheets. Tapi setelah pakai, rasanya beda — lebih niat, lebih enak dibaca, dan tim nggak bingung.",
+    name: "Fajar Nugroho",
+    role: "Co-founder startup UMKM",
+    accent: "bg-leaf"
+  },
+  {
+    quote:
+      "Bundle Bisnis worth it banget. Langsung rapi dari finance, ops, sampai sales. Nggak perlu bikin sistem dari nol.",
+    name: "Rina Marlina",
+    role: "Owner reseller fashion",
+    accent: "bg-sky"
   }
 ];
 
@@ -240,3 +288,79 @@ export const quickMetrics = [
   { label: "Stok aman", value: "91%" },
   { label: "Invoice", value: "24" }
 ];
+
+// ─── Shop Templates ───────────────────────────────────────────────────────────
+
+export type ShopTemplate = {
+  slug: string;
+  title: string;
+  shortTitle: string;
+  description: string;
+  longDescription: string;
+  badge: string;
+  category: "Finance" | "Sales" | "Operasional" | "Bundle" | "Marketing" | "Project";
+  price: string;
+  priceRaw: number;
+  originalPrice?: string;
+  icon: typeof WalletCards;
+  accent: string;
+  features: string[];
+  whatsIncluded: string[];
+  previewImages: string[];
+  isNew?: boolean;
+  isBestSeller?: boolean;
+  ctaUrl: string;
+};
+
+export const shopTemplates: ShopTemplate[] = [
+  {
+    slug: "content-planner-instagram-pro",
+    title: "Content Planner Instagram Pro",
+    shortTitle: "Content Planner IG",
+    description: "Rencanakan, jadwalkan, dan pantau konten Instagram bisnis kamu dalam satu spreadsheet yang rapi.",
+    longDescription:
+      "Buat konten Instagram jadi lebih terencana dan konsisten. Template ini membantu kamu menyusun kalender konten, mencatat ide, memantau performa posting, dan memastikan jadwal upload tidak berantakan — semua dari Google Sheets.",
+    badge: "Marketing",
+    category: "Marketing",
+    price: "Rp99rb",
+    priceRaw: 99000,
+    originalPrice: "Rp149rb",
+    icon: LayoutDashboard,
+    accent: "bg-sky text-cobalt",
+    features: [
+      "Kalender konten bulanan",
+      "Tracker ide & caption",
+      "Jadwal posting otomatis",
+      "Pantau engagement per post",
+    ],
+    whatsIncluded: [
+      "1 file Google Sheets siap pakai",
+      "Kalender konten 12 bulan",
+      "Tracker ide konten & caption",
+      "Dashboard performa konten",
+      "Panduan penggunaan lengkap",
+      "Update minor gratis",
+    ],
+    previewImages: [
+      "/previews/content-planner-instagram-pro/preview-1.jpg",
+      "/previews/content-planner-instagram-pro/preview-2.jpg",
+      "/previews/content-planner-instagram-pro/preview-3.jpg",
+      "/previews/content-planner-instagram-pro/preview-4.jpg",
+    ],
+    isNew: true,
+    isBestSeller: false,
+    ctaUrl: "https://lynkd.id/pakarsheet",
+  },
+];
+
+export const shopCategories = [
+  "Semua",
+  "Finance",
+  "Sales",
+  "Operasional",
+  "Marketing",
+  "Project",
+  "Bundle",
+] as const;
+
+export type ShopCategory = (typeof shopCategories)[number];

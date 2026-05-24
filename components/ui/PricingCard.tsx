@@ -1,6 +1,5 @@
 import { Check } from "lucide-react";
 import { Button } from "./Button";
-import { site } from "@/lib/site";
 
 type PricingCardProps = {
   name: string;
@@ -8,10 +7,11 @@ type PricingCardProps = {
   description: string;
   features: string[];
   cta: string;
+  ctaUrl: string;
   highlighted?: boolean;
 };
 
-export function PricingCard({ name, price, description, features, cta, highlighted }: PricingCardProps) {
+export function PricingCard({ name, price, description, features, cta, ctaUrl, highlighted }: PricingCardProps) {
   return (
     <article
       className={`reveal-item relative rounded-3xl border p-6 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-soft ${
@@ -39,7 +39,7 @@ export function PricingCard({ name, price, description, features, cta, highlight
           </li>
         ))}
       </ul>
-      <Button href={site.contactUrl} variant={highlighted ? "secondary" : "primary"} className="mt-8 w-full">
+      <Button href={ctaUrl} variant={highlighted ? "secondary" : "primary"} className="mt-8 w-full">
         {cta}
       </Button>
     </article>

@@ -1,0 +1,14 @@
+export default function NotFound() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 text-center">
+      <h1 className="text-6xl font-bold">404</h1>
+      <p className="text-xl text-gray-500">Halaman tidak ditemukan.</p>
+      <a
+        href="/"
+        className="mt-4 rounded-lg bg-ink px-6 py-3 text-sm font-semibold text-white hover:opacity-90"
+      >
+        Kembali ke Beranda
+      </a>
+    </div>
+  );
+}
