@@ -5,12 +5,12 @@ import { useGsapReveal } from "@/hooks/useGsapReveal";
 import { Button } from "./ui/Button";
 import { site } from "@/lib/site";
 
-export function CTA() {
+export function CTA({ contactUrl }: { contactUrl?: string }) {
   const ref = useGsapReveal<HTMLElement>();
 
   return (
-    <section id="cta-section" ref={ref} className="bg-white px-5 py-10 lg:px-10">
-      <div className="mx-auto max-w-[1380px] rounded-[32px] bg-ink px-5 py-20 text-center text-white sm:px-8 lg:px-10 lg:py-24">
+    <section id="cta-section" ref={ref} className="bg-white px-3 py-6 sm:px-5 sm:py-10 lg:px-10">
+      <div className="mx-auto max-w-[1380px] rounded-[20px] bg-ink px-4 py-14 text-center text-white sm:rounded-[32px] sm:px-8 lg:px-10 lg:py-24">
         <p className="reveal-item inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-bold text-white/75">
           <Sparkles className="h-4 w-4" />
           Spreadsheet bisa lebih rapi mulai hari ini
@@ -25,7 +25,7 @@ export function CTA() {
           <Button href={site.templateUrl} variant="secondary" size="lg">
             {site.primaryCta}
           </Button>
-          <Button href={site.contactUrl} variant="ghost" size="lg" className="text-white hover:text-white/75">
+          <Button href={contactUrl ?? site.contactUrl} variant="ghost" size="lg" className="text-white hover:text-white/75">
             Tanya Dulu
           </Button>
         </div>

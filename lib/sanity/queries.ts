@@ -8,6 +8,11 @@ export type SanityImage = {
   alt?: string;
 };
 
+export type SanitySiteSettings = {
+  whatsappNumber: string;
+  whatsappMessage: string;
+};
+
 export type SanityShopTemplate = {
   _id: string;
   slug: { current: string };
@@ -82,4 +87,13 @@ export const shopTemplateBySlugQuery = groq`
 
 export const allShopSlugsQuery = groq`
   *[_type == "shopTemplate"] { "slug": slug.current }
+`;
+
+// ─── Site Settings ────────────────────────────────────────────────────────────
+
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0] {
+    whatsappNumber,
+    whatsappMessage
+  }
 `;

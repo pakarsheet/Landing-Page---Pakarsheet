@@ -11,14 +11,19 @@ import { Stats } from "@/components/Stats";
 import { Templates } from "@/components/Templates";
 import { Testimonials } from "@/components/Testimonials";
 import { BgTransition } from "@/components/BgTransition";
+import { FloatingWAButton } from "@/components/FloatingWAButton";
+import { getSiteSettings, buildWaUrl } from "@/lib/sanity/settings";
 
-export default function Home() {
+export default async function Home() {
+  const settings = await getSiteSettings();
+  const waUrl = buildWaUrl(settings);
+
   return (
     <>
       <BgTransition />
       <Navbar />
       <main id="main-content">
-        <Hero />
+        <Hero contactUrl={waUrl} />
         <Stats />
         <Problems />
         <Features />
@@ -27,9 +32,10 @@ export default function Home() {
         <Pricing />
         <Testimonials />
         <FAQ />
-        <CTA />
+        <CTA contactUrl={waUrl} />
       </main>
       <Footer />
+      <FloatingWAButton href={waUrl} />
     </>
   );
 }

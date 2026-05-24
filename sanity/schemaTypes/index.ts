@@ -1,3 +1,4 @@
 import { shopTemplateType } from "./shopTemplate";
+import { siteSettingsType } from "./siteSettings";
 
-export const schemaTypes = [shopTemplateType];
+export const schemaTypes = [shopTemplateType, siteSettingsType];

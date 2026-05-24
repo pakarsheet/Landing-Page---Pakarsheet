@@ -17,10 +17,24 @@ export default defineConfig({
         S.list()
           .title("Pakarsheet")
           .items([
+            // ── Produk ──────────────────────────────────────────────────────
             S.listItem()
               .title("Produk Toko")
               .schemaType("shopTemplate")
               .child(S.documentTypeList("shopTemplate").title("Semua Produk")),
+
+            S.divider(),
+
+            // ── Pengaturan (singleton) ───────────────────────────────────────
+            S.listItem()
+              .title("Pengaturan Situs")
+              .id("siteSettings")
+              .child(
+                S.document()
+                  .schemaType("siteSettings")
+                  .documentId("siteSettings")
+                  .title("Pengaturan Situs")
+              ),
           ]),
     }),
     visionTool(),
