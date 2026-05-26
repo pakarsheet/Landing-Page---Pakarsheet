@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Package, Settings, ExternalLink } from "lucide-react";
 
@@ -18,11 +19,9 @@ export function AdminSidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-gray-100 px-6">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900 text-white">
-            <LayoutDashboard className="h-4 w-4" />
+            <Image src="/logo.png" alt="Pakarsheet logo" width={32} height={32} className="h-8 w-8 object-contain" />
+            <span className="font-semibold text-gray-900">Pakarsheet</span>
           </div>
-          <span className="font-semibold text-gray-900">Pakarsheet</span>
-        </div>
       </div>
 
       {/* Nav */}

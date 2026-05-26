@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { navItems } from "@/lib/data";
 import { site } from "@/lib/site";
@@ -15,8 +16,8 @@ export function Navbar() {
     <header className="absolute left-0 top-0 z-50 w-full px-4 pt-4 sm:px-6 sm:pt-8 lg:px-10 lg:pt-[62px]">
       <nav className="mx-auto flex max-w-[1068px] items-center justify-between gap-2 rounded-[18px] border border-white/80 bg-white px-3 py-2 shadow-[0_16px_48px_rgba(1,17,43,0.12)] sm:gap-3">
         <Link href="/" className="flex min-w-0 items-center gap-3" aria-label="Pakarsheet home" onClick={() => setOpen(false)}>
-          <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-ink font-primary text-base font-semibold text-white">P</span>
-          <span className="truncate font-primary text-base font-semibold leading-none text-ink">{site.name}</span>
+          <Image src="/logo.png" alt="Pakarsheet logo" width={36} height={36} className="h-9 w-9 object-contain" />
+          <span className="truncate font-primary text-xl font-semibold leading-none text-ink">{site.name}</span>
         </Link>
 
         <div className="hidden min-w-0 items-center gap-6 lg:flex">

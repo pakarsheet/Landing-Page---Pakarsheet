@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { navItems } from "@/lib/data";
 import { site } from "@/lib/site";
 
@@ -18,10 +19,8 @@ export function Footer() {
           {/* Brand */}
           <div className="max-w-sm">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-2xl bg-ink font-primary text-lg font-semibold text-white">
-                P
-              </span>
-              <span className="font-primary text-lg font-semibold text-ink">{site.name}</span>
+              <Image src="/logo.png" alt="Pakarsheet logo" width={40} height={40} className="h-10 w-10 object-contain" />
+              <span className="font-primary text-xl font-semibold text-ink">{site.name}</span>
             </div>
             <p className="mt-3 text-sm leading-6 text-muted">{site.description}</p>
 

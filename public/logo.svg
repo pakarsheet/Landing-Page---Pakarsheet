@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer head shape: large rounded form facing right -->
+  <!-- Based on: round top, flat bottom-left with neck cutout, beak/snout pointing right -->
+  
+  <!-- Main green shape -->
+  <path
+    d="
+      M 30 170
+      L 30 130
+      C 10 118 5 98 5 85
+      C 5 38 42 5 95 5
+      C 135 5 175 25 185 58
+      C 190 72 185 88 175 96
+      L 175 110
+      L 195 110
+      L 195 135
+      L 155 135
+      L 155 110
+      C 140 112 128 120 118 132
+      L 118 195
+      L 80 195
+      L 80 155
+      C 55 148 30 162 30 170
+      Z
+    "
+    fill="#00E676"
+  />
+  <!-- Eye -->
+  <circle cx="148" cy="52" r="14" fill="#0a0a0a" />
+</svg>
