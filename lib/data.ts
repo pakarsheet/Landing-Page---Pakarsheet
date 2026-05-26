@@ -148,6 +148,53 @@ export const steps = [
   }
 ];
 
+// ─── HowItWorks panels ────────────────────────────────────────────────────────
+
+export type HowItWorksPanel = {
+  kicker: string;
+  title: string;
+  description: string;
+  points: string[];
+  /** Determines which mockup visual to render: "sheet" | "flow" | "chart" */
+  visual: "sheet" | "flow" | "chart";
+};
+
+export const howItWorksPanels: HowItWorksPanel[] = [
+  {
+    kicker: "01",
+    title: "Template siap pakai, bukan sheet kosong.",
+    description: "Mulai dari struktur data yang sudah disusun untuk pekerjaan harian bisnis.",
+    points: [
+      "Kolom dan tab sudah tertata",
+      "Format input mudah diikuti tim",
+      "Bisa langsung dipakai hari pertama",
+    ],
+    visual: "sheet",
+  },
+  {
+    kicker: "02",
+    title: "Workflow lebih otomatis tanpa pindah aplikasi.",
+    description: "Formula, status, dan ringkasan dibuat supaya rekap kerja tidak selalu manual.",
+    points: [
+      "Update status lebih jelas",
+      "Rekap otomatis dari data input",
+      "Minim input ulang dan salah hitung",
+    ],
+    visual: "flow",
+  },
+  {
+    kicker: "03",
+    title: "Dashboard bikin angka penting cepat kebaca.",
+    description: "Owner bisa pantau performa tanpa bongkar banyak tab atau bikin laporan dari nol.",
+    points: [
+      "Ringkasan penjualan dan biaya",
+      "Grafik siap untuk evaluasi",
+      "Laporan lebih enak dibagikan",
+    ],
+    visual: "chart",
+  },
+];
+
 export const pricing = [
   {
     name: "Basic Template",
@@ -353,14 +400,5 @@ export const shopTemplates: ShopTemplate[] = [
   },
 ];
 
-export const shopCategories = [
-  "Semua",
-  "Finance",
-  "Sales",
-  "Operasional",
-  "Marketing",
-  "Project",
-  "Bundle",
-] as const;
-
-export type ShopCategory = (typeof shopCategories)[number];
+// Re-export from lib/types to keep a single source of truth
+export { shopCategories, type ShopCategory } from "@/lib/types";

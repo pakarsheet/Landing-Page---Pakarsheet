@@ -340,7 +340,10 @@ export function formatMultiplier(value: number): string {
 }
 
 export function safeNum(val: string | number, fallback = 0): number {
-  const n = typeof val === "number" ? val : parseFloat(String(val).replace(/,/g, "."));
+  if (typeof val === "number") return isFinite(val) ? val : fallback;
+  // Strip Indonesian thousand-separator dots, then normalise decimal comma → dot
+  const cleaned = String(val).replace(/\./g, "").replace(/,/g, ".");
+  const n = parseFloat(cleaned);
   return isFinite(n) ? n : fallback;
 }
 

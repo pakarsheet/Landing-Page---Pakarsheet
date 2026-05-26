@@ -11,7 +11,6 @@ import {
   Zap,
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { BgTransition } from "@/components/BgTransition";
 import { Button } from "@/components/ui/Button";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
@@ -79,7 +78,6 @@ export default async function TemplateDetailPage({ params }: Props) {
   return (
     <>
       <BgTransition />
-      <Navbar />
       <main id="main-content" className="bg-white">
 
         {/* ── Breadcrumb ─────────────────────────────────────────── */}

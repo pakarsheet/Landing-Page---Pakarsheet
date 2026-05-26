@@ -18,14 +18,16 @@ export function ProductsTable({ products }: Props) {
     if (!confirm(`Hapus produk "${title}"? Tindakan ini tidak bisa dibatalkan.`)) return;
     setDeletingId(id);
     startTransition(async () => {
-      await deleteProduct(id);
+      const result = await deleteProduct(id);
       setDeletingId(null);
+      if (result?.error) alert("Gagal menghapus produk: " + result.error);
     });
   }
 
   function handleToggle(id: string, status: string) {
     startTransition(async () => {
-      await toggleProductStatus(id, status);
+      const result = await toggleProductStatus(id, status);
+      if (result?.error) alert("Gagal mengubah status: " + result.error);
     });
   }
 

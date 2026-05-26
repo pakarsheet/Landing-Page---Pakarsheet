@@ -4,36 +4,9 @@ import { useLayoutEffect, useRef } from "react";
 import { BarChart3, CheckCircle2, FileSpreadsheet, RefreshCw } from "lucide-react";
 import { gsap, ScrollTrigger, DrawSVGPlugin } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { howItWorksPanels, type HowItWorksPanel } from "@/lib/data";
 
-const panels = [
-  {
-    kicker: "01",
-    title: "Template siap pakai, bukan sheet kosong.",
-    description: "Mulai dari struktur data yang sudah disusun untuk pekerjaan harian bisnis.",
-    points: ["Kolom dan tab sudah tertata", "Format input mudah diikuti tim", "Bisa langsung dipakai hari pertama"],
-    visual: "sheet"
-  },
-  {
-    kicker: "02",
-    title: "Workflow lebih otomatis tanpa pindah aplikasi.",
-    description: "Formula, status, dan ringkasan dibuat supaya rekap kerja tidak selalu manual.",
-    points: ["Update status lebih jelas", "Rekap otomatis dari data input", "Minim input ulang dan salah hitung"],
-    visual: "flow"
-  },
-  {
-    kicker: "03",
-    title: "Dashboard bikin angka penting cepat kebaca.",
-    description: "Owner bisa pantau performa tanpa bongkar banyak tab atau bikin laporan dari nol.",
-    points: ["Ringkasan penjualan dan biaya", "Grafik siap untuk evaluasi", "Laporan lebih enak dibagikan"],
-    visual: "chart"
-  }
-];
-
-const panelBackgrounds = [
-  "bg-sky",
-  "bg-lilac",
-  "bg-white",
-];
+const panelBackgrounds = ["bg-sky", "bg-lilac", "bg-white"];
 
 function SheetMockup() {
   return (
@@ -106,7 +79,7 @@ function ChartMockup() {
   );
 }
 
-function PanelVisual({ visual }: { visual: string }) {
+function PanelVisual({ visual }: { visual: HowItWorksPanel["visual"] }) {
   if (visual === "flow") return <FlowMockup />;
   if (visual === "chart") return <ChartMockup />;
   return <SheetMockup />;
@@ -228,7 +201,7 @@ export function HowItWorks() {
       </div>
 
       <div className="mx-auto mt-16 max-w-[1068px] sm:mt-20">
-        {panels.map((panel, index) => (
+        {howItWorksPanels.map((panel, index) => (
           <article
             key={panel.title}
             style={{ top: `${96 + index * 18}px`, zIndex: index + 1 }}

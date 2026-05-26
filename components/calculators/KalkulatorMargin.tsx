@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { RotateCcw } from "lucide-react";
-import { formatRupiah, formatPct, safeNum, safeDivide, inputClass, trackToolEvent } from "@/lib/tools";
+import { formatRupiah, formatPct, safeNum, safeDivide } from "@/lib/tools";
+import { formatThousands } from "@/lib/formatInput";
+import { useCalcTracking } from "@/hooks/useCalcTracking";
+import { CalcInputPanel, type CalcFieldDef } from "./CalcInputPanel";
 import { ResultCard, marginStatus } from "@/components/ui/ResultCard";
 import { CalcDisclaimer } from "@/components/ui/CalcDisclaimer";
 
@@ -15,30 +16,15 @@ const defaultVals = {
   qty:       "100",
 };
 
+const fields: CalcFieldDef[] = [
+  { id: "hargaBeli", label: "Harga Beli / Modal",  hint: "Biaya beli atau produksi per unit",         prefix: "Rp" },
+  { id: "hargaJual", label: "Harga Jual",          hint: "Harga yang dibayar pembeli per unit",       prefix: "Rp" },
+  { id: "biayaOps",  label: "Biaya Operasional",   hint: "Ongkir, kemasan, biaya admin per unit",     prefix: "Rp" },
+  { id: "qty",       label: "Jumlah Unit",         hint: "Target penjualan untuk hitung total profit", currency: false },
+];
+
 export function KalkulatorMargin() {
-  const [vals, setVals] = useState(defaultVals);
-  const [resetKey, setResetKey] = useState(0);
-  const visitedFired     = useRef(false);
-  const interactionCount = useRef(0);
-  const calculatedFired  = useRef(false);
-
-  // Guard against React Strict Mode double-invoke
-  useEffect(() => {
-    if (visitedFired.current) return;
-    visitedFired.current = true;
-    trackToolEvent("tool_visited", SLUG);
-  }, []);
-
-  const reset = () => { setVals(defaultVals); setResetKey((k) => k + 1); };
-
-  const update = (id: string, value: string) => {
-    setVals((prev) => ({ ...prev, [id]: value }));
-    interactionCount.current += 1;
-    if (interactionCount.current >= 3 && !calculatedFired.current) {
-      calculatedFired.current = true;
-      trackToolEvent("tool_calculated", SLUG);
-    }
-  };
+  const { vals, resetKey, reset, update } = useCalcTracking(SLUG, defaultVals);
 
   const hargaBeli = Math.max(0, safeNum(vals.hargaBeli));
   const hargaJual = Math.max(0, safeNum(vals.hargaJual));
@@ -52,90 +38,65 @@ export function KalkulatorMargin() {
   const totalProfit = profitUnit * qty;
   const bep         = profitUnit > 0 ? Math.ceil(totalModal / profitUnit) : 0;
 
-  const fields: { id: keyof typeof defaultVals; label: string; prefix?: string; hint?: string }[] = [
-    { id: "hargaBeli", label: "Harga Beli / Modal per Unit", prefix: "Rp", hint: "Harga beli atau biaya produksi per unit, belum termasuk biaya operasional." },
-    { id: "hargaJual", label: "Harga Jual per Unit",         prefix: "Rp" },
-    { id: "biayaOps",  label: "Biaya Operasional per Unit",  prefix: "Rp", hint: "Termasuk ongkir, kemasan, biaya admin, dan biaya lain per unit." },
-    { id: "qty",       label: "Jumlah Unit" },
+  const metrics = [
+    { label: "Profit per Unit",        value: formatRupiah(profitUnit),  highlight: profitUnit > 0 },
+    { label: "Markup",                 value: formatPct(markupPct),      highlight: false },
+    { label: "Total Modal per Unit",   value: formatRupiah(totalModal),  highlight: false },
+    { label: "Total Profit",           value: formatRupiah(totalProfit), highlight: totalProfit > 0 },
+    { label: "Break-Even Point (BEP)", value: bep > 0 ? `${bep.toLocaleString("id-ID")} unit` : "—", highlight: false },
   ];
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
-      {/* ── Inputs ── */}
-      <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
-            Parameter Input
-          </h2>
-          <button
-            type="button"
-            onClick={reset}
-            aria-label="Reset kalkulator margin keuntungan ke nilai default"
-            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
-          >
-            <RotateCcw className="h-3 w-3" />
-            Reset
-          </button>
-        </div>
-        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
-          {fields.map((f) => (
-            <div key={f.id}>
-              <label htmlFor={f.id} className="mb-1.5 block font-secondary text-sm font-semibold text-ink">
-                {f.label}
-              </label>
-              {f.hint && (
-                <p id={`${f.id}-hint`} className="mb-1.5 font-secondary text-xs text-muted">
-                  {f.hint}
-                </p>
-              )}
-              <div className={inputClass}>
-                {f.prefix && (
-                  <span className="mr-2 font-secondary text-sm font-semibold text-muted" aria-hidden="true">{f.prefix}</span>
-                )}
-                <input
-                  id={f.id}
-                  type="text"
-                  inputMode={f.id === "qty" ? "numeric" : "decimal"}
-                  pattern="[0-9]*"
-                  min={f.id === "qty" ? 1 : 0}
-                  value={vals[f.id]}
-                  onChange={(e) => update(f.id, e.target.value)}
-                  aria-describedby={f.hint ? `${f.id}-hint` : undefined}
-                  className="w-full bg-transparent font-secondary text-base text-ink outline-none placeholder:text-muted/50"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+      <CalcInputPanel
+        fields={fields}
+        vals={vals}
+        onUpdate={update}
+        onReset={reset}
+        resetKey={resetKey}
+        summary={[
+          { label: "Total Modal", value: formatRupiah(totalModal) },
+          {
+            label: "Profit / Unit",
+            value: formatRupiah(profitUnit),
+            valueColor: profitUnit >= 0 ? "text-green-600" : "text-red-600",
+          },
+        ]}
+      />
 
-      {/* ── Results ── */}
-      <div className="flex flex-col gap-4">
+      {/* ── Result Panel ────────────────────────────────────────── */}
+      <div className="flex flex-col gap-4 lg:sticky lg:top-6">
         <ResultCard
           label="Margin Keuntungan"
           value={formatPct(marginPct)}
+          subtitle={`Dari ${qty.toLocaleString("id-ID")} unit → total profit ${formatRupiah(totalProfit)}`}
           {...marginStatus(marginPct)}
         />
 
-        <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-          <ul className="space-y-4">
-            {[
-              { label: "Profit per Unit",        value: formatRupiah(profitUnit) },
-              { label: "Markup",                 value: formatPct(markupPct) },
-              { label: "Total Modal per Unit",   value: formatRupiah(totalModal) },
-              { label: "Total Profit",           value: formatRupiah(totalProfit) },
-              { label: "Break-Even Point (BEP)", value: bep > 0 ? `${bep.toLocaleString("id-ID")} unit` : "—" },
-            ].map(({ label, value }) => (
-              <li key={label} className="flex items-center justify-between gap-4 border-b border-line pb-4 last:border-0 last:pb-0">
+        <div className="rounded-3xl border border-line bg-white shadow-card">
+          <div className="border-b border-line px-6 py-4">
+            <p className="font-secondary text-[11px] font-bold uppercase tracking-[0.1em] text-muted/60">
+              Rincian Kalkulasi
+            </p>
+          </div>
+          <ul className="divide-y divide-line">
+            {metrics.map(({ label, value, highlight }) => (
+              <li key={label} className="flex items-center justify-between gap-4 px-6 py-4">
                 <span className="font-secondary text-sm text-muted">{label}</span>
-                <span className="font-secondary text-sm font-semibold text-ink">{value}</span>
+                <span
+                  className={`font-secondary text-sm font-semibold ${
+                    highlight ? "text-green-600" : "text-ink"
+                  }`}
+                >
+                  {value}
+                </span>
               </li>
             ))}
           </ul>
         </div>
-      </div>
 
-      <CalcDisclaimer />
+        <CalcDisclaimer />
+      </div>
     </div>
   );
 }

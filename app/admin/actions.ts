@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ProductInsert, ProductUpdate } from "@/lib/supabase/types";
 
@@ -16,7 +15,7 @@ export async function createProduct(formData: FormData) {
 
   revalidatePath("/admin/products");
   revalidatePath("/shop");
-  redirect("/admin/products");
+  return { success: true };
 }
 
 export async function updateProduct(id: string, formData: FormData) {
@@ -33,7 +32,7 @@ export async function updateProduct(id: string, formData: FormData) {
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath(`/shop/${payload.slug}`);
-  redirect("/admin/products");
+  return { success: true };
 }
 
 export async function deleteProduct(id: string) {
@@ -127,13 +126,13 @@ export async function deleteProductImage(path: string) {
 
 function parseProductForm(formData: FormData) {
   const parseList = (key: string): string[] =>
-    (formData.get(key) as string)
+    ((formData.get(key) as string) ?? "")
       .split("\n")
       .map((s) => s.trim())
       .filter(Boolean);
 
   const parseImages = (): string[] =>
-    (formData.get("preview_images") as string)
+    ((formData.get("preview_images") as string) ?? "")
       .split("\n")
       .map((s) => s.trim())
       .filter(Boolean);

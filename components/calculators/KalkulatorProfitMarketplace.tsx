@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { RotateCcw } from "lucide-react";
-import {
-  formatRupiah, formatPct, safeNum, safeDivide,
-  inputClass, marketplacePlatforms, trackToolEvent,
-} from "@/lib/tools";
+import { useState } from "react";
+import { formatRupiah, formatPct, safeNum, safeDivide, marketplacePlatforms } from "@/lib/tools";
+import { useCalcTracking } from "@/hooks/useCalcTracking";
+import { CalcInputPanel, type CalcFieldDef, inputWrap, inputBase, prefixCls } from "./CalcInputPanel";
+import { PlatformSelector } from "./PlatformSelector";
 import { ResultCard, profitStatus } from "@/components/ui/ResultCard";
 import { CalcDisclaimer } from "@/components/ui/CalcDisclaimer";
+import { formatThousands } from "@/lib/formatInput";
 
 const SLUG = "kalkulator-profit-marketplace";
 
@@ -23,32 +23,23 @@ const defaultVals = {
   customFee:       "5",
 };
 
+const baseFields: CalcFieldDef[] = [
+  { id: "hargaJual",       label: "Harga Jual per Unit",        hint: "Harga yang tertera di listing produk",                 prefix: "Rp" },
+  { id: "hpp",             label: "HPP / Modal per Unit",       hint: "Biaya pokok barang per unit",                          prefix: "Rp" },
+  { id: "qty",             label: "Jumlah Terjual",             hint: "Target atau aktual penjualan untuk hitung total",       min: 1 },
+  { id: "pack",            label: "Packaging per Unit",         hint: "Kardus, bubble wrap, stiker per unit",                 prefix: "Rp" },
+  { id: "ongkirSeller",    label: "Subsidi Ongkir per Unit",    hint: "Biaya ongkir yang kamu tanggung per transaksi",        prefix: "Rp" },
+  { id: "voucherSeller",   label: "Voucher / Diskon Seller",    hint: "Nominal diskon produk yang ditanggung toko kamu",      prefix: "Rp" },
+  { id: "adSpendPerOrder", label: "Biaya Iklan per Order (CPA)",hint: "Rata-rata biaya iklan untuk menghasilkan 1 transaksi", prefix: "Rp" },
+  { id: "biayaFixed",      label: "Biaya Admin Tetap per Order",hint: "Biaya penanganan tetap per transaksi",                 prefix: "Rp" },
+];
+
 export function KalkulatorProfitMarketplace() {
   const [platformIdx, setPlatformIdx] = useState(0);
-  const [vals, setVals] = useState(defaultVals);
-  const [resetKey, setResetKey] = useState(0);
-  const visitedFired     = useRef(false);
-  const interactionCount = useRef(0);
-  const calculatedFired  = useRef(false);
+  const { vals, resetKey, reset: baseReset, update } = useCalcTracking(SLUG, defaultVals);
 
-  useEffect(() => {
-    if (visitedFired.current) return;
-    visitedFired.current = true;
-    trackToolEvent("tool_visited", SLUG);
-  }, []);
+  const reset = () => { baseReset(); setPlatformIdx(0); };
 
-  const reset = () => { setVals(defaultVals); setPlatformIdx(0); setResetKey((k) => k + 1); };
-
-  const update = (id: string, value: string) => {
-    setVals((prev) => ({ ...prev, [id]: value }));
-    interactionCount.current += 1;
-    if (interactionCount.current >= 3 && !calculatedFired.current) {
-      calculatedFired.current = true;
-      trackToolEvent("tool_calculated", SLUG);
-    }
-  };
-
-  // Platform fee resolution
   const isCustom = platformIdx === marketplacePlatforms.length - 1;
   const platform = marketplacePlatforms[platformIdx];
   const feePlatformPct = isCustom
@@ -78,110 +69,44 @@ export function KalkulatorProfitMarketplace() {
 
   const ratePlatform = feePlatformPct / 100;
   const hargaBEP     = ratePlatform < 1 ? safeDivide(hpp + opsCostUnit, 1 - ratePlatform) : 0;
-  const maxAdSpend   = Math.max(
-    0,
-    hargaJual - hpp - platformFeeUnit - pack - ongkirSeller - voucherSeller - biayaFixed
-  );
+  const maxAdSpend   = Math.max(0, hargaJual - hpp - platformFeeUnit - pack - ongkirSeller - voucherSeller - biayaFixed);
 
-  const baseFields: { id: keyof typeof defaultVals; label: string; prefix?: string; min?: number; hint?: string }[] = [
-    { id: "hargaJual",       label: "Harga Jual per Unit",        prefix: "Rp" },
-    { id: "hpp",             label: "HPP / Modal per Unit",        prefix: "Rp" },
-    { id: "qty",             label: "Jumlah Terjual",              min: 1 },
-    { id: "pack",            label: "Packaging per Unit",          prefix: "Rp" },
-    { id: "ongkirSeller",    label: "Subsidi Ongkir per Unit",     prefix: "Rp", hint: "Biaya ongkir yang kamu tanggung per transaksi (bukan per kg)." },
-    { id: "voucherSeller",   label: "Voucher / Diskon Seller",     prefix: "Rp", hint: "Nominal diskon produk yang ditanggung oleh toko kamu." },
-    { id: "adSpendPerOrder", label: "Biaya Iklan per Order (CPA)", prefix: "Rp", hint: "Rata-rata biaya iklan untuk menghasilkan 1 transaksi." },
-    { id: "biayaFixed",      label: "Biaya Admin Tetap per Order", prefix: "Rp" },
-  ];
+  const platformNote = !isCustom
+    ? `Total fee ${feePlatformPct.toFixed(1)}% — ${platform.feeNote}`
+    : undefined;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
-      {/* ── Inputs ── */}
-      <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="font-primary text-xl font-semibold tracking-[-0.4px] text-ink">
-            Parameter Input
-          </h2>
-          <button
-            type="button"
-            onClick={reset}
-            aria-label="Reset kalkulator profit marketplace ke nilai default"
-            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
-          >
-            <RotateCcw className="h-3 w-3" />
-            Reset
-          </button>
-        </div>
+    <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+      <CalcInputPanel
+        fields={baseFields}
+        vals={vals}
+        onUpdate={update}
+        onReset={reset}
+        resetKey={resetKey}
+        summary={[
+          { label: "Omzet Total",  value: formatRupiah(omzetTotal) },
+          {
+            label: "Total Profit",
+            value: formatRupiah(totalProfit),
+            valueColor: totalProfit >= 0 ? "text-green-600" : "text-red-600",
+          },
+        ]}
+      >
+        <PlatformSelector
+          platformIdx={platformIdx}
+          onChange={setPlatformIdx}
+          note={platformNote}
+        />
 
-        {/* Platform selector */}
-        <div className="mt-5">
-          <p className="mb-2 font-secondary text-sm font-semibold text-ink">Platform Marketplace</p>
-          <div className="flex flex-wrap gap-2" role="group" aria-label="Pilih platform marketplace">
-            {marketplacePlatforms.map((p, i) => (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => setPlatformIdx(i)}
-                aria-pressed={platformIdx === i}
-                className={`rounded-full border px-4 py-1.5 font-secondary text-sm font-semibold transition ${
-                  platformIdx === i
-                    ? "border-cobalt bg-cobalt text-white"
-                    : "border-line bg-white text-ink hover:border-cobalt hover:text-cobalt"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-          {!isCustom && (
-            <p className="mt-2 font-secondary text-xs text-muted">
-              Service fee {platform.serviceFee}% + Admin fee {platform.adminFee}% = Total {feePlatformPct.toFixed(1)}% &mdash; {platform.feeNote}
-            </p>
-          )}
-          {isCustom && (
-            <p className="mt-2 font-secondary text-xs text-muted">
-              {marketplacePlatforms[marketplacePlatforms.length - 1].feeNote}
-            </p>
-          )}
-        </div>
-
-        <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
-          {baseFields.map((f) => (
-            <div key={f.id}>
-              <label htmlFor={f.id} className="mb-1.5 block font-secondary text-sm font-semibold text-ink">
-                {f.label}
-              </label>
-              {f.hint && (
-                <p id={`${f.id}-hint`} className="mb-1.5 font-secondary text-xs text-muted">
-                  {f.hint}
-                </p>
-              )}
-              <div className={inputClass}>
-                {f.prefix && (
-                  <span className="mr-2 font-secondary text-sm font-semibold text-muted" aria-hidden="true">{f.prefix}</span>
-                )}
-                <input
-                  id={f.id}
-                  type="text"
-                  inputMode="decimal"
-                  pattern="[0-9]*"
-                  min={f.min ?? 0}
-                  value={vals[f.id]}
-                  onChange={(e) => update(f.id, e.target.value)}
-                  aria-describedby={f.hint ? `${f.id}-hint` : undefined}
-                  className="w-full bg-transparent font-secondary text-base text-ink outline-none"
-                />
-              </div>
-            </div>
-          ))}
-
-          {/* Custom fee input */}
-          {isCustom && (
+        {/* Custom fee field — only shown when "Custom" platform is selected */}
+        {isCustom && (
+          <div className="border-b border-line px-6 pb-5">
             <div>
-              <label htmlFor="customFee" className="mb-1.5 block font-secondary text-sm font-semibold text-ink">
-                Fee Marketplace (%)
+              <label htmlFor="customFee" className="mb-1 block font-secondary text-sm font-semibold text-ink">
+                Fee Marketplace
               </label>
-              <div className={inputClass}>
+              <p className="mb-2 font-secondary text-xs text-muted/70">Total persentase fee platform</p>
+              <div className={inputWrap}>
                 <input
                   id="customFee"
                   type="text"
@@ -189,28 +114,30 @@ export function KalkulatorProfitMarketplace() {
                   pattern="[0-9]*"
                   value={vals.customFee}
                   onChange={(e) => update("customFee", e.target.value)}
-                  className="w-full bg-transparent font-secondary text-base text-ink outline-none"
+                  className={inputBase}
                 />
-                <span className="ml-2 font-secondary text-sm font-semibold text-muted" aria-hidden="true">%</span>
+                <span className={prefixCls} aria-hidden="true">%</span>
               </div>
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </CalcInputPanel>
 
-      {/* ── Results ── */}
-      <div className="flex flex-col gap-4">
+      {/* ── Result Panel ────────────────────────────────────────── */}
+      <div className="flex flex-col gap-4 lg:sticky lg:top-6">
         <ResultCard
           label="Profit Bersih per Unit"
           value={formatRupiah(profitUnit)}
-          subtitle={`Margin: ${formatPct(marginPct)}`}
+          subtitle={`Margin: ${formatPct(marginPct)} · Markup: ${formatPct(markupPct)}`}
           {...profitStatus(profitUnit, marginPct)}
         />
 
         {/* Per-unit detail */}
-        <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-          <p className="mb-4 font-secondary text-xs font-bold uppercase tracking-[0.08em] text-muted">Per Unit</p>
-          <ul className="space-y-4">
+        <div className="rounded-3xl border border-line bg-white shadow-card">
+          <div className="border-b border-line px-6 py-4">
+            <p className="font-secondary text-[11px] font-bold uppercase tracking-[0.1em] text-muted/60">Per Unit</p>
+          </div>
+          <ul className="divide-y divide-line">
             {[
               { label: "Margin Bersih",          value: formatPct(marginPct) },
               { label: "Markup Bersih",           value: formatPct(markupPct) },
@@ -219,7 +146,7 @@ export function KalkulatorProfitMarketplace() {
               { label: "Harga BEP Minimum",       value: formatRupiah(hargaBEP) },
               { label: "Maks. Biaya Iklan/Order", value: formatRupiah(maxAdSpend) },
             ].map(({ label, value }) => (
-              <li key={label} className="flex items-center justify-between gap-4 border-b border-line pb-4 last:border-0 last:pb-0">
+              <li key={label} className="flex items-center justify-between gap-4 px-6 py-4">
                 <span className="font-secondary text-sm text-muted">{label}</span>
                 <span className="font-secondary text-sm font-semibold text-ink">{value}</span>
               </li>
@@ -228,27 +155,39 @@ export function KalkulatorProfitMarketplace() {
         </div>
 
         {/* Total summary */}
-        <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-          <p className="mb-4 font-secondary text-xs font-bold uppercase tracking-[0.08em] text-muted">
-            Total ({qty.toLocaleString("id-ID")} unit)
-          </p>
-          <ul className="space-y-4">
+        <div className="rounded-3xl border border-line bg-white shadow-card">
+          <div className="border-b border-line px-6 py-4">
+            <p className="font-secondary text-[11px] font-bold uppercase tracking-[0.1em] text-muted/60">
+              Total ({qty.toLocaleString("id-ID")} unit)
+            </p>
+          </div>
+          <ul className="divide-y divide-line">
             {[
-              { label: "Omzet Total",         value: formatRupiah(omzetTotal) },
-              { label: "Total Profit Bersih", value: formatRupiah(totalProfit) },
-              { label: "Total Fee Platform",  value: formatRupiah(totalPlatformFee) },
-              { label: "Total Beban",         value: formatRupiah(totalBeban) },
-            ].map(({ label, value }) => (
-              <li key={label} className="flex items-center justify-between gap-4 border-b border-line pb-4 last:border-0 last:pb-0">
+              { label: "Omzet Total",         value: formatRupiah(omzetTotal),       colored: false },
+              { label: "Total Profit Bersih", value: formatRupiah(totalProfit),      colored: true },
+              { label: "Total Fee Platform",  value: formatRupiah(totalPlatformFee), colored: false },
+              { label: "Total Beban",         value: formatRupiah(totalBeban),       colored: false },
+            ].map(({ label, value, colored }) => (
+              <li key={label} className="flex items-center justify-between gap-4 px-6 py-4">
                 <span className="font-secondary text-sm text-muted">{label}</span>
-                <span className="font-secondary text-sm font-semibold text-ink">{value}</span>
+                <span
+                  className={`font-secondary text-sm font-semibold ${
+                    colored
+                      ? totalProfit >= 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                      : "text-ink"
+                  }`}
+                >
+                  {value}
+                </span>
               </li>
             ))}
           </ul>
         </div>
-      </div>
 
-      <CalcDisclaimer note="Fee marketplace bervariasi per kategori, tier seller, dan program promo. Selalu verifikasi fee aktual di Seller Centre sebelum menetapkan harga jual." />
+        <CalcDisclaimer note="Fee marketplace bervariasi per kategori, tier seller, dan program promo. Selalu verifikasi fee aktual di Seller Centre." />
+      </div>
     </div>
   );
 }

@@ -123,8 +123,8 @@ export default async function ToolDetailPage({ params }: Props) {
                 <div className="max-w-[640px]">
                   {/* Icon + badge row */}
                   <div className="flex items-center gap-3">
-                    <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${tool.accent}`}>
-                      <Icon className="h-7 w-7" />
+                    <span className={`flex h-16 w-16 items-center justify-center rounded-2xl ${tool.accent}`}>
+                      <Icon className="h-8 w-8" />
                     </span>
                     <span className="rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-bold text-cobalt shadow-card">
                       {tool.badge}
@@ -158,15 +158,15 @@ export default async function ToolDetailPage({ params }: Props) {
         </section>
 
         {/* ── Calculator ─────────────────────────────────────────── */}
-        <section className="bg-white px-5 py-12 lg:px-10">
-          <div className="mx-auto max-w-[1068px]">
+        <section className="bg-white px-5 py-14 sm:py-20 lg:px-10">
+          <div className="mx-auto max-w-[1280px]">
             <CalculatorForSlug slug={slug} />
           </div>
         </section>
 
         {/* ── CTA — upgrade to template ──────────────────────────── */}
         <section className="bg-white px-5 pb-12 lg:px-10">
-          <div className="mx-auto max-w-[1068px]">
+          <div className="mx-auto max-w-[1280px]">
             <div className="relative overflow-hidden rounded-3xl bg-ink px-6 py-10 sm:px-10 lg:px-14 lg:py-14">
               <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-sheet/20 blur-3xl" />
               <div aria-hidden="true" className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-cobalt/20 blur-3xl" />
@@ -205,7 +205,7 @@ export default async function ToolDetailPage({ params }: Props) {
 
         {/* ── Related tools ──────────────────────────────────────── */}
         <section className="bg-white px-5 pb-20 lg:px-10">
-          <div className="mx-auto max-w-[1068px]">
+          <div className="mx-auto max-w-[1280px]">
             <div className="mb-6 flex items-center justify-between">
               <p className="font-secondary text-xs font-bold uppercase tracking-[0.08em] text-muted">
                 Kalkulator lainnya

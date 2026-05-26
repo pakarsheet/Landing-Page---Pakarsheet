@@ -3,17 +3,22 @@
 import { type LucideIcon, TrendingUp, TrendingDown, Minus, AlertTriangle } from "lucide-react";
 
 // ─── ResultCard ──────────────────────────────────────────────────────────────
-export interface ResultCardProps {
+
+/** Status-related props, grouped for cleaner spread at call sites */
+export type ResultStatus = {
+  /** 0–100, drives the progress bar */
+  gaugeValue: number;
+  statusColor: string;
+  statusBg: string;
+  statusBarColor: string;
+  statusLabel: string;
+  statusIcon?: LucideIcon;
+};
+
+export interface ResultCardProps extends ResultStatus {
   label: string;
   value: string;
   subtitle?: string;
-  /** 0–100, drives the progress bar */
-  gaugeValue: number;
-  statusColor: string;   // tailwind text color, e.g. "text-green-600"
-  statusBg: string;      // tailwind bg color, e.g. "bg-green-50"
-  statusBarColor: string; // tailwind bg for bar fill, e.g. "bg-green-500"
-  statusLabel: string;
-  statusIcon?: LucideIcon;
 }
 
 export function ResultCard({
@@ -30,36 +35,46 @@ export function ResultCard({
   const clamped = Math.min(100, Math.max(0, gaugeValue));
 
   return (
-    <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-      {/* Label */}
-      <p className="font-secondary text-xs font-bold uppercase tracking-[0.1em] text-muted">
-        {label}
-      </p>
+    <div className={`relative overflow-hidden rounded-3xl border border-line p-6 shadow-card ${statusBg}`}>
+      {/* Decorative glow blob */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-30 blur-2xl ${statusBarColor}`}
+      />
 
-      {/* Value — responsive font so long Rupiah values don't overflow on mobile */}
-      <p className="mt-2 font-primary text-[28px] font-semibold leading-none tracking-[-1.2px] text-ink sm:text-[36px] sm:tracking-[-1.5px] lg:text-[40px] lg:tracking-[-1.8px]">
-        {value}
-      </p>
-
-      {/* Subtitle */}
-      {subtitle && (
-        <p className="mt-2 font-secondary text-sm text-muted">{subtitle}</p>
-      )}
-
-      {/* Progress bar */}
-      <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-line">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${statusBarColor}`}
-          style={{ width: `${clamped}%` }}
-        />
-      </div>
-
-      {/* Status badge */}
-      <div className="mt-3">
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-secondary text-xs font-bold ${statusBg} ${statusColor}`}>
-          {Icon && <Icon className="h-3.5 w-3.5" />}
+      <div className="relative z-10">
+        {/* Status badge — top */}
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-secondary text-[11px] font-bold uppercase tracking-[0.08em] ${statusBg} ${statusColor} border border-current/20`}>
+          {Icon && <Icon className="h-3 w-3" />}
           {statusLabel}
         </span>
+
+        {/* Label */}
+        <p className="mt-4 font-secondary text-xs font-semibold uppercase tracking-[0.1em] text-muted/70">
+          {label}
+        </p>
+
+        {/* Value — hero number */}
+        <p className="mt-1 font-primary text-[36px] font-semibold leading-none tracking-[-1.5px] text-ink sm:text-[52px] sm:tracking-[-2.5px]">
+          {value}
+        </p>
+
+        {subtitle && (
+          <p className="mt-2 font-secondary text-sm text-muted">{subtitle}</p>
+        )}
+
+        {/* Progress bar */}
+        <div className="mt-5 h-2 w-full overflow-hidden rounded-full bg-black/10">
+          <div
+            className={`h-full rounded-full transition-all duration-700 ease-out ${statusBarColor}`}
+            style={{ width: `${clamped}%` }}
+          />
+        </div>
+        <div className="mt-1.5 flex justify-between font-secondary text-[10px] text-muted/60">
+          <span>0</span>
+          <span>{Math.round(clamped)}%</span>
+          <span>100</span>
+        </div>
       </div>
     </div>
   );
@@ -67,7 +82,7 @@ export function ResultCard({
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
-type StatusResult = Pick<ResultCardProps, "statusColor" | "statusBg" | "statusBarColor" | "statusLabel" | "statusIcon" | "gaugeValue">;
+type StatusResult = ResultStatus;
 
 export function marginStatus(pct: number): StatusResult {
   const gaugeValue = Math.min(100, Math.max(0, pct));
@@ -103,7 +118,6 @@ export function profitStatus(profitUnit: number, marginPct: number): StatusResul
   return                      { gaugeValue,    statusColor: "text-red-500",    statusBg: "bg-red-50",    statusBarColor: "bg-red-400",    statusLabel: "Terlalu tipis",          statusIcon: AlertTriangle };
 }
 
-/** Status efektivitas iklan berdasarkan ROAS aktual vs target ROAS */
 export function adEfficiencyStatus(roas: number, roasTarget: number): StatusResult {
   const gaugeValue = Math.min(100, (roas / Math.max(roasTarget * 1.5, 6)) * 100);
   const targetTercapai = roas >= roasTarget;

@@ -2,9 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createProduct, updateProduct, uploadProductImage } from "@/app/admin/actions";
+import { createProduct, updateProduct, uploadProductImage, deleteProduct } from "@/app/admin/actions";
 import type { Product } from "@/lib/supabase/types";
-import { Loader2, Plus, Trash2, Upload, X } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, X, AlertTriangle } from "lucide-react";
 
 const CATEGORIES = ["Finance", "Sales", "Operasional", "Bundle", "Marketing", "Project"];
 const ACCENTS = [
@@ -21,8 +21,23 @@ interface Props {
 export function ProductForm({ product }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isDeleting, startDeleteTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  function handleDelete() {
+    if (!product) return;
+    startDeleteTransition(async () => {
+      const result = await deleteProduct(product.id);
+      if (result?.error) {
+        setError("Gagal menghapus produk: " + result.error);
+        setShowDeleteConfirm(false);
+      } else {
+        router.push("/admin/products");
+      }
+    });
+  }
 
   // Dynamic list states
   const [features, setFeatures] = useState<string[]>(
@@ -85,7 +100,11 @@ export function ProductForm({ product }: Props) {
       const result = product
         ? await updateProduct(product.id, formData)
         : await createProduct(formData);
-      if (result?.error) setError(result.error);
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        router.push("/admin/products");
+      }
     });
   }
 
@@ -369,11 +388,11 @@ export function ProductForm({ product }: Props) {
       </FormSection>
 
       {/* ── Submit ──────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 border-t border-gray-200 pt-6">
+      <div className="flex items-center gap-3 border-t border-line pt-6">
         <button
           type="submit"
-          disabled={isPending}
-          className="flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:opacity-60"
+          disabled={isPending || isDeleting}
+          className="flex items-center gap-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-cobalt disabled:opacity-60"
         >
           {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
           {isPending ? "Menyimpan..." : product ? "Simpan Perubahan" : "Buat Produk"}
@@ -381,10 +400,50 @@ export function ProductForm({ product }: Props) {
         <button
           type="button"
           onClick={() => router.push("/admin/products")}
-          className="rounded-xl border border-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-100"
+          disabled={isPending || isDeleting}
+          className="rounded-full border border-line px-6 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:border-ink disabled:opacity-60"
         >
           Batal
         </button>
+
+        {/* Tombol hapus — hanya muncul saat edit */}
+        {product && (
+          <div className="ml-auto">
+            {!showDeleteConfirm ? (
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                disabled={isPending || isDeleting}
+                className="flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-muted transition hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-60"
+              >
+                <Trash2 className="h-4 w-4" />
+                Hapus Produk
+              </button>
+            ) : (
+              <div className="flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-2.5">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+                <span className="text-sm font-medium text-red-700">Yakin hapus produk ini?</span>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="flex items-center gap-1.5 rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                >
+                  {isDeleting && <Loader2 className="h-3 w-3 animate-spin" />}
+                  {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="rounded-full border border-red-200 px-4 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-60"
+                >
+                  Batal
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </form>
   );
