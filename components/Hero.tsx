@@ -391,8 +391,8 @@ export function Hero({ contactUrl }: { contactUrl?: string }) {
   }, [prefersReducedMotion]);
 
   return (
-    <section ref={rootRef} className="relative overflow-x-clip bg-white px-3 pb-16 pt-3 sm:px-5 sm:pt-5 lg:px-10 lg:pt-10">
-      <div className="hero-panel relative mx-auto max-w-[1380px] rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-6 pt-24 sm:rounded-[32px] sm:px-8 sm:pb-12 sm:pt-36 lg:px-10 lg:pb-16 lg:pt-[165px]">
+    <section ref={rootRef} className="relative overflow-x-clip bg-white px-3 pb-16 pt-3 sm:px-5 sm:pt-5 lg:px-10">
+      <div className="hero-panel relative mx-auto max-w-[1380px] rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-6 pt-28 sm:rounded-[32px] sm:px-8 sm:pb-12 sm:pt-36 lg:px-10 lg:pb-16 lg:pt-[165px]">
         <SheetGrid cells={HERO_CELLS} />
 
         <div className="relative z-10 mx-auto flex max-w-[890px] flex-col items-center text-center">
