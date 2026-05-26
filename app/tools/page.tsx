@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: `Tools Kalkulator Bisnis Gratis — ${site.name}`,
   description:
     "Kalkulator bisnis gratis online: margin keuntungan, HPP, harga jual marketplace, ROAS iklan, diskon bertingkat, dan profit marketplace. Tanpa login, hasil instan.",
+  alternates: { canonical: "/tools" },
   openGraph: {
     title: `Tools Kalkulator Bisnis Gratis — ${site.name}`,
     description:

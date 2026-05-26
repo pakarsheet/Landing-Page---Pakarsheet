@@ -11,17 +11,12 @@ import {
   Zap,
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/Navbar";
 import { BgTransition } from "@/components/BgTransition";
 import { Button } from "@/components/ui/Button";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
 import { site } from "@/lib/site";
-import { client } from "@/lib/sanity/client";
-import {
-  allShopSlugsQuery,
-  shopTemplateBySlugQuery,
-  type SanityShopTemplate,
-} from "@/lib/sanity/queries";
-import { adaptSanityTemplate } from "@/lib/sanity/adapter";
+import { getProductBySlug, getAllProductSlugs } from "@/lib/supabase/queries";
 
 export const revalidate = 60;
 
@@ -30,22 +25,21 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const slugs = await client.fetch<{ slug: string }[]>(allShopSlugsQuery);
-  return slugs.map((s) => ({ slug: s.slug }));
+  const slugs = await getAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const raw = await client.fetch<SanityShopTemplate | null>(shopTemplateBySlugQuery, { slug });
-  if (!raw) return {};
-  const template = adaptSanityTemplate(raw);
+  const product = await getProductBySlug(slug);
+  if (!product) return {};
   return {
-    title: `${template.title} — ${site.name}`,
-    description: template.description,
+    title: `${product.title} — ${site.name}`,
+    description: product.description,
     openGraph: {
-      title: `${template.title} — ${site.name}`,
-      description: template.description,
-      images: template.previewImages[0] ? [template.previewImages[0]] : [],
+      title: `${product.title} — ${site.name}`,
+      description: product.description,
+      images: product.preview_images[0] ? [product.preview_images[0]] : [],
       type: "website",
     },
   };
@@ -53,25 +47,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TemplateDetailPage({ params }: Props) {
   const { slug } = await params;
-  const raw = await client.fetch<SanityShopTemplate | null>(shopTemplateBySlugQuery, { slug });
-  if (!raw) notFound();
-
-  const template = adaptSanityTemplate(raw);
+  const product = await getProductBySlug(slug);
+  if (!product) notFound();
 
   const {
     title,
     badge,
     price,
-    originalPrice,
-    longDescription,
+    original_price: originalPrice,
+    long_description: longDescription,
     features,
-    whatsIncluded,
-    previewImages,
-    isNew,
-    isBestSeller,
-    ctaUrl,
-    priceRaw,
-  } = template;
+    whats_included: whatsIncluded,
+    preview_images: previewImages,
+    is_new: isNew,
+    is_best_seller: isBestSeller,
+    cta_url: ctaUrl,
+    price_raw: priceRaw,
+  } = product;
 
   const parsePrice = (str: string) => {
     const lower = str.toLowerCase().replace(/\./g, "").replace(/\s/g, "");
@@ -87,6 +79,7 @@ export default async function TemplateDetailPage({ params }: Props) {
   return (
     <>
       <BgTransition />
+      <Navbar />
       <main id="main-content" className="bg-white">
 
         {/* ── Breadcrumb ─────────────────────────────────────────── */}
@@ -106,7 +99,6 @@ export default async function TemplateDetailPage({ params }: Props) {
 
             {/* ── Left column ──────────────────────────────────── */}
             <div>
-              {/* Back link */}
               <Link
                 href="/shop"
                 className="mb-8 inline-flex items-center gap-2 font-secondary text-sm font-medium text-muted transition hover:text-cobalt"
@@ -115,7 +107,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                 Kembali ke toko
               </Link>
 
-              {/* Image carousel — 1:1 */}
               <ProductImageCarousel
                 images={previewImages}
                 title={title}
@@ -124,7 +115,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                 discountPct={discountPct}
               />
 
-              {/* ── About section — h2 scale from design system */}
               <div className="mt-12">
                 <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 font-secondary text-sm font-semibold leading-none text-cobalt shadow-card">
                   Tentang template
@@ -137,7 +127,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                 </p>
               </div>
 
-              {/* ── Features — FeatureCard-like checklist */}
               <div className="mt-12">
                 <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 font-secondary text-sm font-semibold leading-none text-cobalt shadow-card">
                   Fitur utama
@@ -157,7 +146,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                 </ul>
               </div>
 
-              {/* ── Trust signals — StatCard-like pattern */}
               <div className="mt-12 grid grid-cols-3 gap-4 rounded-3xl border border-line bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] p-6">
                 <div className="flex flex-col items-center gap-3 text-center">
                   <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sheet text-ink">
@@ -182,20 +170,15 @@ export default async function TemplateDetailPage({ params }: Props) {
 
             {/* ── Right column — sticky purchase panel ─────────── */}
             <aside className="lg:sticky lg:top-28">
-              {/* Card — PricingCard-like pattern */}
               <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
-
-                {/* Category badge */}
                 <span className="rounded-full border border-line bg-white px-3 py-1 font-secondary text-xs font-bold text-cobalt shadow-card">
                   {badge}
                 </span>
 
-                {/* Title */}
                 <h1 className="mt-4 font-primary text-2xl font-semibold leading-[1.25] tracking-[-0.6px] text-ink">
                   {title}
                 </h1>
 
-                {/* Price */}
                 <div className="mt-6">
                   <div className="flex items-end gap-3">
                     <strong className="font-primary text-[42px] font-semibold leading-none tracking-[-1.8px] text-ink">
@@ -221,7 +204,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                   )}
                 </div>
 
-                {/* CTA — Button component */}
                 <div className="mt-7 flex flex-col gap-3">
                   <a
                     href={ctaUrl}
@@ -246,7 +228,6 @@ export default async function TemplateDetailPage({ params }: Props) {
                   </a>
                 </div>
 
-                {/* What's included — same checklist as PricingCard */}
                 <div className="mt-7 border-t border-line pt-6">
                   <p className="mb-4 font-secondary text-xs font-bold uppercase tracking-[0.08em] text-muted">
                     Yang kamu dapat
@@ -267,7 +248,7 @@ export default async function TemplateDetailPage({ params }: Props) {
           </div>
         </div>
 
-        {/* ── Bottom CTA strip ───────────────────────────────────── */}
+        {/* ── Bottom CTA strip */}
         <div className="mx-auto max-w-[1068px] px-5 pb-20 lg:px-10">
           <div className="flex flex-col items-start justify-between gap-4 rounded-3xl border border-line bg-sky/30 px-6 py-6 sm:flex-row sm:items-center">
             <div>

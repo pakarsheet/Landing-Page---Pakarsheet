@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { shopCategories, type ShopCategory } from "@/lib/data";
+import { shopCategories, type ShopCategory } from "@/lib/types";
 
 type SortOption = "terbaru" | "terpopuler" | "harga-asc" | "harga-desc";
 

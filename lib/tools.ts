@@ -5,6 +5,8 @@ import {
   Megaphone,
   Tag,
   Store,
+  BarChart2,
+  FileText,
 } from "lucide-react";
 
 export type ToolMeta = {
@@ -17,6 +19,8 @@ export type ToolMeta = {
   icon: typeof Calculator;
   accent: string;
   keywords: string[];
+  /** Short CTA label shown on ToolCard, e.g. "Hitung margin →" */
+  ctaText: string;
   relatedShopSlug?: string;
 };
 
@@ -32,12 +36,17 @@ export const tools: ToolMeta[] = [
     badge: "Finance",
     icon: TrendingUp,
     accent: "bg-sheet text-ink",
+    ctaText: "Hitung margin →",
     keywords: [
       "kalkulator margin keuntungan",
       "hitung margin profit",
+      "cara hitung margin keuntungan toko online",
+      "margin profit yang bagus berapa persen",
       "break even point",
       "markup harga",
+      "rumus margin keuntungan",
     ],
+    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-hpp",
@@ -50,12 +59,18 @@ export const tools: ToolMeta[] = [
     badge: "Produksi",
     icon: Calculator,
     accent: "bg-sky text-cobalt",
+    ctaText: "Hitung HPP →",
     keywords: [
       "kalkulator HPP",
       "harga pokok produksi",
       "hitung HPP online",
       "biaya produksi per unit",
+      "cara hitung HPP makanan per porsi",
+      "HPP per porsi",
+      "rumus HPP usaha kuliner",
+      "HPP manufaktur kecil",
     ],
+    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-harga-jual",
@@ -68,12 +83,17 @@ export const tools: ToolMeta[] = [
     badge: "Marketplace",
     icon: ShoppingCart,
     accent: "bg-lilac text-ink",
+    ctaText: "Simulasi harga →",
     keywords: [
       "kalkulator harga jual marketplace",
       "harga jual shopee tokopedia",
       "fee marketplace indonesia",
       "hitung harga jual online",
+      "cara hitung harga jual di shopee",
+      "fee admin tokopedia berapa persen",
+      "harga jual minimum marketplace",
     ],
+    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-roas",
@@ -86,12 +106,18 @@ export const tools: ToolMeta[] = [
     badge: "Marketing",
     icon: Megaphone,
     accent: "bg-sky text-cobalt",
+    ctaText: "Cek ROAS →",
     keywords: [
       "kalkulator ROAS",
       "hitung return on ad spend",
       "ROAS iklan facebook",
       "CPA cost per acquisition",
+      "roas iklan shopee berapa yang bagus",
+      "cara hitung roas tiktok ads",
+      "roas meta ads indonesia",
+      "rumus roas iklan digital",
     ],
+    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-diskon-bertingkat",
@@ -104,12 +130,17 @@ export const tools: ToolMeta[] = [
     badge: "Belanja",
     icon: Tag,
     accent: "bg-leaf text-cobalt",
+    ctaText: "Hitung diskon →",
     keywords: [
       "kalkulator diskon bertingkat",
       "hitung diskon 20 10 persen",
       "diskon compound",
       "harga setelah diskon voucher",
+      "cara hitung diskon bertingkat shopee",
+      "diskon 20 persen plus 10 persen berapa",
+      "kalkulator promo belanja online",
     ],
+    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-profit-marketplace",
@@ -122,14 +153,170 @@ export const tools: ToolMeta[] = [
     badge: "Marketplace",
     icon: Store,
     accent: "bg-sheet text-ink",
+    ctaText: "Hitung profit →",
     keywords: [
       "kalkulator profit marketplace",
       "hitung profit bersih seller",
       "profit shopee tokopedia",
       "margin bersih jualan online",
+      "cara hitung profit jualan di shopee",
+      "profit bersih seller marketplace indonesia",
+      "hitung laba bersih toko online",
     ],
+    relatedShopSlug: "content-planner-instagram-pro",
+  },
+  {
+    slug: "kalkulator-laba-rugi",
+    title: "Kalkulator Laba Rugi Bisnis",
+    shortTitle: "Laba Rugi Bisnis",
+    description:
+      "Hitung laba bersih bisnis bulan ini dari omzet, HPP, dan semua biaya tetap — langsung tahu untung atau rugi.",
+    longDescription:
+      "Banyak pemilik UMKM lihat saldo naik tapi tidak tahu apakah itu profit atau sekadar omzet. Masukkan pendapatan, modal barang terjual, dan semua pengeluaran tetap — dapatkan laba bersih, margin, rasio beban, dan BEP omzet minimum.",
+    badge: "Finance",
+    icon: FileText,
+    accent: "bg-sky text-cobalt",
+    ctaText: "Hitung laba rugi →",
+    keywords: [
+      "kalkulator laba rugi bisnis",
+      "hitung untung rugi usaha",
+      "laporan laba rugi sederhana UMKM",
+      "cara hitung laba bersih toko",
+      "rumus laba rugi usaha kecil",
+      "laba bersih vs omzet",
+      "hitung profit bersih bisnis bulanan",
+    ],
+    relatedShopSlug: "content-planner-instagram-pro",
+  },
+  {
+    slug: "kalkulator-efektivitas-iklan",
+    title: "Kalkulator Efektivitas Iklan",
+    shortTitle: "Efektivitas Iklan",
+    description:
+      "Cek apakah iklan kamu benar-benar untung setelah HPP, fee marketplace, packaging, dan ongkir ikut dihitung.",
+    longDescription:
+      "ROAS tinggi belum tentu profit. Kalkulator ini membongkar biaya tersembunyi yang sering dilupakan saat menilai iklan — fee marketplace, packaging, subsidi ongkir — lalu hitung laba bersih aktual, ROAS minimum BEP, dan maksimal budget iklan yang masih aman.",
+    badge: "Marketing",
+    icon: BarChart2,
+    accent: "bg-lilac text-ink",
+    ctaText: "Cek efektivitas →",
+    keywords: [
+      "kalkulator efektivitas iklan",
+      "iklan shopee rugi atau untung",
+      "roas iklan setelah biaya marketplace",
+      "hitung profit bersih iklan",
+      "cara tahu iklan facebook ads untung",
+      "roas minimum break even",
+      "biaya tersembunyi iklan marketplace",
+    ],
+    relatedShopSlug: "content-planner-instagram-pro",
   },
 ];
+
+// ─── Shared calculator UI helpers ────────────────────────────────────────────
+
+/** Shared input wrapper class used across all calculators */
+export const inputClass =
+  "flex items-center rounded-2xl border border-line bg-white px-4 py-3 shadow-card focus-within:border-cobalt focus-within:ring-1 focus-within:ring-cobalt/20";
+
+/** Typed field config for calculator input grids */
+export type CalcField = {
+  id: string;
+  label: string;
+  prefix?: string;
+  suffix?: string;
+  min?: number;
+  max?: number;
+};
+
+/** Marketplace platform presets */
+export type Platform = {
+  label: string;
+  serviceFee: number;
+  adminFee: number;
+  /**
+   * Catatan singkat tentang variasi fee platform ini.
+   * Ditampilkan di bawah platform selector sebagai konteks untuk user.
+   */
+  feeNote: string;
+};
+
+/**
+ * Preset fee marketplace untuk seller reguler (non-Mall) Indonesia.
+ *
+ * ⚠️  Fee marketplace berubah sewaktu-waktu dan bervariasi berdasarkan:
+ *     kategori produk, tier seller, dan program promo yang diikuti.
+ *
+ * Sumber referensi (per Mei 2026):
+ * - Shopee ID Seller Centre: seller.shopee.co.id
+ * - Tokopedia Seller: seller.tokopedia.com
+ * - TikTok Shop Seller Centre: seller-id.tiktok.com
+ * - Lazada Seller Centre: sellercenter.lazada.co.id
+ *
+ * Selalu verifikasi fee aktual di Seller Centre masing-masing platform
+ * sebelum menetapkan harga jual.
+ */
+export const marketplacePlatforms: Platform[] = [
+  {
+    label: "Shopee",
+    serviceFee: 2.0,
+    adminFee: 2.0,
+    feeNote: "Estimasi seller reguler. Bervariasi 2–8% tergantung kategori & tier seller.",
+  },
+  {
+    label: "Tokopedia",
+    serviceFee: 1.8,
+    adminFee: 1.0,
+    feeNote: "Estimasi seller reguler. Bervariasi 1.8–5.5% tergantung kategori produk.",
+  },
+  {
+    label: "TikTok Shop",
+    serviceFee: 1.8,
+    adminFee: 3.0,
+    feeNote: "Estimasi seller reguler. Bervariasi 1.8–8% tergantung kategori & program afiliasi.",
+  },
+  {
+    label: "Lazada",
+    serviceFee: 2.0,
+    adminFee: 2.0,
+    feeNote: "Estimasi seller reguler. Bervariasi 2–6.5% tergantung kategori produk.",
+  },
+  {
+    label: "Custom",
+    serviceFee: 0,
+    adminFee: 0,
+    feeNote: "Masukkan fee aktual dari Seller Centre platform kamu.",
+  },
+];
+
+// ─── Analytics event tracking ─────────────────────────────────────────────────
+
+/** Fire a lightweight client-side analytics event (no-op if gtag not loaded) */
+export function trackToolEvent(
+  event: "tool_visited" | "tool_calculated" | "tool_conversion_clicked",
+  toolSlug: string,
+  extra?: Record<string, string>
+) {
+  if (typeof window === "undefined") return;
+  try {
+    // Google Analytics 4 via gtag
+    type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
+    const gtagFn = (window as GtagWindow).gtag;
+    if (typeof gtagFn === "function") {
+      gtagFn("event", event, {
+        tool_slug: toolSlug,
+        ...extra,
+      });
+    }
+    // Fallback: custom dataLayer (GTM)
+    const dl = (window as Window & { dataLayer?: unknown[] }).dataLayer;
+    if (Array.isArray(dl)) {
+      dl.push({ event, tool_slug: toolSlug, ...extra });
+    }
+  } catch {
+    // silently ignore tracking errors
+  }
+}
 
 // ─── Formatting helpers ───────────────────────────────────────────────────────
 

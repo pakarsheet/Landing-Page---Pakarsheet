@@ -3,13 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { navItems, shopTemplates } from "@/lib/data";
+import { navItems } from "@/lib/data";
 import { site } from "@/lib/site";
-
-const productLinks = shopTemplates.map((template) => ({
-  label: template.title,
-  href: `/shop/${template.slug}`,
-}));
 
 const visibleNavItems = navItems.filter((item) => item.label !== "Template");
 

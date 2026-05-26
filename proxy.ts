@@ -1,32 +1,60 @@
-import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
-const COOKIE_NAME = "admin_session";
-const LOGIN_PATH = "/admin-login";
+export async function proxy(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request });
 
-export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
 
-  // Hanya proteksi /admin dan semua sub-path-nya
-  if (!pathname.startsWith("/admin")) return NextResponse.next();
+  // Refresh session
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const session = req.cookies.get(COOKIE_NAME)?.value;
-  const secret = process.env.ADMIN_SECRET;
+  const { pathname } = request.nextUrl;
 
-  if (!secret) {
-    return new NextResponse("Admin not configured.", { status: 503 });
+  // Protect /admin routes (except /admin-login and /admin-logout)
+  if (
+    pathname.startsWith("/admin") &&
+    !pathname.startsWith("/admin-login") &&
+    !pathname.startsWith("/admin-logout")
+  ) {
+    if (!user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/admin-login";
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
-  if (session === secret) {
-    return NextResponse.next();
+  // Redirect logged-in users away from login page
+  if (pathname === "/admin-login" && user) {
+    const adminUrl = request.nextUrl.clone();
+    adminUrl.pathname = "/admin";
+    return NextResponse.redirect(adminUrl);
   }
 
-  // Belum login — redirect ke halaman login
-  const loginUrl = req.nextUrl.clone();
-  loginUrl.pathname = LOGIN_PATH;
-  loginUrl.searchParams.set("from", pathname);
-  return NextResponse.redirect(loginUrl);
+  return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/admin-login"],
 };

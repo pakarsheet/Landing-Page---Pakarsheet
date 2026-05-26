@@ -1,15 +1,27 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { BgTransition } from "@/components/BgTransition";
+import { SheetGrid } from "@/components/SheetGrid";
+import { tools } from "@/lib/tools";
+import { site } from "@/lib/site";
+import { shopTemplates } from "@/lib/data";
 
-// ── SheetGrid (mirrors ToolsHero) ────────────────────────────
-const COLS = 9;
-const ROWS = 7;
-const CW = 100 / COLS;
-const CH = 100 / ROWS;
+// ── Dynamic imports — each calculator is only bundled when its page is visited
+const KalkulatorMargin           = dynamic(() => import("@/components/calculators/KalkulatorMargin").then(m => ({ default: m.KalkulatorMargin })));
+const KalkulatorHPP              = dynamic(() => import("@/components/calculators/KalkulatorHPP").then(m => ({ default: m.KalkulatorHPP })));
+const KalkulatorHargaJual        = dynamic(() => import("@/components/calculators/KalkulatorHargaJual").then(m => ({ default: m.KalkulatorHargaJual })));
+const KalkulatorROAS             = dynamic(() => import("@/components/calculators/KalkulatorROAS").then(m => ({ default: m.KalkulatorROAS })));
+const KalkulatorDiskon           = dynamic(() => import("@/components/calculators/KalkulatorDiskon").then(m => ({ default: m.KalkulatorDiskon })));
+const KalkulatorProfitMarketplace = dynamic(() => import("@/components/calculators/KalkulatorProfitMarketplace").then(m => ({ default: m.KalkulatorProfitMarketplace })));
+const KalkulatorLabaRugi         = dynamic(() => import("@/components/calculators/KalkulatorLabaRugi").then(m => ({ default: m.KalkulatorLabaRugi })));
+const KalkulatorEfektivitasIklan = dynamic(() => import("@/components/calculators/KalkulatorEfektivitasIklan").then(m => ({ default: m.KalkulatorEfektivitasIklan })));
 
-const HIGHLIGHT_CELLS = [
+const DETAIL_CELLS = [
   { col: 0, row: 0, delay: "0s" },
   { col: 3, row: 1, delay: "0.8s" },
   { col: 6, row: 0, delay: "1.6s" },
@@ -19,57 +31,17 @@ const HIGHLIGHT_CELLS = [
   { col: 2, row: 5, delay: "1.8s" },
 ];
 
-function SheetGrid() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[32px]"
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: [
-            `repeating-linear-gradient(to right, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CW}%)`,
-            `repeating-linear-gradient(to bottom, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CH}%)`,
-          ].join(", "),
-        }}
-      />
-      {HIGHLIGHT_CELLS.map(({ col, row, delay }, i) => (
-        <div
-          key={i}
-          className="sheet-cell absolute"
-          style={{
-            left: `${col * CW}%`,
-            top: `${row * CH}%`,
-            width: `${CW}%`,
-            height: `${CH}%`,
-            background: "rgba(139,237,2,0.18)",
-            animationDelay: delay,
-          }}
-        />
-      ))}
-      <div
-        className="sheet-row-sweep absolute inset-x-0"
-        style={{
-          height: `${CH}%`,
-          background:
-            "linear-gradient(90deg, transparent 0%, rgba(139,237,2,0.12) 50%, transparent 100%)",
-        }}
-      />
-    </div>
-  );
-}
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { BgTransition } from "@/components/BgTransition";
-import { KalkulatorMargin } from "@/components/calculators/KalkulatorMargin";
-import { KalkulatorHPP } from "@/components/calculators/KalkulatorHPP";
-import { KalkulatorHargaJual } from "@/components/calculators/KalkulatorHargaJual";
-import { KalkulatorROAS } from "@/components/calculators/KalkulatorROAS";
-import { KalkulatorDiskon } from "@/components/calculators/KalkulatorDiskon";
-import { KalkulatorProfitMarketplace } from "@/components/calculators/KalkulatorProfitMarketplace";
-import { tools } from "@/lib/tools";
-import { site } from "@/lib/site";
+// Per-tool CTA copy for ToolCard and related section
+const toolCta: Record<string, string> = {
+  "kalkulator-margin":             "Hitung margin →",
+  "kalkulator-hpp":                "Hitung HPP →",
+  "kalkulator-harga-jual":         "Simulasi harga →",
+  "kalkulator-roas":               "Cek ROAS →",
+  "kalkulator-diskon-bertingkat":  "Hitung diskon →",
+  "kalkulator-profit-marketplace": "Hitung profit →",
+  "kalkulator-laba-rugi":          "Hitung laba rugi →",
+  "kalkulator-efektivitas-iklan":  "Cek efektivitas →",
+};
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -96,14 +68,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const calculatorMap: Record<string, React.ReactNode> = {
-  "kalkulator-margin":             <KalkulatorMargin />,
-  "kalkulator-hpp":                <KalkulatorHPP />,
-  "kalkulator-harga-jual":         <KalkulatorHargaJual />,
-  "kalkulator-roas":               <KalkulatorROAS />,
-  "kalkulator-diskon-bertingkat":  <KalkulatorDiskon />,
-  "kalkulator-profit-marketplace": <KalkulatorProfitMarketplace />,
-};
+function CalculatorForSlug({ slug }: { slug: string }) {
+  switch (slug) {
+    case "kalkulator-margin":             return <KalkulatorMargin />;
+    case "kalkulator-hpp":                return <KalkulatorHPP />;
+    case "kalkulator-harga-jual":         return <KalkulatorHargaJual />;
+    case "kalkulator-roas":               return <KalkulatorROAS />;
+    case "kalkulator-diskon-bertingkat":  return <KalkulatorDiskon />;
+    case "kalkulator-profit-marketplace": return <KalkulatorProfitMarketplace />;
+    case "kalkulator-laba-rugi":          return <KalkulatorLabaRugi />;
+    case "kalkulator-efektivitas-iklan":  return <KalkulatorEfektivitasIklan />;
+    default:                              return null;
+  }
+}
 
 export default async function ToolDetailPage({ params }: Props) {
   const { slug } = await params;
@@ -111,8 +88,14 @@ export default async function ToolDetailPage({ params }: Props) {
   if (!tool) notFound();
 
   const Icon = tool.icon;
-  const calculator = calculatorMap[slug];
   const related = tools.filter((t) => t.slug !== slug).slice(0, 3);
+
+  // Resolve the related shop template for the specific CTA
+  const relatedTemplate = tool.relatedShopSlug
+    ? shopTemplates.find((t) => t.slug === tool.relatedShopSlug)
+    : null;
+  const ctaHref  = relatedTemplate ? `/shop/${relatedTemplate.slug}` : "/shop";
+  const ctaLabel = relatedTemplate ? relatedTemplate.shortTitle : "template premium";
 
   return (
     <>
@@ -123,7 +106,7 @@ export default async function ToolDetailPage({ params }: Props) {
         {/* ── Hero panel ─────────────────────────────────────────── */}
         <section className="bg-white px-3 pb-0 pt-3 sm:px-5 sm:pt-5 lg:px-10">
           <div className="relative mx-auto max-w-[1380px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] sm:rounded-[32px]">
-            <SheetGrid />
+            <SheetGrid cells={DETAIL_CELLS} />
 
             <div className="px-5 pb-12 pt-28 sm:px-8 sm:pt-32 lg:px-12 lg:pb-16 lg:pt-36">
               {/* Back link */}
@@ -159,11 +142,7 @@ export default async function ToolDetailPage({ params }: Props) {
 
                 {/* Feature pills */}
                 <div className="flex flex-wrap gap-2 lg:flex-col lg:items-end">
-                  {[
-                    "Kalkulasi real-time",
-                    "Tanpa login",
-                    "100% gratis",
-                  ].map((f) => (
+                  {["Kalkulasi real-time", "Tanpa login", "100% gratis"].map((f) => (
                     <span
                       key={f}
                       className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-4 py-2 font-secondary text-sm font-semibold text-muted shadow-card"
@@ -181,7 +160,7 @@ export default async function ToolDetailPage({ params }: Props) {
         {/* ── Calculator ─────────────────────────────────────────── */}
         <section className="bg-white px-5 py-12 lg:px-10">
           <div className="mx-auto max-w-[1068px]">
-            {calculator}
+            <CalculatorForSlug slug={slug} />
           </div>
         </section>
 
@@ -189,15 +168,8 @@ export default async function ToolDetailPage({ params }: Props) {
         <section className="bg-white px-5 pb-12 lg:px-10">
           <div className="mx-auto max-w-[1068px]">
             <div className="relative overflow-hidden rounded-3xl bg-ink px-6 py-10 sm:px-10 lg:px-14 lg:py-14">
-              {/* Decorative sheet glow */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-sheet/20 blur-3xl"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-cobalt/20 blur-3xl"
-              />
+              <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-sheet/20 blur-3xl" />
+              <div aria-hidden="true" className="pointer-events-none absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-cobalt/20 blur-3xl" />
 
               <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -210,14 +182,19 @@ export default async function ToolDetailPage({ params }: Props) {
                   <p className="mt-2 font-secondary text-base leading-[1.56] text-white/60">
                     Template Google Sheets Pakarsheet sudah punya semua formula ini — tinggal isi data, laporan langsung jadi.
                   </p>
+                  {relatedTemplate && (
+                    <p className="mt-1 font-secondary text-sm font-semibold text-sheet/80">
+                      Rekomendasi: {relatedTemplate.title}
+                    </p>
+                  )}
                 </div>
                 <Link
-                  href="/shop"
+                  href={ctaHref}
                   className="group inline-flex h-14 shrink-0 items-center gap-2 rounded-full bg-sheet px-7 font-secondary text-base font-semibold text-ink shadow-soft transition duration-300 hover:-translate-y-0.5 hover:bg-white"
                 >
                   <span className="relative block overflow-hidden">
-                    <span className="block transition duration-300 group-hover:-translate-y-full">Lihat template</span>
-                    <span className="absolute left-0 top-full block transition duration-300 group-hover:-translate-y-full">Lihat template</span>
+                    <span className="block transition duration-300 group-hover:-translate-y-full">Lihat {ctaLabel}</span>
+                    <span className="absolute left-0 top-full block transition duration-300 group-hover:-translate-y-full">Lihat {ctaLabel}</span>
                   </span>
                   <ArrowRight className="h-4 w-4 transition duration-300 group-hover:translate-x-1" />
                 </Link>
@@ -233,10 +210,7 @@ export default async function ToolDetailPage({ params }: Props) {
               <p className="font-secondary text-xs font-bold uppercase tracking-[0.08em] text-muted">
                 Kalkulator lainnya
               </p>
-              <Link
-                href="/tools"
-                className="font-secondary text-sm font-semibold text-cobalt transition hover:underline"
-              >
+              <Link href="/tools" className="font-secondary text-sm font-semibold text-cobalt transition hover:underline">
                 Lihat semua →
               </Link>
             </div>
@@ -250,7 +224,6 @@ export default async function ToolDetailPage({ params }: Props) {
                     href={`/tools/${t.slug}`}
                     className="group relative overflow-hidden rounded-3xl border border-line bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-soft"
                   >
-
                     <div className="p-5">
                       <div className="flex items-center justify-between gap-3">
                         <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${t.accent}`}>
@@ -267,8 +240,7 @@ export default async function ToolDetailPage({ params }: Props) {
                         {t.description}
                       </p>
                       <div className="mt-3 inline-flex items-center gap-1 font-secondary text-xs font-semibold text-cobalt">
-                        Buka
-                        <ArrowRight className="h-3 w-3 transition duration-300 group-hover:translate-x-0.5" />
+                        {toolCta[t.slug] ?? "Buka →"}
                       </div>
                     </div>
                   </Link>

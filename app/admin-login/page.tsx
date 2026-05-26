@@ -1,30 +1,27 @@
-import { Suspense } from "react";
 import { AdminLoginForm } from "./AdminLoginForm";
+import { LayoutDashboard } from "lucide-react";
+
+export const metadata = { title: "Admin Login — Pakarsheet" };
 
 export default function AdminLoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4">
-      <div className="w-full max-w-sm rounded-3xl border border-line bg-white p-8 shadow-card">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-sm">
         {/* Logo */}
-        <div className="mb-8 flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-[10px] bg-ink font-primary text-base font-semibold text-white">
-            P
-          </span>
-          <span className="font-primary text-lg font-semibold text-ink">
-            Pakarsheet Admin
-          </span>
+        <div className="mb-8 flex flex-col items-center gap-3 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-900 text-white">
+            <LayoutDashboard className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold text-gray-900">Pakarsheet Admin</h1>
+            <p className="mt-1 text-sm text-gray-500">Masuk untuk mengelola konten</p>
+          </div>
         </div>
 
-        <h1 className="font-primary text-2xl font-semibold tracking-tight text-ink">
-          Masuk ke Admin
-        </h1>
-        <p className="mt-1 font-secondary text-sm text-muted">
-          Masukkan password admin untuk melanjutkan.
-        </p>
-
-        <Suspense fallback={null}>
+        {/* Card */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <AdminLoginForm />
-        </Suspense>
+        </div>
       </div>
     </div>
   );

@@ -12,11 +12,14 @@ import { Templates } from "@/components/Templates";
 import { Testimonials } from "@/components/Testimonials";
 import { BgTransition } from "@/components/BgTransition";
 import { FloatingWAButton } from "@/components/FloatingWAButton";
-import { getSiteSettings, buildWaUrl } from "@/lib/sanity/settings";
+import { getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
+import { site } from "@/lib/site";
+
+export const revalidate = 60;
 
 export default async function Home() {
   const settings = await getSiteSettings();
-  const waUrl = buildWaUrl(settings);
+  const waUrl = buildWaUrl(settings) || site.contactUrl;
 
   return (
     <>

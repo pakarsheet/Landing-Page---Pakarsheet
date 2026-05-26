@@ -1,51 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RotateCcw } from "lucide-react";
-import { formatRupiah, formatPct, safeNum, safeDivide } from "@/lib/tools";
+import { formatRupiah, formatPct, safeNum, safeDivide, inputClass, trackToolEvent } from "@/lib/tools";
 import { ResultCard, marginStatus } from "@/components/ui/ResultCard";
+import { CalcDisclaimer } from "@/components/ui/CalcDisclaimer";
 
-type Field = {
-  id: string;
-  label: string;
-  defaultValue: number;
-  prefix?: string;
-  suffix?: string;
-  min?: number;
-  max?: number;
-  step?: number;
+const SLUG = "kalkulator-margin";
+
+const defaultVals = {
+  hargaBeli: "50000",
+  hargaJual: "80000",
+  biayaOps:  "5000",
+  qty:       "100",
 };
 
-const fields: Field[] = [
-  { id: "hargaBeli", label: "Harga Beli / Modal per Unit", defaultValue: 50000, prefix: "Rp" },
-  { id: "hargaJual", label: "Harga Jual per Unit", defaultValue: 80000, prefix: "Rp" },
-  { id: "biayaOps", label: "Biaya Operasional per Unit", defaultValue: 5000, prefix: "Rp" },
-  { id: "qty", label: "Jumlah Unit", defaultValue: 100, min: 1 },
-];
-
 export function KalkulatorMargin() {
-  const defaultVals = {
-    hargaBeli: "50000",
-    hargaJual: "80000",
-    biayaOps: "5000",
-    qty: "100",
-  };
-
-  const emptyVals = {
-    hargaBeli: "",
-    hargaJual: "",
-    biayaOps: "",
-    qty: "",
-  };
-
-  const [vals, setVals] = useState<Record<string, string>>(defaultVals);
+  const [vals, setVals] = useState(defaultVals);
   const [resetKey, setResetKey] = useState(0);
+  const visitedFired     = useRef(false);
+  const interactionCount = useRef(0);
+  const calculatedFired  = useRef(false);
 
-  const reset = () => { setVals(emptyVals); setResetKey((k) => k + 1); };
+  // Guard against React Strict Mode double-invoke
+  useEffect(() => {
+    if (visitedFired.current) return;
+    visitedFired.current = true;
+    trackToolEvent("tool_visited", SLUG);
+  }, []);
 
-  const hargaBeli = safeNum(vals.hargaBeli);
-  const hargaJual = safeNum(vals.hargaJual);
-  const biayaOps  = safeNum(vals.biayaOps);
+  const reset = () => { setVals(defaultVals); setResetKey((k) => k + 1); };
+
+  const update = (id: string, value: string) => {
+    setVals((prev) => ({ ...prev, [id]: value }));
+    interactionCount.current += 1;
+    if (interactionCount.current >= 3 && !calculatedFired.current) {
+      calculatedFired.current = true;
+      trackToolEvent("tool_calculated", SLUG);
+    }
+  };
+
+  const hargaBeli = Math.max(0, safeNum(vals.hargaBeli));
+  const hargaJual = Math.max(0, safeNum(vals.hargaJual));
+  const biayaOps  = Math.max(0, safeNum(vals.biayaOps));
   const qty       = Math.max(1, safeNum(vals.qty, 1));
 
   const totalModal  = hargaBeli + biayaOps;
@@ -55,8 +52,12 @@ export function KalkulatorMargin() {
   const totalProfit = profitUnit * qty;
   const bep         = profitUnit > 0 ? Math.ceil(totalModal / profitUnit) : 0;
 
-  const update = (id: string, value: string) =>
-    setVals((prev) => ({ ...prev, [id]: value }));
+  const fields: { id: keyof typeof defaultVals; label: string; prefix?: string; hint?: string }[] = [
+    { id: "hargaBeli", label: "Harga Beli / Modal per Unit", prefix: "Rp", hint: "Harga beli atau biaya produksi per unit, belum termasuk biaya operasional." },
+    { id: "hargaJual", label: "Harga Jual per Unit",         prefix: "Rp" },
+    { id: "biayaOps",  label: "Biaya Operasional per Unit",  prefix: "Rp", hint: "Termasuk ongkir, kemasan, biaya admin, dan biaya lain per unit." },
+    { id: "qty",       label: "Jumlah Unit" },
+  ];
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
@@ -69,6 +70,7 @@ export function KalkulatorMargin() {
           <button
             type="button"
             onClick={reset}
+            aria-label="Reset kalkulator margin keuntungan ke nilai default"
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
           >
             <RotateCcw className="h-3 w-3" />
@@ -78,34 +80,29 @@ export function KalkulatorMargin() {
         <div key={resetKey} className="mt-5 grid gap-4 sm:grid-cols-2">
           {fields.map((f) => (
             <div key={f.id}>
-              <label
-                htmlFor={f.id}
-                className="mb-1.5 block font-secondary text-sm font-semibold text-ink"
-              >
+              <label htmlFor={f.id} className="mb-1.5 block font-secondary text-sm font-semibold text-ink">
                 {f.label}
               </label>
-              <div className="flex items-center rounded-2xl border border-line bg-white px-4 py-3 shadow-card focus-within:border-cobalt focus-within:ring-1 focus-within:ring-cobalt/20">
+              {f.hint && (
+                <p id={`${f.id}-hint`} className="mb-1.5 font-secondary text-xs text-muted">
+                  {f.hint}
+                </p>
+              )}
+              <div className={inputClass}>
                 {f.prefix && (
-                  <span className="mr-2 font-secondary text-sm font-semibold text-muted">
-                    {f.prefix}
-                  </span>
+                  <span className="mr-2 font-secondary text-sm font-semibold text-muted" aria-hidden="true">{f.prefix}</span>
                 )}
                 <input
                   id={f.id}
-                  type="number"
+                  type="text"
                   inputMode={f.id === "qty" ? "numeric" : "decimal"}
-                  min={f.min ?? 0}
-                  max={f.max}
-                  step={f.step ?? 1}
+                  pattern="[0-9]*"
+                  min={f.id === "qty" ? 1 : 0}
                   value={vals[f.id]}
                   onChange={(e) => update(f.id, e.target.value)}
+                  aria-describedby={f.hint ? `${f.id}-hint` : undefined}
                   className="w-full bg-transparent font-secondary text-base text-ink outline-none placeholder:text-muted/50"
                 />
-                {f.suffix && (
-                  <span className="ml-2 font-secondary text-sm font-semibold text-muted">
-                    {f.suffix}
-                  </span>
-                )}
               </div>
             </div>
           ))}
@@ -120,14 +117,13 @@ export function KalkulatorMargin() {
           {...marginStatus(marginPct)}
         />
 
-        {/* Detail metrics */}
         <div className="rounded-3xl border border-line bg-white p-6 shadow-card">
           <ul className="space-y-4">
             {[
-              { label: "Profit per Unit", value: formatRupiah(profitUnit) },
-              { label: "Markup", value: formatPct(markupPct) },
-              { label: "Total Modal per Unit", value: formatRupiah(totalModal) },
-              { label: "Total Profit", value: formatRupiah(totalProfit) },
+              { label: "Profit per Unit",        value: formatRupiah(profitUnit) },
+              { label: "Markup",                 value: formatPct(markupPct) },
+              { label: "Total Modal per Unit",   value: formatRupiah(totalModal) },
+              { label: "Total Profit",           value: formatRupiah(totalProfit) },
               { label: "Break-Even Point (BEP)", value: bep > 0 ? `${bep.toLocaleString("id-ID")} unit` : "—" },
             ].map(({ label, value }) => (
               <li key={label} className="flex items-center justify-between gap-4 border-b border-line pb-4 last:border-0 last:pb-0">
@@ -138,6 +134,8 @@ export function KalkulatorMargin() {
           </ul>
         </div>
       </div>
+
+      <CalcDisclaimer />
     </div>
   );
 }

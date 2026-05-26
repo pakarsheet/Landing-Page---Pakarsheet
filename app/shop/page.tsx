@@ -5,11 +5,9 @@ import { ShopHero } from "@/components/ShopHero";
 import { TemplateGrid } from "@/components/TemplateGrid";
 import { BgTransition } from "@/components/BgTransition";
 import { site } from "@/lib/site";
-import { client } from "@/lib/sanity/client";
-import { allShopTemplatesQuery, type SanityShopTemplate } from "@/lib/sanity/queries";
-import { adaptSanityTemplate } from "@/lib/sanity/adapter";
+import { getActiveProducts } from "@/lib/supabase/queries";
 
-export const revalidate = 60; // ISR: revalidate setiap 60 detik
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: `Toko Template — ${site.name}`,
@@ -24,8 +22,28 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
-  const sanityTemplates = await client.fetch<SanityShopTemplate[]>(allShopTemplatesQuery);
-  const templates = sanityTemplates.map(adaptSanityTemplate);
+  const products = await getActiveProducts();
+
+  // Strip fields not needed by client component (no functions to pass)
+  const templates = products.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    shortTitle: p.short_title,
+    description: p.description,
+    longDescription: p.long_description,
+    badge: p.badge,
+    category: p.category,
+    price: p.price,
+    priceRaw: p.price_raw,
+    originalPrice: p.original_price ?? undefined,
+    accent: p.accent,
+    features: p.features,
+    whatsIncluded: p.whats_included,
+    previewImages: p.preview_images,
+    isNew: p.is_new,
+    isBestSeller: p.is_best_seller,
+    ctaUrl: p.cta_url,
+  }));
 
   return (
     <>

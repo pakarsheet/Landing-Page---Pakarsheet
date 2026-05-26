@@ -3,16 +3,11 @@
 import { useLayoutEffect, useRef } from "react";
 import { Calculator, Zap, Lock, Sparkles } from "lucide-react";
 import { gsap } from "@/lib/gsap";
+import { SheetGrid } from "./SheetGrid";
 import { tools } from "@/lib/tools";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
-// Reuse same SheetGrid pattern from Hero
-const COLS = 9;
-const ROWS = 7;
-const CW = 100 / COLS;
-const CH = 100 / ROWS;
-
-const HIGHLIGHT_CELLS = [
+const TOOLS_HERO_CELLS = [
   { col: 0, row: 0, delay: "0s" },
   { col: 3, row: 1, delay: "0.8s" },
   { col: 6, row: 0, delay: "1.6s" },
@@ -21,47 +16,6 @@ const HIGHLIGHT_CELLS = [
   { col: 8, row: 2, delay: "0.4s" },
   { col: 2, row: 5, delay: "1.8s" },
 ];
-
-function SheetGrid() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[32px]"
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: [
-            `repeating-linear-gradient(to right, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CW}%)`,
-            `repeating-linear-gradient(to bottom, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CH}%)`,
-          ].join(", "),
-        }}
-      />
-      {HIGHLIGHT_CELLS.map(({ col, row, delay }, i) => (
-        <div
-          key={i}
-          className="sheet-cell absolute"
-          style={{
-            left: `${col * CW}%`,
-            top: `${row * CH}%`,
-            width: `${CW}%`,
-            height: `${CH}%`,
-            background: "rgba(139,237,2,0.18)",
-            animationDelay: delay,
-          }}
-        />
-      ))}
-      <div
-        className="sheet-row-sweep absolute inset-x-0"
-        style={{
-          height: `${CH}%`,
-          background:
-            "linear-gradient(90deg, transparent 0%, rgba(139,237,2,0.12) 50%, transparent 100%)",
-        }}
-      />
-    </div>
-  );
-}
 
 const badges = [
   { icon: Calculator, label: `${tools.length} kalkulator` },
@@ -90,7 +44,7 @@ export function ToolsHero() {
   return (
     <section ref={rootRef} className="bg-white px-3 pb-0 pt-3 sm:px-5 sm:pt-5 lg:px-10">
       <div className="tools-panel relative mx-auto max-w-[1380px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-16 pt-28 sm:rounded-[32px] sm:px-8 sm:pt-36 lg:px-10 lg:pb-20 lg:pt-[165px]">
-        <SheetGrid />
+        <SheetGrid cells={TOOLS_HERO_CELLS} />
 
         <div className="relative z-10 mx-auto flex max-w-[890px] flex-col items-center text-center">
           {/* Eyebrow */}
@@ -120,7 +74,7 @@ export function ToolsHero() {
 
           {/* Sub */}
           <p className="tools-reveal mt-6 max-w-2xl text-pretty font-secondary text-[18px] font-normal leading-[1.56] text-muted">
-            Hitung margin, HPP, harga jual marketplace, ROAS iklan, diskon bertingkat, dan profit bersih — langsung di browser, tanpa login, tanpa instalasi.
+            Tahu persis berapa margin kamu, harga jual yang aman di marketplace, dan iklan yang benar-benar untung — tanpa rumus rumit, langsung di browser.
           </p>
 
           {/* Badge strip */}

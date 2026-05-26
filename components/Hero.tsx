@@ -4,19 +4,14 @@ import { useLayoutEffect, useRef } from "react";
 import { CheckCircle2, TrendingUp, TrendingDown, ShoppingCart, Users, ArrowUpRight, BarChart2, RefreshCw, FileText } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { MagneticButton } from "./MagneticButton";
+import { SheetGrid } from "./SheetGrid";
 import { site } from "@/lib/site";
 import { audience, trustedBy } from "@/lib/data";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Grid dimensions
-const COLS = 9;
-const ROWS = 7;
-const CW = 100 / COLS; // % width per cell
-const CH = 100 / ROWS; // % height per cell
-
-const HIGHLIGHT_CELLS = [
+const HERO_CELLS = [
   { col: 1, row: 1, delay: "0s" },
   { col: 4, row: 2, delay: "0.6s" },
   { col: 7, row: 1, delay: "1.2s" },
@@ -25,52 +20,6 @@ const HIGHLIGHT_CELLS = [
   { col: 3, row: 6, delay: "2.1s" },
   { col: 8, row: 3, delay: "1.5s" },
 ];
-
-function SheetGrid() {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[32px]"
-    >
-      {/* Grid lines via CSS repeating-linear-gradient */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: [
-            `repeating-linear-gradient(to right, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CW}%)`,
-            `repeating-linear-gradient(to bottom, rgba(99,120,200,0.13) 0px, rgba(99,120,200,0.13) 1px, transparent 1px, transparent ${CH}%)`,
-          ].join(", "),
-        }}
-      />
-
-      {/* Highlight cells — pulse in/out */}
-      {HIGHLIGHT_CELLS.map(({ col, row, delay }, i) => (
-        <div
-          key={i}
-          className="sheet-cell absolute"
-          style={{
-            left: `${col * CW}%`,
-            top: `${row * CH}%`,
-            width: `${CW}%`,
-            height: `${CH}%`,
-            background: "rgba(139,237,2,0.18)",
-            animationDelay: delay,
-          }}
-        />
-      ))}
-
-      {/* Row sweep — slides top → bottom */}
-      <div
-        className="sheet-row-sweep absolute inset-x-0"
-        style={{
-          height: `${CH}%`,
-          background:
-            "linear-gradient(90deg, transparent 0%, rgba(139,237,2,0.12) 50%, transparent 100%)",
-        }}
-      />
-    </div>
-  );
-}
 
 // ── Sparkline SVG ────────────────────────────────────────────
 function Sparkline({ color, points }: { color: string; points: string }) {
@@ -444,7 +393,7 @@ export function Hero({ contactUrl }: { contactUrl?: string }) {
   return (
     <section ref={rootRef} className="relative overflow-x-clip bg-white px-3 pb-16 pt-3 sm:px-5 sm:pt-5 lg:px-10 lg:pt-10">
       <div className="hero-panel relative mx-auto max-w-[1380px] rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-6 pt-24 sm:rounded-[32px] sm:px-8 sm:pb-12 sm:pt-36 lg:px-10 lg:pb-16 lg:pt-[165px]">
-        <SheetGrid />
+        <SheetGrid cells={HERO_CELLS} />
 
         <div className="relative z-10 mx-auto flex max-w-[890px] flex-col items-center text-center">
           <p className="hero-reveal inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-muted shadow-card">

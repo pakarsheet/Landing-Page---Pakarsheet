@@ -36,8 +36,8 @@ export function ResultCard({
         {label}
       </p>
 
-      {/* Value */}
-      <p className="mt-2 font-primary text-[40px] font-semibold leading-none tracking-[-1.8px] text-ink">
+      {/* Value — responsive font so long Rupiah values don't overflow on mobile */}
+      <p className="mt-2 font-primary text-[28px] font-semibold leading-none tracking-[-1.2px] text-ink sm:text-[36px] sm:tracking-[-1.5px] lg:text-[40px] lg:tracking-[-1.8px]">
         {value}
       </p>
 
@@ -101,4 +101,15 @@ export function profitStatus(profitUnit: number, marginPct: number): StatusResul
   if (marginPct >= 20) return { gaugeValue,    statusColor: "text-green-700",  statusBg: "bg-green-50",  statusBarColor: "bg-green-500",  statusLabel: "Sehat",                  statusIcon: TrendingUp };
   if (marginPct >= 10) return { gaugeValue,    statusColor: "text-yellow-700", statusBg: "bg-yellow-50", statusBarColor: "bg-yellow-400", statusLabel: "Tipis tapi masih jalan", statusIcon: AlertTriangle };
   return                      { gaugeValue,    statusColor: "text-red-500",    statusBg: "bg-red-50",    statusBarColor: "bg-red-400",    statusLabel: "Terlalu tipis",          statusIcon: AlertTriangle };
+}
+
+/** Status efektivitas iklan berdasarkan ROAS aktual vs target ROAS */
+export function adEfficiencyStatus(roas: number, roasTarget: number): StatusResult {
+  const gaugeValue = Math.min(100, (roas / Math.max(roasTarget * 1.5, 6)) * 100);
+  const targetTercapai = roas >= roasTarget;
+  if (roas <= 0)          return { gaugeValue: 0, statusColor: "text-red-600",   statusBg: "bg-red-50",    statusBarColor: "bg-red-500",    statusLabel: "Tidak ada return",          statusIcon: TrendingDown };
+  if (roas < 1.0)         return { gaugeValue,    statusColor: "text-red-600",   statusBg: "bg-red-50",    statusBarColor: "bg-red-500",    statusLabel: "Rugi besar",                statusIcon: TrendingDown };
+  if (!targetTercapai)    return { gaugeValue,    statusColor: "text-orange-600", statusBg: "bg-orange-50", statusBarColor: "bg-orange-400", statusLabel: "Di bawah target, evaluasi", statusIcon: AlertTriangle };
+  if (roas >= roasTarget * 1.5) return { gaugeValue, statusColor: "text-green-700", statusBg: "bg-green-50", statusBarColor: "bg-green-500", statusLabel: "Sangat efektif",           statusIcon: TrendingUp };
+  return                        { gaugeValue,    statusColor: "text-green-600",  statusBg: "bg-green-50",  statusBarColor: "bg-green-400",  statusLabel: "Target tercapai",           statusIcon: TrendingUp };
 }

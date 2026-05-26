@@ -3,7 +3,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Store } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { type ShopTemplate, type ShopCategory } from "@/lib/data";
+import { type ClientProduct, type ShopCategory } from "@/lib/types";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { site } from "@/lib/site";
 import { Button } from "./ui/Button";
@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 type SortOption = "terbaru" | "terpopuler" | "harga-asc" | "harga-desc";
 
 type Props = {
-  templates: ShopTemplate[];
+  templates: ClientProduct[];
 };
 
 export function TemplateGrid({ templates }: Props) {

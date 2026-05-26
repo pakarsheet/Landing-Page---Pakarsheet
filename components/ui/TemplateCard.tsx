@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Star, Zap } from "lucide-react";
-import type { ShopTemplate } from "@/lib/data";
+import { Check, LayoutDashboard, Star, Zap } from "lucide-react";
+import type { ClientProduct } from "@/lib/types";
 
 type TemplateCardProps = {
-  template: ShopTemplate;
+  template: ClientProduct;
 };
 
 export function TemplateCard({ template }: TemplateCardProps) {
@@ -16,7 +16,6 @@ export function TemplateCard({ template }: TemplateCardProps) {
     price,
     originalPrice,
     accent,
-    icon: Icon,
     features,
     previewImages,
     isNew,
@@ -39,7 +38,7 @@ export function TemplateCard({ template }: TemplateCardProps) {
           />
         ) : (
           <div className={`flex h-full w-full items-center justify-center ${accent}`}>
-            <Icon className="h-16 w-16 opacity-30" />
+            <LayoutDashboard className="h-16 w-16 opacity-30" />
           </div>
         )}
 

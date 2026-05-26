@@ -5,14 +5,14 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.prod.website-files.com"
+        hostname: "cdn.prod.website-files.com",
       },
       {
         protocol: "https",
-        hostname: "cdn.sanity.io"
-      }
-    ]
-  }
+        hostname: "wnilqemzucemdjvlywts.supabase.co",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

@@ -38,7 +38,7 @@ export function ToolCard({ tool }: Props) {
         {/* CTA row */}
         <div className="mt-5 flex items-center justify-between">
           <span className="font-secondary text-sm font-semibold text-cobalt transition duration-300 group-hover:text-ink">
-            Hitung sekarang
+            {tool.ctaText}
           </span>
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-white shadow-card transition duration-300 group-hover:border-ink group-hover:bg-ink">
             <ArrowRight className="h-3.5 w-3.5 text-muted transition duration-300 group-hover:translate-x-0.5 group-hover:text-white" />

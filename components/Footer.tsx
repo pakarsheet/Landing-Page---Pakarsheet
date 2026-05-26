@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 const legalLinks = [
   { label: "Kebijakan Privasi", href: "/privacy-policy" },
   { label: "Syarat & Ketentuan", href: "/terms" },
-  { label: "Kebijakan Refund", href: "/refund-policy" },
+  { label: "Kebijakan Refund",   href: "/refund-policy" },
 ];
 
 export function Footer() {
@@ -24,19 +24,44 @@ export function Footer() {
               <span className="font-primary text-lg font-semibold text-ink">{site.name}</span>
             </div>
             <p className="mt-3 text-sm leading-6 text-muted">{site.description}</p>
+
+            {/* Social links */}
+            <div className="mt-4 flex items-center gap-3">
+              {site.socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target={s.href.startsWith("mailto") ? undefined : "_blank"}
+                  rel={s.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                  className="rounded-full border border-line bg-white px-3 py-1.5 font-secondary text-xs font-semibold text-muted shadow-card transition hover:border-ink hover:text-ink"
+                >
+                  {s.label}
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Nav links */}
+          {/* Nav links — use Next Link for internal routes */}
           <div className="flex flex-wrap gap-x-6 gap-y-3">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-sm font-bold text-muted transition hover:text-ink"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) =>
+              item.href.startsWith("/") ? (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-bold text-muted transition hover:text-ink"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-bold text-muted transition hover:text-ink"
+                >
+                  {item.label}
+                </a>
+              )
+            )}
           </div>
         </div>
 
