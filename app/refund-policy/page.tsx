@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { BgTransition } from "@/components/BgTransition";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -16,10 +14,8 @@ const LAST_UPDATED = "24 Mei 2026";
 export default function RefundPolicyPage() {
   return (
     <>
-      <BgTransition />
-      <Navbar />
       <main id="main-content" className="bg-white">
-        <section className="bg-white px-5 pb-5 pt-28 sm:pt-32 lg:px-10 lg:pt-36">
+        <section className="bg-white px-5 pb-5 pt-10 sm:pt-12 lg:px-10 lg:pt-16">
           <div className="mx-auto max-w-[1068px] overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-5 py-8 sm:px-8 sm:py-10">
 
             {/* Hero header */}

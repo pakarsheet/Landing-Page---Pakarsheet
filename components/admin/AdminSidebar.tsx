@@ -3,11 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Settings, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Package, Settings, ExternalLink, BookOpen } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Produk", href: "/admin/products", icon: Package, exact: false },
+  { label: "Blog", href: "/admin/blog", icon: BookOpen, exact: false },
   { label: "Pengaturan", href: "/admin/settings", icon: Settings, exact: false },
 ];
 

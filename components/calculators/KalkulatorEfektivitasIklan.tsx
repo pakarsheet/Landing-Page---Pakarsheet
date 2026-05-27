@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import {
-  formatRupiah, formatPct, formatMultiplier, safeNum, safeDivide, trackToolEvent,
+  formatRupiah, formatPct, formatMultiplier, safeNum, safeDivide,
 } from "@/lib/tools";
 import { formatThousands } from "@/lib/formatInput";
 import { useCalcTracking } from "@/hooks/useCalcTracking";

@@ -59,7 +59,6 @@ function RpField({
         {label}
       </label>
       <p className="mb-2 font-secondary text-sm text-muted/60">{hint}</p>
-      <p className="mb-2 font-secondary text-xs text-muted/70">{hint}</p>
       <div className={inputWrap}>
         <span className={prefixCls} aria-hidden="true">Rp</span>
         <input

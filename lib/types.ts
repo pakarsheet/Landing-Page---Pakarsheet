@@ -43,3 +43,5 @@ export const shopCategories = [
 ] as const;
 
 export type ShopCategory = (typeof shopCategories)[number];
+
+export type SortOption = "terbaru" | "terpopuler" | "harga-asc" | "harga-desc";

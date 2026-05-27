@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
+import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/Button";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
 import { site } from "@/lib/site";
@@ -44,10 +45,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+function buildProductJsonLd(product: Awaited<ReturnType<typeof getProductBySlug>>) {
+  if (!product) return null;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        name: product.title,
+        description: product.description,
+        image: product.preview_images[0] ?? undefined,
+        offers: {
+          "@type": "Offer",
+          price: product.price_raw,
+          priceCurrency: "IDR",
+          availability: "https://schema.org/InStock",
+          url: `${site.url}/shop/${product.slug}`,
+        },
+        brand: {
+          "@type": "Brand",
+          name: site.name,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home",  item: site.url },
+          { "@type": "ListItem", position: 2, name: "Toko",  item: `${site.url}/shop` },
+          { "@type": "ListItem", position: 3, name: product.title, item: `${site.url}/shop/${product.slug}` },
+        ],
+      },
+    ],
+  };
+}
+
 export default async function TemplateDetailPage({ params }: Props) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+
+  const jsonLd = buildProductJsonLd(product);
 
   const {
     title,
@@ -77,7 +114,14 @@ export default async function TemplateDetailPage({ params }: Props) {
 
   return (
     <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <BgTransition />
+      <Navbar />
       <main id="main-content" className="bg-white">
 
         {/* ── Breadcrumb ─────────────────────────────────────────── */}

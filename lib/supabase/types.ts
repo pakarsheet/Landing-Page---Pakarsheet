@@ -7,10 +7,46 @@ export type ProductCategory =
   | "Project";
 
 export type ProductStatus = "active" | "draft";
+export type PostStatus = "published" | "draft";
+
+export type PostCategory =
+  | "Tips Bisnis"
+  | "Keuangan Bisnis"
+  | "Jualan Online"
+  | "Marketing"
+  | "Google Sheets Tips"
+  | "Manajemen Bisnis";
 
 export interface Database {
   public: {
     Tables: {
+      posts: {
+        Row: {
+          id: string;
+          slug: string;
+          title: string;
+          excerpt: string;
+          content: string;
+          cover_image: string | null;
+          category: string;
+          tags: string[];
+          author_name: string;
+          author_avatar: string | null;
+          status: PostStatus;
+          featured: boolean;
+          read_time: number;
+          related_tool_slug: string | null;
+          related_shop_slug: string | null;
+          published_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["posts"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["posts"]["Insert"]>;
+      };
       products: {
         Row: {
           id: string;
@@ -67,3 +103,6 @@ export type Product = Database["public"]["Tables"]["products"]["Row"];
 export type ProductInsert = Database["public"]["Tables"]["products"]["Insert"];
 export type ProductUpdate = Database["public"]["Tables"]["products"]["Update"];
 export type SiteSettings = Database["public"]["Tables"]["site_settings"]["Row"];
+export type Post = Database["public"]["Tables"]["posts"]["Row"];
+export type PostInsert = Database["public"]["Tables"]["posts"]["Insert"];
+export type PostUpdate = Database["public"]["Tables"]["posts"]["Update"];

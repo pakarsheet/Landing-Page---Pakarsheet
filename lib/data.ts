@@ -21,6 +21,7 @@ export const navItems = [
   { label: "Harga", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
   { label: "Tools", href: "/tools" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export const stats = [

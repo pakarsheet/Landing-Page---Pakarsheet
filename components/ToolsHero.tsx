@@ -1,10 +1,10 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { Calculator, Zap, Lock, Sparkles } from "lucide-react";
+import { Calculator, Zap, Lock, Sparkles, FileSpreadsheet } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { SheetGrid } from "./SheetGrid";
-import { tools } from "@/lib/tools";
+import { tools, worksheets } from "@/lib/tools";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 const TOOLS_HERO_CELLS = [
@@ -18,10 +18,11 @@ const TOOLS_HERO_CELLS = [
 ];
 
 const badges = [
-  { icon: Calculator, label: `${tools.length} kalkulator` },
-  { icon: Zap,        label: "Real-time" },
-  { icon: Lock,       label: "Tanpa login" },
-  { icon: Sparkles,   label: "100% gratis" },
+  { icon: Calculator,      label: `${tools.length} kalkulator` },
+  { icon: FileSpreadsheet, label: `${worksheets.length} worksheet` },
+  { icon: Zap,             label: "Real-time" },
+  { icon: Lock,            label: "Tanpa login" },
+  { icon: Sparkles,        label: "100% gratis" },
 ];
 
 export function ToolsHero() {
@@ -39,7 +40,7 @@ export function ToolsHero() {
     return () => ctx.revert();
   }, [prefersReducedMotion]);
 
-  const headline = "Kalkulator bisnis gratis.";
+  const headline = "Tools bisnis gratis.";
 
   return (
     <section ref={rootRef} className="bg-white px-3 pb-0 pt-3 sm:px-5 sm:pt-5 lg:px-10">
@@ -74,7 +75,7 @@ export function ToolsHero() {
 
           {/* Sub */}
           <p className="tools-reveal mt-6 max-w-2xl text-pretty font-secondary text-[18px] font-normal leading-[1.56] text-muted">
-            Tahu persis berapa margin kamu, harga jual yang aman di marketplace, dan iklan yang benar-benar untung — tanpa rumus rumit, langsung di browser.
+            Kalkulator untuk hitung cepat, worksheet untuk evaluasi dan rencana bisnis — semua gratis, semua langsung di browser, tanpa perlu daftar.
           </p>
 
           {/* Badge strip */}

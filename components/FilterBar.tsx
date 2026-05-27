@@ -1,9 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { shopCategories, type ShopCategory } from "@/lib/types";
-
-type SortOption = "terbaru" | "terpopuler" | "harga-asc" | "harga-desc";
+import { shopCategories, type ShopCategory, type SortOption } from "@/lib/types";
 
 type FilterBarProps = {
   activeCategory: ShopCategory;

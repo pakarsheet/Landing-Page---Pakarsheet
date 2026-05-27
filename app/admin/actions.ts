@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { ProductInsert, ProductUpdate } from "@/lib/supabase/types";
+import type { PostInsert, PostUpdate, ProductInsert, ProductUpdate } from "@/lib/supabase/types";
 
 // ── Products ──────────────────────────────────────────────────────────────────
 
@@ -157,5 +157,98 @@ function parseProductForm(formData: FormData) {
     preview_images: parseImages(),
     sort_order: parseInt(formData.get("sort_order") as string, 10) || 0,
     status: formData.get("status") as string,
+  };
+}
+
+// ── Blog Posts ────────────────────────────────────────────────────────────────
+
+export async function createPost(formData: FormData) {
+  const supabase = createAdminClient();
+  const payload = parsePostForm(formData);
+
+  const { error } = await supabase.from("posts").insert(payload as PostInsert);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
+  return { success: true };
+}
+
+export async function updatePost(id: string, formData: FormData) {
+  const supabase = createAdminClient();
+  const payload = parsePostForm(formData);
+
+  const { error } = await supabase
+    .from("posts")
+    .update(payload as PostUpdate)
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  revalidatePath(`/blog/${payload.slug}`);
+  revalidatePath("/sitemap.xml");
+  return { success: true };
+}
+
+export async function deletePost(id: string) {
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("posts").delete().eq("id", id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  return { success: true };
+}
+
+export async function togglePostStatus(id: string, currentStatus: string) {
+  const supabase = createAdminClient();
+  const newStatus = currentStatus === "published" ? "draft" : "published";
+  const published_at = newStatus === "published" ? new Date().toISOString() : null;
+
+  const { error } = await supabase
+    .from("posts")
+    .update({ status: newStatus, published_at })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  return { success: true };
+}
+
+// ── Post form parser ──────────────────────────────────────────────────────────
+
+function parsePostForm(formData: FormData) {
+  const parseTags = (): string[] =>
+    ((formData.get("tags") as string) ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+  const status = formData.get("status") as string;
+  const published_at =
+    status === "published"
+      ? (formData.get("published_at") as string) || new Date().toISOString()
+      : null;
+
+  return {
+    slug: (formData.get("slug") as string).trim(),
+    title: (formData.get("title") as string).trim(),
+    excerpt: (formData.get("excerpt") as string).trim(),
+    content: (formData.get("content") as string).trim(),
+    cover_image: (formData.get("cover_image") as string).trim() || null,
+    category: (formData.get("category") as string).trim(),
+    tags: parseTags(),
+    author_name: (formData.get("author_name") as string).trim() || "Tim Pakarsheet",
+    author_avatar: (formData.get("author_avatar") as string).trim() || null,
+    status,
+    featured: formData.get("featured") === "on",
+    read_time: parseInt(formData.get("read_time") as string, 10) || 5,
+    related_tool_slug: (formData.get("related_tool_slug") as string).trim() || null,
+    related_shop_slug: (formData.get("related_shop_slug") as string).trim() || null,
+    published_at,
   };
 }

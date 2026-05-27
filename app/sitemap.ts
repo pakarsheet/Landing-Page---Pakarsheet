@@ -1,62 +1,33 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
-import { tools } from "@/lib/tools";
-import { shopTemplates } from "@/lib/data";
+import { tools, worksheets } from "@/lib/tools";
+import { getAllProductSlugs } from "@/lib/supabase/queries";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = site.url;
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: base,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1.0,
-    },
-    {
-      url: `${base}/shop`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${base}/tools`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/privacy-policy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${base}/terms`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${base}/refund-policy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+    { url: base,                    lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
+    { url: `${base}/shop`,          lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
+    { url: `${base}/tools`,         lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/privacy-policy`,lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${base}/terms`,         lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${base}/refund-policy`, lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
   ];
 
-  const toolRoutes: MetadataRoute.Sitemap = tools.map((tool) => ({
+  const toolRoutes: MetadataRoute.Sitemap = [...tools, ...worksheets].map((tool) => ({
     url: `${base}/tools/${tool.slug}`,
     lastModified: now,
-    changeFrequency: "monthly",
+    changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  const shopRoutes: MetadataRoute.Sitemap = shopTemplates.map((template) => ({
-    url: `${base}/shop/${template.slug}`,
+  const slugs = await getAllProductSlugs();
+  const shopRoutes: MetadataRoute.Sitemap = slugs.map((slug) => ({
+    url: `${base}/shop/${slug}`,
     lastModified: now,
-    changeFrequency: "weekly",
+    changeFrequency: "weekly" as const,
     priority: 0.85,
   }));
 

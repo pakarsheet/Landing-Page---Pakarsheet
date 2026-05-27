@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
+import { site } from "@/lib/site";
 
 export default function NotFound() {
   return (
@@ -62,7 +63,7 @@ export default function NotFound() {
               {[
                 { label: "Toko Template",       href: "/shop",  desc: "Template Google Sheets premium siap pakai." },
                 { label: "Tools Kalkulator",    href: "/tools", desc: "Kalkulator bisnis gratis, tanpa login." },
-                { label: "Konsultasi via WA",   href: "https://wa.me/6285XXXXXXXXX", desc: "Tanya langsung ke tim Pakarsheet." },
+                { label: "Konsultasi via WA",   href: site.contactUrl, desc: "Tanya langsung ke tim Pakarsheet." },
               ].map(({ label, href, desc }) => (
                 <Link
                   key={href}

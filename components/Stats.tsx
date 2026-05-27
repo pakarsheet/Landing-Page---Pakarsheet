@@ -4,11 +4,9 @@ import { useLayoutEffect, useRef } from "react";
 import { stats } from "@/lib/data";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { StatCard } from "./ui/StatCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Parse numeric value and suffix from stat string e.g. "40%" → { num: 40, suffix: "%" }
 function parseStatValue(value: string): { num: number; prefix: string; suffix: string } {
   const match = value.match(/^([^\d]*)(\d+(?:\.\d+)?)(.*)$/);
   if (!match) return { num: 0, prefix: "", suffix: value };
@@ -24,21 +22,20 @@ export function Stats() {
     if (!root || prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      // Reveal cards with stagger
       gsap.fromTo(
         ".stat-card",
-        { autoAlpha: 0, y: 28 },
+        { autoAlpha: 0, y: 28, scale: 0.97 },
         {
           autoAlpha: 1,
           y: 0,
+          scale: 1,
           duration: 0.7,
-          stagger: 0.1,
+          stagger: 0.09,
           ease: "power3.out",
-          scrollTrigger: { trigger: root, start: "top 80%", once: true },
+          scrollTrigger: { trigger: root, start: "top 82%", once: true },
         }
       );
 
-      // Count-up each stat value
       const valueEls = root.querySelectorAll<HTMLElement>(".stat-value");
       valueEls.forEach((el) => {
         const raw = el.dataset.value ?? "";
@@ -48,10 +45,10 @@ export function Stats() {
         const counter = { val: 0 };
         gsap.to(counter, {
           val: num,
-          duration: 1.6,
+          duration: 1.8,
           ease: "power2.out",
-          delay: 0.3,
-          scrollTrigger: { trigger: root, start: "top 80%", once: true },
+          delay: 0.2,
+          scrollTrigger: { trigger: root, start: "top 82%", once: true },
           onUpdate() {
             const display = Number.isInteger(num)
               ? Math.round(counter.val)
@@ -67,10 +64,47 @@ export function Stats() {
 
   return (
     <section ref={ref} className="bg-white px-4 py-12 sm:px-5 sm:py-16 lg:px-10">
-      <div className="mx-auto grid max-w-[1068px] gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
-        ))}
+      <div className="mx-auto max-w-[1068px]">
+
+        {/* Single card row — horizontal layout */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <article
+                key={stat.label}
+                className="stat-card group flex flex-col gap-4 rounded-3xl border border-line bg-white p-6 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-soft"
+              >
+                {/* Top row: icon + value side by side */}
+                <div className="flex items-start justify-between gap-3">
+                  <strong
+                    className="stat-value font-primary text-[42px] font-semibold leading-none tracking-[-2px] text-ink"
+                    data-value={stat.value}
+                  >
+                    {stat.value}
+                  </strong>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-leaf text-cobalt transition duration-300 group-hover:scale-105">
+                    <Icon className="h-5 w-5 transition duration-300 group-hover:-rotate-6" />
+                  </div>
+                </div>
+
+                {/* Label */}
+                <span className="font-secondary text-sm font-semibold leading-snug text-ink">
+                  {stat.label}
+                </span>
+
+                {/* Divider */}
+                <div className="h-px w-full bg-line" />
+
+                {/* Description */}
+                <p className="font-secondary text-sm leading-[1.56] text-muted">
+                  {stat.description}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+
       </div>
     </section>
   );

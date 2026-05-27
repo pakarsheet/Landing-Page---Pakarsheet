@@ -7,7 +7,17 @@ import {
   Store,
   BarChart2,
   FileText,
+  ClipboardCheck,
+  Zap,
+  Users,
+  Table2,
+  Wallet,
+  Package,
+  UserCheck,
+  TrendingDown,
 } from "lucide-react";
+
+export type ToolType = "kalkulator" | "worksheet";
 
 export type ToolMeta = {
   slug: string;
@@ -19,9 +29,13 @@ export type ToolMeta = {
   icon: typeof Calculator;
   accent: string;
   keywords: string[];
-  /** Short CTA label shown on ToolCard, e.g. "Hitung margin →" */
+  /** Short CTA label shown on ToolCard */
   ctaText: string;
   relatedShopSlug?: string;
+  /** Distinguishes calculator vs worksheet — defaults to "kalkulator" */
+  type?: ToolType;
+  /** Estimated time to complete, shown on WorksheetCard */
+  estimatedTime?: string;
 };
 
 export const tools: ToolMeta[] = [
@@ -46,7 +60,6 @@ export const tools: ToolMeta[] = [
       "markup harga",
       "rumus margin keuntungan",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-hpp",
@@ -70,7 +83,6 @@ export const tools: ToolMeta[] = [
       "rumus HPP usaha kuliner",
       "HPP manufaktur kecil",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-harga-jual",
@@ -93,7 +105,6 @@ export const tools: ToolMeta[] = [
       "fee admin tokopedia berapa persen",
       "harga jual minimum marketplace",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-roas",
@@ -117,7 +128,6 @@ export const tools: ToolMeta[] = [
       "roas meta ads indonesia",
       "rumus roas iklan digital",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-diskon-bertingkat",
@@ -140,7 +150,6 @@ export const tools: ToolMeta[] = [
       "diskon 20 persen plus 10 persen berapa",
       "kalkulator promo belanja online",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-profit-marketplace",
@@ -163,7 +172,6 @@ export const tools: ToolMeta[] = [
       "profit bersih seller marketplace indonesia",
       "hitung laba bersih toko online",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-laba-rugi",
@@ -186,7 +194,6 @@ export const tools: ToolMeta[] = [
       "laba bersih vs omzet",
       "hitung profit bersih bisnis bulanan",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
   },
   {
     slug: "kalkulator-efektivitas-iklan",
@@ -209,7 +216,191 @@ export const tools: ToolMeta[] = [
       "roas minimum break even",
       "biaya tersembunyi iklan marketplace",
     ],
-    relatedShopSlug: "content-planner-instagram-pro",
+  },
+  {
+    slug: "kalkulator-cashflow",
+    title: "Kalkulator Cashflow Bisnis",
+    shortTitle: "Cashflow Bisnis",
+    description:
+      "Proyeksikan arus kas bulanan — hitung net cashflow, saldo akhir, runway, dan komposisi pengeluaran bisnis kamu.",
+    longDescription:
+      "Banyak bisnis profit di atas kertas tapi kehabisan uang tunai. Kalkulator ini membantu kamu memahami arus kas nyata: masukkan semua pemasukan dan pengeluaran bulan ini, lalu dapatkan net cashflow, saldo akhir, runway (berapa bulan kas bertahan), dan breakdown pengeluaran terbesar.",
+    badge: "Finance",
+    icon: Wallet,
+    accent: "bg-leaf text-cobalt",
+    ctaText: "Cek cashflow →",
+    keywords: [
+      "kalkulator cashflow bisnis",
+      "hitung arus kas usaha",
+      "cashflow positif negatif",
+      "runway bisnis berapa bulan",
+      "cara hitung cashflow UMKM",
+      "proyeksi arus kas bulanan",
+      "cashflow vs profit perbedaan",
+    ],
+  },
+  {
+    slug: "kalkulator-bundling",
+    title: "Kalkulator Harga Bundling",
+    shortTitle: "Harga Bundling",
+    description:
+      "Hitung harga bundle 2–5 produk agar tetap profit — lihat margin, diskon vs harga normal, dan nilai hemat untuk pembeli.",
+    longDescription:
+      "Bundling produk bisa meningkatkan AOV, tapi salah hitung bisa bikin rugi. Masukkan HPP dan harga normal tiap produk dalam bundle, tentukan harga jual bundle, dan langsung lihat margin, diskon efektif, harga minimum BEP, serta nilai hemat yang dirasakan pembeli.",
+    badge: "Marketplace",
+    icon: Package,
+    accent: "bg-sky text-cobalt",
+    ctaText: "Hitung bundle →",
+    keywords: [
+      "kalkulator harga bundling produk",
+      "harga bundle shopee tokopedia",
+      "cara hitung harga paket produk",
+      "bundling produk agar profit",
+      "diskon bundle vs harga satuan",
+      "strategi bundling marketplace",
+      "harga minimum bundle",
+    ],
+  },
+  {
+    slug: "kalkulator-komisi-reseller",
+    title: "Kalkulator Komisi Reseller",
+    shortTitle: "Komisi Reseller",
+    description:
+      "Hitung komisi reseller maksimal yang aman tanpa menggerus margin — lengkap dengan saran struktur tier komisi.",
+    longDescription:
+      "Berapa komisi yang bisa kamu berikan ke reseller tanpa rugi? Masukkan HPP, harga jual, dan target margin kamu — dapatkan komisi maksimal aman, harga beli reseller, saran struktur 3 tier komisi, dan proyeksi profit per reseller per bulan.",
+    badge: "Finance",
+    icon: UserCheck,
+    accent: "bg-lilac text-ink",
+    ctaText: "Hitung komisi →",
+    keywords: [
+      "kalkulator komisi reseller",
+      "berapa komisi reseller yang wajar",
+      "harga beli reseller",
+      "struktur tier komisi reseller",
+      "komisi agen dropshipper",
+      "cara hitung komisi tanpa rugi",
+      "program reseller UMKM",
+    ],
+  },
+  {
+    slug: "kalkulator-kenaikan-harga",
+    title: "Kalkulator Kenaikan Harga",
+    shortTitle: "Kenaikan Harga",
+    description:
+      "Simulasi dampak naik harga terhadap volume, omzet, dan profit — tahu persis apakah kenaikan harga layak dilakukan.",
+    longDescription:
+      "Takut naik harga karena khawatir pelanggan kabur? Kalkulator ini mensimulasikan dampak kenaikan harga X% terhadap volume penjualan, omzet, dan total profit — termasuk berapa persen penurunan volume yang masih bisa ditoleransi agar profit tidak turun.",
+    badge: "Finance",
+    icon: TrendingDown,
+    accent: "bg-sheet text-ink",
+    ctaText: "Simulasi harga →",
+    keywords: [
+      "kalkulator kenaikan harga produk",
+      "dampak naik harga terhadap penjualan",
+      "simulasi kenaikan harga",
+      "apakah layak naik harga",
+      "elastisitas harga UMKM",
+      "strategi naik harga tanpa kehilangan pelanggan",
+      "break even kenaikan harga",
+    ],
+  },
+];
+
+// ─── Worksheets ───────────────────────────────────────────────────────────────
+
+export const worksheets: ToolMeta[] = [
+  {
+    slug: "scorecard-bisnis-bulanan",
+    title: "Scorecard Bisnis Bulanan",
+    shortTitle: "Scorecard Bisnis",
+    description:
+      "Evaluasi kesehatan bisnis bulan ini dari 4 area: keuangan, operasional, marketing, dan SDM — dapat skor + prioritas perbaikan.",
+    longDescription:
+      "Banyak pemilik UMKM tidak tahu area mana yang paling perlu diperbaiki. Scorecard ini memandu kamu mengisi 12 metrik bisnis, lalu menghasilkan skor per area, status kesehatan keseluruhan, dan 3 prioritas aksi bulan depan.",
+    badge: "Evaluasi",
+    icon: ClipboardCheck,
+    accent: "bg-sky text-cobalt",
+    ctaText: "Mulai evaluasi →",
+    type: "worksheet",
+    estimatedTime: "~10 menit",
+    keywords: [
+      "scorecard bisnis UMKM",
+      "evaluasi kesehatan bisnis bulanan",
+      "cara evaluasi bisnis sendiri",
+      "indikator kinerja bisnis kecil",
+      "KPI UMKM sederhana",
+      "cek kesehatan bisnis",
+    ],
+  },
+  {
+    slug: "planner-flash-sale",
+    title: "Planner Flash Sale",
+    shortTitle: "Planner Flash Sale",
+    description:
+      "Rencanakan flash sale tanpa rugi — hitung diskon maksimal aman, estimasi revenue, profit, dan stok yang perlu disiapkan.",
+    longDescription:
+      "Seller sering asal kasih diskon flash sale tanpa hitung apakah masih profit. Planner ini memandu kamu dari target flash sale, produk yang dipromosikan, hingga diskon maksimal yang aman — lengkap dengan estimasi revenue dan profit bersih.",
+    badge: "Promo",
+    icon: Zap,
+    accent: "bg-sheet text-ink",
+    ctaText: "Buat rencana →",
+    type: "worksheet",
+    estimatedTime: "~8 menit",
+    keywords: [
+      "planner flash sale marketplace",
+      "cara hitung diskon flash sale agar tidak rugi",
+      "strategi flash sale shopee tokopedia",
+      "diskon maksimal flash sale",
+      "perencanaan promo seller",
+      "flash sale tanpa rugi",
+    ],
+  },
+  {
+    slug: "planner-rekrut-karyawan",
+    title: "Planner Rekrut Karyawan",
+    shortTitle: "Rekrut Karyawan",
+    description:
+      "Cek apakah bisnismu sudah siap rekrut karyawan — hitung titik impas, estimasi biaya, dan kapan investasi SDM balik modal.",
+    longDescription:
+      "Kapan waktu yang tepat rekrut karyawan pertama? Planner ini memandu kamu menilai kesiapan bisnis, menghitung total biaya rekrut dan gaji, serta memproyeksikan kapan penambahan SDM akan balik modal — bukan sekadar feeling.",
+    badge: "SDM",
+    icon: Users,
+    accent: "bg-lilac text-ink",
+    ctaText: "Cek kesiapan →",
+    type: "worksheet",
+    estimatedTime: "~12 menit",
+    keywords: [
+      "kapan harus rekrut karyawan",
+      "cara tahu bisnis siap tambah karyawan",
+      "hitung biaya rekrut karyawan UMKM",
+      "titik impas rekrut karyawan",
+      "perencanaan SDM usaha kecil",
+      "gaji karyawan pertama UMKM",
+    ],
+  },
+  {
+    slug: "tabel-fee-marketplace",
+    title: "Tabel Fee Marketplace Lengkap",
+    shortTitle: "Fee Marketplace",
+    description:
+      "Referensi fee terlengkap untuk Shopee, Tokopedia, TikTok Shop, Lazada, dan Blibli — bisa difilter per platform dan kategori.",
+    longDescription:
+      "Satu halaman referensi fee marketplace Indonesia yang komprehensif. Tidak perlu buka satu per satu Seller Centre — semua fee admin, service fee, dan biaya program sudah dirangkum dan bisa difilter per platform.",
+    badge: "Referensi",
+    icon: Table2,
+    accent: "bg-leaf text-cobalt",
+    ctaText: "Lihat tabel →",
+    type: "worksheet",
+    estimatedTime: "Referensi",
+    keywords: [
+      "fee marketplace indonesia lengkap",
+      "biaya admin shopee tokopedia tiktok shop",
+      "fee seller marketplace 2025",
+      "tabel fee marketplace indonesia",
+      "berapa fee shopee per transaksi",
+      "perbandingan fee marketplace indonesia",
+    ],
   },
 ];
 

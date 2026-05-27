@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, Clock } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
 import { SheetGrid } from "@/components/SheetGrid";
-import { tools } from "@/lib/tools";
+import { ToolSEOContent } from "@/components/ToolSEOContent";
+import { tools, worksheets } from "@/lib/tools";
+import { toolContent } from "@/lib/tool-content";
 import { site } from "@/lib/site";
 import { shopTemplates } from "@/lib/data";
 
@@ -20,6 +22,16 @@ const KalkulatorDiskon           = dynamic(() => import("@/components/calculator
 const KalkulatorProfitMarketplace = dynamic(() => import("@/components/calculators/KalkulatorProfitMarketplace").then(m => ({ default: m.KalkulatorProfitMarketplace })));
 const KalkulatorLabaRugi         = dynamic(() => import("@/components/calculators/KalkulatorLabaRugi").then(m => ({ default: m.KalkulatorLabaRugi })));
 const KalkulatorEfektivitasIklan = dynamic(() => import("@/components/calculators/KalkulatorEfektivitasIklan").then(m => ({ default: m.KalkulatorEfektivitasIklan })));
+const KalkulatorCashflow         = dynamic(() => import("@/components/calculators/KalkulatorCashflow").then(m => ({ default: m.KalkulatorCashflow })));
+const KalkulatorBundling         = dynamic(() => import("@/components/calculators/KalkulatorBundling").then(m => ({ default: m.KalkulatorBundling })));
+const KalkulatorKomisiReseller   = dynamic(() => import("@/components/calculators/KalkulatorKomisiReseller").then(m => ({ default: m.KalkulatorKomisiReseller })));
+const KalkulatorKenaikanHarga    = dynamic(() => import("@/components/calculators/KalkulatorKenaikanHarga").then(m => ({ default: m.KalkulatorKenaikanHarga })));
+
+// ── Worksheet dynamic imports
+const ScorecardBisnis        = dynamic(() => import("@/components/worksheets/ScorecardBisnis").then(m => ({ default: m.ScorecardBisnis })));
+const PlannerFlashSale       = dynamic(() => import("@/components/worksheets/PlannerFlashSale").then(m => ({ default: m.PlannerFlashSale })));
+const PlannerRekrutKaryawan  = dynamic(() => import("@/components/worksheets/PlannerRekrutKaryawan").then(m => ({ default: m.PlannerRekrutKaryawan })));
+const TabelFeeMarketplace    = dynamic(() => import("@/components/worksheets/TabelFeeMarketplace").then(m => ({ default: m.TabelFeeMarketplace })));
 
 const DETAIL_CELLS = [
   { col: 0, row: 0, delay: "0s" },
@@ -31,29 +43,21 @@ const DETAIL_CELLS = [
   { col: 2, row: 5, delay: "1.8s" },
 ];
 
-// Per-tool CTA copy for ToolCard and related section
-const toolCta: Record<string, string> = {
-  "kalkulator-margin":             "Hitung margin →",
-  "kalkulator-hpp":                "Hitung HPP →",
-  "kalkulator-harga-jual":         "Simulasi harga →",
-  "kalkulator-roas":               "Cek ROAS →",
-  "kalkulator-diskon-bertingkat":  "Hitung diskon →",
-  "kalkulator-profit-marketplace": "Hitung profit →",
-  "kalkulator-laba-rugi":          "Hitung laba rugi →",
-  "kalkulator-efektivitas-iklan":  "Cek efektivitas →",
-};
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export function generateStaticParams() {
-  return tools.map((t) => ({ slug: t.slug }));
+  return [
+    ...tools.map((t) => ({ slug: t.slug })),
+    ...worksheets.map((w) => ({ slug: w.slug })),
+  ];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const tool = tools.find((t) => t.slug === slug);
+  const tool = [...tools, ...worksheets].find((t) => t.slug === slug);
   if (!tool) return {};
 
   const title = `${tool.title} Gratis Online — ${site.name}`;
@@ -68,6 +72,84 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+/** Build JSON-LD structured data for a calculator/worksheet tool page */
+function buildJsonLd(tool: (typeof tools)[number] | undefined, slug: string) {
+  if (!tool) return null;
+  const isWorksheet = tool.type === "worksheet";
+  const pageUrl = `${site.url}/tools/${slug}`;
+
+  if (isWorksheet) {
+    // Use WebApplication schema for interactive worksheets
+    return {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: tool.title,
+      description: tool.longDescription,
+      url: pageUrl,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "IDR",
+      },
+      provider: {
+        "@type": "Organization",
+        name: site.name,
+        url: site.url,
+      },
+    };
+  }
+
+  // Use SoftwareApplication + BreadcrumbList for calculators
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        name: tool.title,
+        description: tool.longDescription,
+        url: pageUrl,
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Web",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "IDR",
+        },
+        provider: {
+          "@type": "Organization",
+          name: site.name,
+          url: site.url,
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Tools",
+            item: `${site.url}/tools`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: tool.title,
+            item: pageUrl,
+          },
+        ],
+      },
+    ],
+  };
+}
+
 function CalculatorForSlug({ slug }: { slug: string }) {
   switch (slug) {
     case "kalkulator-margin":             return <KalkulatorMargin />;
@@ -78,27 +160,53 @@ function CalculatorForSlug({ slug }: { slug: string }) {
     case "kalkulator-profit-marketplace": return <KalkulatorProfitMarketplace />;
     case "kalkulator-laba-rugi":          return <KalkulatorLabaRugi />;
     case "kalkulator-efektivitas-iklan":  return <KalkulatorEfektivitasIklan />;
+    case "kalkulator-cashflow":           return <KalkulatorCashflow />;
+    case "kalkulator-bundling":           return <KalkulatorBundling />;
+    case "kalkulator-komisi-reseller":    return <KalkulatorKomisiReseller />;
+    case "kalkulator-kenaikan-harga":     return <KalkulatorKenaikanHarga />;
+    // Worksheets
+    case "scorecard-bisnis-bulanan":      return <ScorecardBisnis />;
+    case "planner-flash-sale":            return <PlannerFlashSale />;
+    case "planner-rekrut-karyawan":       return <PlannerRekrutKaryawan />;
+    case "tabel-fee-marketplace":         return <TabelFeeMarketplace />;
     default:                              return null;
   }
 }
 
 export default async function ToolDetailPage({ params }: Props) {
   const { slug } = await params;
-  const tool = tools.find((t) => t.slug === slug);
+  const tool = [...tools, ...worksheets].find((t) => t.slug === slug);
   if (!tool) notFound();
 
+  const jsonLd = buildJsonLd(tool, slug);
   const Icon = tool.icon;
-  const related = tools.filter((t) => t.slug !== slug).slice(0, 3);
+  const isWorksheet = tool.type === "worksheet";
+
+  // Related tools: prefer same badge/category, exclude current tool, max 3
+  const allTools = [...tools, ...worksheets];
+  const sameBadge = allTools.filter((t) => t.slug !== slug && t.badge === tool.badge);
+  const others    = allTools.filter((t) => t.slug !== slug && t.badge !== tool.badge);
+  const related   = [...sameBadge, ...others].slice(0, 3);
 
   // Resolve the related shop template for the specific CTA
-  const relatedTemplate = tool.relatedShopSlug
-    ? shopTemplates.find((t) => t.slug === tool.relatedShopSlug)
-    : null;
+  // Prefer a template matching the tool's badge/category, otherwise fall back to /shop
+  const relatedTemplate =
+    (tool.relatedShopSlug
+      ? shopTemplates.find((t) => t.slug === tool.relatedShopSlug)
+      : null) ??
+    shopTemplates.find((t) => t.category === tool.badge) ??
+    null;
   const ctaHref  = relatedTemplate ? `/shop/${relatedTemplate.slug}` : "/shop";
   const ctaLabel = relatedTemplate ? relatedTemplate.shortTitle : "template premium";
 
   return (
     <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <BgTransition />
       <Navbar />
       <main id="main-content" className="bg-white">
@@ -142,12 +250,20 @@ export default async function ToolDetailPage({ params }: Props) {
 
                 {/* Feature pills */}
                 <div className="flex flex-wrap gap-2 lg:flex-col lg:items-end">
-                  {["Kalkulasi real-time", "Tanpa login", "100% gratis"].map((f) => (
+                  {[
+                    ...(isWorksheet && tool.estimatedTime ? [tool.estimatedTime] : []),
+                    ...(isWorksheet ? ["Evaluasi interaktif"] : ["Kalkulasi real-time"]),
+                    "Tanpa login",
+                    "100% gratis",
+                  ].map((f) => (
                     <span
                       key={f}
                       className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-4 py-2 font-secondary text-sm font-semibold text-muted shadow-card"
                     >
-                      <Sparkles className="h-3.5 w-3.5 text-cobalt" />
+                      {f.includes("menit") || f === tool.estimatedTime
+                        ? <Clock className="h-3.5 w-3.5 text-cobalt" />
+                        : <Sparkles className="h-3.5 w-3.5 text-cobalt" />
+                      }
                       {f}
                     </span>
                   ))}
@@ -161,6 +277,10 @@ export default async function ToolDetailPage({ params }: Props) {
         <section className="bg-white px-5 py-14 sm:py-20 lg:px-10">
           <div className="mx-auto max-w-[1280px]">
             <CalculatorForSlug slug={slug} />
+            {/* SEO content: how-to + FAQ */}
+            {toolContent[slug] && (
+              <ToolSEOContent content={toolContent[slug]} toolTitle={tool.shortTitle} />
+            )}
           </div>
         </section>
 
@@ -240,7 +360,7 @@ export default async function ToolDetailPage({ params }: Props) {
                         {t.description}
                       </p>
                       <div className="mt-3 inline-flex items-center gap-1 font-secondary text-xs font-semibold text-cobalt">
-                        {toolCta[t.slug] ?? "Buka →"}
+                        {t.ctaText ?? "Buka →"}
                       </div>
                     </div>
                   </Link>
