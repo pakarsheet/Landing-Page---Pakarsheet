@@ -49,7 +49,7 @@ export function ToastProvider() {
   if (items.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2.5">
+    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2">
       {items.map((item) => (
         <ToastCard key={item.id} item={item} onClose={() => remove(item.id)} />
       ))}
@@ -62,36 +62,41 @@ export function ToastProvider() {
 const config = {
   success: {
     icon: CheckCircle2,
-    bg: "bg-leaf border-leaf",
-    text: "text-cobalt",
-    iconColor: "text-cobalt",
+    bar: "bg-sheet",
+    iconColor: "text-ink",
+    bg: "bg-white",
+    border: "border-ink/10",
   },
   error: {
     icon: XCircle,
-    bg: "bg-red-50 border-red-200",
-    text: "text-red-700",
+    bar: "bg-red-500",
     iconColor: "text-red-500",
+    bg: "bg-white",
+    border: "border-ink/10",
   },
   warning: {
     icon: AlertTriangle,
-    bg: "bg-blush border-line",
-    text: "text-ink",
-    iconColor: "text-muted",
+    bar: "bg-cobalt",
+    iconColor: "text-cobalt",
+    bg: "bg-white",
+    border: "border-ink/10",
   },
 };
 
 function ToastCard({ item, onClose }: { item: ToastItem; onClose: () => void }) {
-  const { icon: Icon, bg, text, iconColor } = config[item.type];
+  const { icon: Icon, bar, iconColor, bg, border } = config[item.type];
 
   return (
     <div
-      className={`flex min-w-[280px] max-w-sm items-start gap-3 rounded-2xl border px-4 py-3 shadow-soft ${bg} animate-in slide-in-from-bottom-2 fade-in duration-200`}
+      className={`relative flex min-w-[300px] max-w-sm items-start gap-3 overflow-hidden rounded-2xl border px-4 py-3.5 shadow-soft ${bg} ${border} animate-in slide-in-from-bottom-3 fade-in duration-200`}
     >
+      {/* Colored left bar */}
+      <span className={`absolute left-0 top-0 h-full w-1 rounded-l-2xl ${bar}`} />
       <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${iconColor}`} />
-      <p className={`flex-1 text-sm font-medium ${text}`}>{item.message}</p>
+      <p className="flex-1 text-sm font-medium text-ink">{item.message}</p>
       <button
         onClick={onClose}
-        className={`shrink-0 rounded-lg p-0.5 transition hover:opacity-60 ${text}`}
+        className="shrink-0 rounded-lg p-0.5 text-ink/35 transition hover:text-ink"
       >
         <X className="h-3.5 w-3.5" />
       </button>

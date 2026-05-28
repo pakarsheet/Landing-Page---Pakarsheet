@@ -2,9 +2,29 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createProduct, updateProduct, uploadProductImage, deleteProduct } from "@/app/admin/actions";
+import {
+  createProduct,
+  updateProduct,
+  uploadProductImage,
+  deleteProduct,
+} from "@/app/admin/actions";
 import type { Product } from "@/lib/supabase/types";
-import { Loader2, Plus, Trash2, Upload, X, AlertTriangle } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  Trash2,
+  Upload,
+  X,
+  AlertTriangle,
+  Save,
+  ArrowLeft,
+  Info,
+  Image as ImageIcon,
+  Tag,
+  DollarSign,
+  Zap,
+  List,
+} from "lucide-react";
 import { toast } from "@/components/admin/Toast";
 
 const CATEGORIES = ["Finance", "Sales", "Operasional", "Bundle", "Marketing", "Project"];
@@ -28,7 +48,9 @@ export function ProductForm({ product }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const [features, setFeatures] = useState<string[]>(product?.features ?? [""]);
-  const [whatsIncluded, setWhatsIncluded] = useState<string[]>(product?.whats_included ?? [""]);
+  const [whatsIncluded, setWhatsIncluded] = useState<string[]>(
+    product?.whats_included ?? [""]
+  );
   const [images, setImages] = useState<string[]>(product?.preview_images ?? [""]);
   const [slug, setSlug] = useState(product?.slug ?? "");
 
@@ -95,14 +117,16 @@ export function ProductForm({ product }: Props) {
       if (result?.error) {
         setError(result.error);
       } else {
-        toast.success(product ? "Produk berhasil diperbarui." : "Produk baru berhasil dibuat.");
+        toast.success(
+          product ? "Produk berhasil diperbarui." : "Produk baru berhasil dibuat."
+        );
         router.push("/admin/products");
       }
     });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5 max-w-3xl">
       {error && (
         <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -111,7 +135,12 @@ export function ProductForm({ product }: Props) {
       )}
 
       {/* ── Info Dasar ─────────────────────────────────────── */}
-      <FormSection title="Info Dasar">
+      <FormSection
+        icon={<Info className="h-4 w-4 text-cobalt" />}
+        iconBg="bg-blush"
+        title="Info Dasar"
+        desc="Judul, slug, dan deskripsi produk."
+      >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Title *">
             <input
@@ -134,7 +163,7 @@ export function ProductForm({ product }: Props) {
           </Field>
         </div>
 
-        <Field label="Slug *" hint={`URL: /shop/${slug || "..."}`}>
+        <Field label="Slug *" hint={`URL: /shop/${slug || "…"}`}>
           <input
             name="slug"
             required
@@ -169,12 +198,23 @@ export function ProductForm({ product }: Props) {
       </FormSection>
 
       {/* ── Kategori & Tampilan ─────────────────────────────── */}
-      <FormSection title="Kategori & Tampilan">
+      <FormSection
+        icon={<Tag className="h-4 w-4 text-cobalt" />}
+        iconBg="bg-blush"
+        title="Kategori & Tampilan"
+        desc="Kategori, badge, dan warna aksen produk."
+      >
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Kategori *">
-            <select name="category" defaultValue={product?.category ?? "Finance"} className={inputCls}>
+            <select
+              name="category"
+              defaultValue={product?.category ?? "Finance"}
+              className={inputCls}
+            >
               {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </Field>
@@ -188,47 +228,107 @@ export function ProductForm({ product }: Props) {
             />
           </Field>
           <Field label="Accent Color">
-            <select name="accent" defaultValue={product?.accent ?? "bg-sky text-cobalt"} className={inputCls}>
+            <select
+              name="accent"
+              defaultValue={product?.accent ?? "bg-sky text-cobalt"}
+              className={inputCls}
+            >
               {ACCENTS.map((a) => (
-                <option key={a.value} value={a.value}>{a.label}</option>
+                <option key={a.value} value={a.value}>
+                  {a.label}
+                </option>
               ))}
             </select>
           </Field>
         </div>
 
-        <div className="flex flex-wrap gap-6">
-          <CheckboxField name="is_new" defaultChecked={product?.is_new ?? false} label="Tandai sebagai Baru" />
-          <CheckboxField name="is_best_seller" defaultChecked={product?.is_best_seller ?? false} label="Tandai sebagai Terlaris" />
+        <div className="flex flex-wrap gap-5">
+          <CheckboxField
+            name="is_new"
+            defaultChecked={product?.is_new ?? false}
+            label="Tandai sebagai Baru"
+          />
+          <CheckboxField
+            name="is_best_seller"
+            defaultChecked={product?.is_best_seller ?? false}
+            label="Tandai sebagai Terlaris"
+          />
         </div>
       </FormSection>
 
       {/* ── Harga ───────────────────────────────────────────── */}
-      <FormSection title="Harga">
+      <FormSection
+        icon={<DollarSign className="h-4 w-4 text-ink" />}
+        iconBg="bg-sheet/20"
+        title="Harga"
+        desc="Harga tampil, harga raw, dan harga coret."
+      >
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Harga Tampil *">
-            <input name="price" required defaultValue={product?.price} className={inputCls} placeholder="Rp99rb" />
+            <input
+              name="price"
+              required
+              defaultValue={product?.price}
+              className={inputCls}
+              placeholder="Rp99rb"
+            />
           </Field>
           <Field label="Harga Raw (angka) *">
-            <input name="price_raw" type="number" required min={0} defaultValue={product?.price_raw ?? 0} className={inputCls} placeholder="99000" />
+            <input
+              name="price_raw"
+              type="number"
+              required
+              min={0}
+              defaultValue={product?.price_raw ?? 0}
+              className={inputCls}
+              placeholder="99000"
+            />
           </Field>
           <Field label="Harga Coret (opsional)">
-            <input name="original_price" defaultValue={product?.original_price ?? ""} className={inputCls} placeholder="Rp149rb" />
+            <input
+              name="original_price"
+              defaultValue={product?.original_price ?? ""}
+              className={inputCls}
+              placeholder="Rp149rb"
+            />
           </Field>
         </div>
       </FormSection>
 
       {/* ── CTA & Status ────────────────────────────────────── */}
-      <FormSection title="CTA & Status">
+      <FormSection
+        icon={<Zap className="h-4 w-4 text-ink" />}
+        iconBg="bg-sheet/20"
+        title="CTA & Status"
+        desc="Link pembelian, urutan tampil, dan status produk."
+      >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="CTA URL *">
-            <input name="cta_url" type="url" required defaultValue={product?.cta_url} className={inputCls} placeholder="https://lynkd.id/pakarsheet" />
+            <input
+              name="cta_url"
+              type="url"
+              required
+              defaultValue={product?.cta_url}
+              className={inputCls}
+              placeholder="https://lynkd.id/pakarsheet"
+            />
           </Field>
           <Field label="Urutan Tampil">
-            <input name="sort_order" type="number" min={0} defaultValue={product?.sort_order ?? 0} className={inputCls} />
+            <input
+              name="sort_order"
+              type="number"
+              min={0}
+              defaultValue={product?.sort_order ?? 0}
+              className={inputCls}
+            />
           </Field>
         </div>
         <Field label="Status">
-          <select name="status" defaultValue={product?.status ?? "draft"} className={inputCls}>
+          <select
+            name="status"
+            defaultValue={product?.status ?? "draft"}
+            className={inputCls}
+          >
             <option value="active">Aktif (tampil di toko)</option>
             <option value="draft">Draft (tersembunyi)</option>
           </select>
@@ -236,17 +336,42 @@ export function ProductForm({ product }: Props) {
       </FormSection>
 
       {/* ── Fitur Utama ─────────────────────────────────────── */}
-      <FormSection title="Fitur Utama">
-        <DynamicList items={features} onChange={setFeatures} placeholder="Kalender konten bulanan" addLabel="Tambah fitur" />
+      <FormSection
+        icon={<List className="h-4 w-4 text-cobalt" />}
+        iconBg="bg-blush"
+        title="Fitur Utama"
+        desc="Daftar fitur yang ditampilkan di halaman produk."
+      >
+        <DynamicList
+          items={features}
+          onChange={setFeatures}
+          placeholder="Kalender konten bulanan"
+          addLabel="Tambah fitur"
+        />
       </FormSection>
 
       {/* ── What's Included ─────────────────────────────────── */}
-      <FormSection title="Yang Kamu Dapat (What's Included)">
-        <DynamicList items={whatsIncluded} onChange={setWhatsIncluded} placeholder="1 file Google Sheets siap pakai" addLabel="Tambah item" />
+      <FormSection
+        icon={<List className="h-4 w-4 text-cobalt" />}
+        iconBg="bg-blush"
+        title="Yang Kamu Dapat"
+        desc="Isi paket yang didapat pembeli."
+      >
+        <DynamicList
+          items={whatsIncluded}
+          onChange={setWhatsIncluded}
+          placeholder="1 file Google Sheets siap pakai"
+          addLabel="Tambah item"
+        />
       </FormSection>
 
       {/* ── Gambar Preview ──────────────────────────────────── */}
-      <FormSection title="Gambar Preview">
+      <FormSection
+        icon={<ImageIcon className="h-4 w-4 text-cobalt" />}
+        iconBg="bg-blush"
+        title="Gambar Preview"
+        desc="URL gambar atau upload langsung ke Supabase Storage."
+      >
         <div className="space-y-3">
           {images.map((img, i) => (
             <div key={i} className="flex items-center gap-2">
@@ -264,7 +389,7 @@ export function ProductForm({ product }: Props) {
                 <button
                   type="button"
                   onClick={() => setImages(images.filter((_, j) => j !== i))}
-                  className="shrink-0 rounded-lg p-2 text-muted hover:bg-red-50 hover:text-red-500"
+                  className="shrink-0 rounded-lg p-2 text-ink/40 transition hover:bg-red-50 hover:text-red-500"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -275,39 +400,54 @@ export function ProductForm({ product }: Props) {
             <button
               type="button"
               onClick={() => setImages([...images, ""])}
-              className="flex items-center gap-1.5 rounded-lg border border-dashed border-line px-3 py-2 text-sm text-muted transition hover:border-ink/30 hover:text-ink"
+              className="flex items-center gap-1.5 rounded-xl border border-dashed border-ink/20 px-4 py-2 text-sm text-ink/50 transition hover:border-ink/40 hover:text-ink"
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-4 w-4" />
               Tambah URL
             </button>
-            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-cobalt/30 px-3 py-2 text-sm text-cobalt transition hover:border-cobalt hover:bg-sky">
-              {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
-              {uploading ? "Mengupload..." : "Upload Gambar"}
-              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-dashed border-cobalt/30 px-4 py-2 text-sm text-cobalt transition hover:border-cobalt hover:bg-blush">
+              {uploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="h-4 w-4" />
+              )}
+              {uploading ? "Mengupload…" : "Upload Gambar"}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+                disabled={uploading}
+              />
             </label>
           </div>
-          <p className="text-xs text-muted/70">
-            Gambar diupload ke Supabase Storage. Pastikan slug sudah diisi sebelum upload.
+          <p className="text-xs text-ink/35">
+            Pastikan slug sudah diisi sebelum upload gambar.
           </p>
         </div>
       </FormSection>
 
       {/* ── Submit ──────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 border-t border-line pt-5">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-ink/8 bg-white p-5 shadow-sm">
         <button
           type="submit"
           disabled={isPending || isDeleting}
-          className="flex items-center gap-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-cobalt disabled:opacity-60"
+          className="flex items-center gap-2 rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cobalt disabled:opacity-60"
         >
-          {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-          {isPending ? "Menyimpan..." : product ? "Simpan Perubahan" : "Buat Produk"}
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4" />
+          )}
+          {isPending ? "Menyimpan…" : product ? "Simpan Perubahan" : "Buat Produk"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/admin/products")}
           disabled={isPending || isDeleting}
-          className="rounded-full border border-line px-6 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:border-ink disabled:opacity-60"
+          className="flex items-center gap-2 rounded-xl border border-ink/12 px-5 py-2.5 text-sm font-semibold text-ink/60 transition hover:border-ink/25 hover:text-ink disabled:opacity-60"
         >
+          <ArrowLeft className="h-4 w-4" />
           Batal
         </button>
 
@@ -318,29 +458,31 @@ export function ProductForm({ product }: Props) {
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
                 disabled={isPending || isDeleting}
-                className="flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-semibold text-muted transition hover:-translate-y-0.5 hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-60"
+                className="flex items-center gap-2 rounded-xl border border-ink/12 px-4 py-2.5 text-sm font-semibold text-ink/45 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-60"
               >
                 <Trash2 className="h-4 w-4" />
                 Hapus Produk
               </button>
             ) : (
-              <div className="flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-2.5">
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
                 <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
-                <span className="text-sm font-medium text-red-700">Yakin hapus produk ini?</span>
+                <span className="text-sm font-medium text-red-700">
+                  Yakin hapus produk ini?
+                </span>
                 <button
                   type="button"
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="flex items-center gap-1.5 rounded-full bg-red-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                  className="flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
                 >
-                  {isDeleting && <Loader2 className="h-3 w-3 animate-spin" />}
-                  {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+                  {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {isDeleting ? "Menghapus…" : "Ya, Hapus"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(false)}
                   disabled={isDeleting}
-                  className="rounded-full border border-red-200 px-4 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-60"
+                  className="rounded-xl border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-60"
                 >
                   Batal
                 </button>
@@ -356,37 +498,73 @@ export function ProductForm({ product }: Props) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-cobalt focus:ring-2 focus:ring-cobalt/15";
+  "w-full rounded-xl border border-ink/12 bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+function FormSection({
+  icon,
+  iconBg,
+  title,
+  desc,
+  children,
+}: {
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  desc: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="rounded-2xl border border-line bg-white p-6 shadow-card">
-      <h2 className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted">{title}</h2>
-      <div className="space-y-4">{children}</div>
+    <div className="overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-sm">
+      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/1 px-5 py-4">
+        <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${iconBg}`}>
+          {icon}
+        </span>
+        <div>
+          <p className="text-sm font-semibold text-ink">{title}</p>
+          <p className="text-xs text-ink/45">{desc}</p>
+        </div>
+      </div>
+      <div className="space-y-4 p-5">{children}</div>
     </div>
   );
 }
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-ink">{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-muted/70">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs text-ink/40">{hint}</p>}
     </div>
   );
 }
 
-function CheckboxField({ name, defaultChecked, label }: { name: string; defaultChecked: boolean; label: string }) {
+function CheckboxField({
+  name,
+  defaultChecked,
+  label,
+}: {
+  name: string;
+  defaultChecked: boolean;
+  label: string;
+}) {
   return (
     <label className="flex cursor-pointer items-center gap-2.5">
       <input
         type="checkbox"
         name={name}
         defaultChecked={defaultChecked}
-        className="h-4 w-4 rounded border-line accent-cobalt"
+        className="h-4 w-4 rounded border-ink/20 accent-cobalt"
       />
       <span className="text-sm font-medium text-ink">{label}</span>
     </label>
@@ -422,7 +600,7 @@ function DynamicList({
             <button
               type="button"
               onClick={() => onChange(items.filter((_, j) => j !== i))}
-              className="shrink-0 rounded-lg p-2 text-muted hover:bg-red-50 hover:text-red-500"
+              className="shrink-0 rounded-lg p-2 text-ink/40 transition hover:bg-red-50 hover:text-red-500"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -432,9 +610,9 @@ function DynamicList({
       <button
         type="button"
         onClick={() => onChange([...items, ""])}
-        className="flex items-center gap-1.5 rounded-lg border border-dashed border-line px-3 py-2 text-sm text-muted transition hover:border-ink/30 hover:text-ink"
+        className="flex items-center gap-1.5 rounded-xl border border-dashed border-ink/20 px-4 py-2 text-sm text-ink/50 transition hover:border-ink/40 hover:text-ink"
       >
-        <Plus className="h-3.5 w-3.5" />
+        <Plus className="h-4 w-4" />
         {addLabel}
       </button>
     </div>

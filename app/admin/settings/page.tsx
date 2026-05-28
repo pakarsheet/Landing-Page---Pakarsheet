@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SettingsForm } from "@/components/admin/SettingsForm";
+import { Settings } from "lucide-react";
 
 export const metadata = { title: "Pengaturan — Admin Pakarsheet" };
 
@@ -12,7 +13,7 @@ export default async function AdminSettingsPage() {
 
   if (error && error.code !== "PGRST116") {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+      <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
         Gagal memuat pengaturan: {error.message}
       </div>
     );
@@ -20,12 +21,19 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Page header */}
       <div>
-        <h1 className="text-2xl font-semibold text-ink">Pengaturan Situs</h1>
-        <p className="mt-1 text-sm text-muted">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-line">
+            <Settings className="h-4.5 w-4.5 text-muted" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">Pengaturan</h1>
+        </div>
+        <p className="mt-2 text-sm text-ink/50">
           Perubahan langsung berlaku di landing page.
         </p>
       </div>
+
       <SettingsForm settings={settings} />
     </div>
   );
