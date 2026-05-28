@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import { updateSiteSettings } from "@/app/admin/actions";
 import type { SiteSettings } from "@/lib/supabase/types";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
+import { toast } from "@/components/admin/Toast";
 
 interface Props {
   settings: SiteSettings | null;
@@ -11,13 +12,11 @@ interface Props {
 
 export function SettingsForm({ settings }: Props) {
   const [isPending, startTransition] = useTransition();
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setSuccess(false);
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
       if (!settings?.id) {
@@ -27,37 +26,27 @@ export function SettingsForm({ settings }: Props) {
       const result = await updateSiteSettings(settings.id, formData);
       if (result?.error) {
         setError(result.error);
+        toast.error("Gagal menyimpan: " + result.error);
       } else {
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
+        toast.success("Pengaturan berhasil disimpan.");
       }
     });
   }
 
-  const inputCls =
-    "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
-  const labelCls = "mb-1.5 block text-sm font-medium text-gray-700";
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
           {error}
-        </div>
-      )}
-      {success && (
-        <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-          <CheckCircle2 className="h-4 w-4" />
-          Pengaturan berhasil disimpan.
         </div>
       )}
 
       {/* WhatsApp */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-5 text-base font-semibold text-gray-900">WhatsApp</h2>
+      <div className="rounded-2xl border border-line bg-white p-6 shadow-card">
+        <h2 className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted">WhatsApp</h2>
         <div className="space-y-4">
-          <div>
-            <label className={labelCls}>Nomor WhatsApp</label>
+          <Field label="Nomor WhatsApp" hint="Format internasional tanpa + (contoh: 6281234567890)">
             <input
               name="whatsapp_number"
               required
@@ -65,12 +54,8 @@ export function SettingsForm({ settings }: Props) {
               className={inputCls}
               placeholder="6281234567890"
             />
-            <p className="mt-1 text-xs text-gray-400">
-              Format internasional tanpa + (contoh: 6281234567890)
-            </p>
-          </div>
-          <div>
-            <label className={labelCls}>Pesan Default WA</label>
+          </Field>
+          <Field label="Pesan Default WA">
             <textarea
               name="whatsapp_message"
               required
@@ -79,31 +64,29 @@ export function SettingsForm({ settings }: Props) {
               className={inputCls}
               placeholder="Halo Pakarsheet, saya ingin tahu lebih lanjut..."
             />
-          </div>
+          </Field>
           {settings && (
-            <div className="rounded-xl bg-gray-50 px-4 py-3">
-              <p className="text-xs font-medium text-gray-500">Preview URL WA:</p>
-              <p className="mt-1 break-all text-xs text-gray-700">{settings.contact_url}</p>
+            <div className="rounded-xl border border-line bg-blush/30 px-4 py-3">
+              <p className="text-xs font-medium text-muted">Preview URL WA:</p>
+              <p className="mt-1 break-all text-xs text-ink">{settings.contact_url}</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Brand */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-5 text-base font-semibold text-gray-900">Brand</h2>
+      <div className="rounded-2xl border border-line bg-white p-6 shadow-card">
+        <h2 className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted">Brand</h2>
         <div className="space-y-4">
-          <div>
-            <label className={labelCls}>Nama Situs</label>
+          <Field label="Nama Situs">
             <input
               name="site_name"
               required
               defaultValue={settings?.site_name ?? "Pakarsheet"}
               className={inputCls}
             />
-          </div>
-          <div>
-            <label className={labelCls}>Tagline</label>
+          </Field>
+          <Field label="Tagline">
             <input
               name="tagline"
               required
@@ -111,7 +94,7 @@ export function SettingsForm({ settings }: Props) {
               className={inputCls}
               placeholder="Bikin Google Sheets kamu naik level."
             />
-          </div>
+          </Field>
         </div>
       </div>
 
@@ -119,12 +102,35 @@ export function SettingsForm({ settings }: Props) {
         <button
           type="submit"
           disabled={isPending}
-          className="flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:opacity-60"
+          className="flex items-center gap-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-cobalt disabled:opacity-60"
         >
           {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
           {isPending ? "Menyimpan..." : "Simpan Pengaturan"}
         </button>
       </div>
     </form>
+  );
+}
+
+// ── Shared styles ─────────────────────────────────────────────────────────────
+
+const inputCls =
+  "w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-cobalt focus:ring-2 focus:ring-cobalt/15";
+
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-ink">{label}</label>
+      {children}
+      {hint && <p className="mt-1 text-xs text-muted/70">{hint}</p>}
+    </div>
   );
 }

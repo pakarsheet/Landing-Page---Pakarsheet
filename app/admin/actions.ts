@@ -37,17 +37,58 @@ export async function updateProduct(id: string, formData: FormData) {
 
 export async function deleteProduct(id: string) {
   const supabase = createAdminClient();
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("slug")
+    .eq("id", id)
+    .single();
+
   const { error } = await supabase.from("products").delete().eq("id", id);
   if (error) return { error: error.message };
 
   revalidatePath("/admin/products");
   revalidatePath("/shop");
+  if (product?.slug) revalidatePath(`/shop/${product.slug}`);
   return { success: true };
+}
+
+export async function duplicateProduct(id: string) {
+  const supabase = createAdminClient();
+
+  const { data: product, error: fetchError } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !product) return { error: "Produk tidak ditemukan." };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id: _id, created_at: _ca, updated_at: _ua, ...rest } = product;
+  const newSlug = `${rest.slug}-copy-${Date.now().toString(36)}`;
+
+  const { data: newProduct, error } = await supabase
+    .from("products")
+    .insert({
+      ...rest,
+      slug: newSlug,
+      title: `${rest.title} (Copy)`,
+      status: "draft",
+    } as ProductInsert)
+    .select("id")
+    .single();
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/products");
+  return { success: true, id: newProduct.id };
 }
 
 export async function toggleProductStatus(id: string, currentStatus: string) {
   const supabase = createAdminClient();
   const newStatus = currentStatus === "active" ? "draft" : "active";
+
   const { error } = await supabase
     .from("products")
     .update({ status: newStatus })
@@ -100,16 +141,13 @@ export async function uploadProductImage(formData: FormData) {
 
   if (error) return { error: error.message };
 
-  const { data } = supabase.storage
-    .from("product-images")
-    .getPublicUrl(fileName);
+  const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
 
   return { url: data.publicUrl };
 }
 
 export async function deleteProductImage(path: string) {
   const supabase = createAdminClient();
-  // path is the full URL — extract the storage path
   const url = new URL(path);
   const storagePath = url.pathname.split("/product-images/")[1];
   if (!storagePath) return { error: "Path tidak valid." };
@@ -120,44 +158,6 @@ export async function deleteProductImage(path: string) {
 
   if (error) return { error: error.message };
   return { success: true };
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function parseProductForm(formData: FormData) {
-  const parseList = (key: string): string[] =>
-    ((formData.get(key) as string) ?? "")
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-  const parseImages = (): string[] =>
-    ((formData.get("preview_images") as string) ?? "")
-      .split("\n")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-  return {
-    slug: (formData.get("slug") as string).trim(),
-    title: (formData.get("title") as string).trim(),
-    short_title: (formData.get("short_title") as string).trim(),
-    description: (formData.get("description") as string).trim(),
-    long_description: (formData.get("long_description") as string).trim(),
-    badge: (formData.get("badge") as string).trim(),
-    category: formData.get("category") as string,
-    price: (formData.get("price") as string).trim(),
-    price_raw: parseInt(formData.get("price_raw") as string, 10) || 0,
-    original_price: (formData.get("original_price") as string).trim() || null,
-    cta_url: (formData.get("cta_url") as string).trim(),
-    accent: (formData.get("accent") as string).trim(),
-    is_new: formData.get("is_new") === "on",
-    is_best_seller: formData.get("is_best_seller") === "on",
-    features: parseList("features"),
-    whats_included: parseList("whats_included"),
-    preview_images: parseImages(),
-    sort_order: parseInt(formData.get("sort_order") as string, 10) || 0,
-    status: formData.get("status") as string,
-  };
 }
 
 // ── Blog Posts ────────────────────────────────────────────────────────────────
@@ -219,7 +219,45 @@ export async function togglePostStatus(id: string, currentStatus: string) {
   return { success: true };
 }
 
-// ── Post form parser ──────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function parseProductForm(formData: FormData) {
+  const parseList = (key: string): string[] =>
+    ((formData.get(key) as string) ?? "")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+  const parseImages = (): string[] =>
+    ((formData.get("preview_images") as string) ?? "")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+  const str = (key: string) => ((formData.get(key) as string) ?? "").trim();
+
+  return {
+    slug: str("slug"),
+    title: str("title"),
+    short_title: str("short_title"),
+    description: str("description"),
+    long_description: str("long_description"),
+    badge: str("badge"),
+    category: formData.get("category") as string,
+    price: str("price"),
+    price_raw: parseInt(formData.get("price_raw") as string, 10) || 0,
+    original_price: str("original_price") || null,
+    cta_url: str("cta_url"),
+    accent: str("accent"),
+    is_new: formData.get("is_new") === "on",
+    is_best_seller: formData.get("is_best_seller") === "on",
+    features: parseList("features"),
+    whats_included: parseList("whats_included"),
+    preview_images: parseImages(),
+    sort_order: parseInt(formData.get("sort_order") as string, 10) || 0,
+    status: formData.get("status") as string,
+  };
+}
 
 function parsePostForm(formData: FormData) {
   const parseTags = (): string[] =>
@@ -234,21 +272,23 @@ function parsePostForm(formData: FormData) {
       ? (formData.get("published_at") as string) || new Date().toISOString()
       : null;
 
+  const str = (key: string) => ((formData.get(key) as string) ?? "").trim();
+
   return {
-    slug: (formData.get("slug") as string).trim(),
-    title: (formData.get("title") as string).trim(),
-    excerpt: (formData.get("excerpt") as string).trim(),
-    content: (formData.get("content") as string).trim(),
-    cover_image: (formData.get("cover_image") as string).trim() || null,
-    category: (formData.get("category") as string).trim(),
+    slug: str("slug"),
+    title: str("title"),
+    excerpt: str("excerpt"),
+    content: str("content"),
+    cover_image: str("cover_image") || null,
+    category: str("category"),
     tags: parseTags(),
-    author_name: (formData.get("author_name") as string).trim() || "Tim Pakarsheet",
-    author_avatar: (formData.get("author_avatar") as string).trim() || null,
+    author_name: str("author_name") || "Tim Pakarsheet",
+    author_avatar: str("author_avatar") || null,
     status,
     featured: formData.get("featured") === "on",
     read_time: parseInt(formData.get("read_time") as string, 10) || 5,
-    related_tool_slug: (formData.get("related_tool_slug") as string).trim() || null,
-    related_shop_slug: (formData.get("related_shop_slug") as string).trim() || null,
+    related_tool_slug: str("related_tool_slug") || null,
+    related_shop_slug: str("related_shop_slug") || null,
     published_at,
   };
 }

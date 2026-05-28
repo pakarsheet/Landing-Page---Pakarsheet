@@ -6,6 +6,8 @@ import { createPost, updatePost, deletePost } from "@/app/admin/actions";
 import type { Post } from "@/lib/supabase/types";
 import { Loader2, Trash2, AlertTriangle } from "lucide-react";
 import { tools, worksheets } from "@/lib/tools";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { toast } from "@/components/admin/Toast";
 
 const CATEGORIES = [
   "Tips Bisnis",
@@ -49,6 +51,7 @@ export function PostForm({ post }: Props) {
         setError("Gagal menghapus artikel: " + result.error);
         setShowDeleteConfirm(false);
       } else {
+        toast.success("Artikel berhasil dihapus.");
         router.push("/admin/blog");
       }
     });
@@ -67,27 +70,24 @@ export function PostForm({ post }: Props) {
       if (result?.error) {
         setError(result.error);
       } else {
+        toast.success(post ? "Artikel berhasil diperbarui." : "Artikel baru berhasil dibuat.");
         router.push("/admin/blog");
       }
     });
   }
 
-  const inputCls =
-    "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
-  const labelCls = "mb-1.5 block text-sm font-medium text-gray-700";
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
           {error}
         </div>
       )}
 
       {/* ── Info Dasar ─────────────────────────────────────── */}
       <FormSection title="Info Dasar">
-        <div>
-          <label className={labelCls}>Judul Artikel *</label>
+        <Field label="Judul Artikel *">
           <input
             name="title"
             required
@@ -96,10 +96,9 @@ export function PostForm({ post }: Props) {
             className={inputCls}
             placeholder="Cara Hitung HPP Produk Makanan dari Nol"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className={labelCls}>Slug *</label>
+        <Field label="Slug *" hint={`URL: /blog/${slug || "..."}`}>
           <input
             name="slug"
             required
@@ -108,11 +107,9 @@ export function PostForm({ post }: Props) {
             className={inputCls}
             placeholder="cara-hitung-hpp-produk-makanan"
           />
-          <p className="mt-1 text-xs text-gray-400">URL: /blog/{slug || "..."}</p>
-        </div>
+        </Field>
 
-        <div>
-          <label className={labelCls}>Excerpt (ringkasan) *</label>
+        <Field label="Excerpt (ringkasan) *" hint="Ideal 120–160 karakter untuk SEO.">
           <textarea
             name="excerpt"
             required
@@ -121,140 +118,84 @@ export function PostForm({ post }: Props) {
             className={inputCls}
             placeholder="Ringkasan singkat artikel yang muncul di card dan meta description."
           />
-          <p className="mt-1 text-xs text-gray-400">Ideal 120–160 karakter untuk SEO.</p>
-        </div>
+        </Field>
       </FormSection>
 
       {/* ── Konten ─────────────────────────────────────────── */}
       <FormSection title="Konten Artikel">
-        <div>
-          <label className={labelCls}>Konten (HTML) *</label>
-          <textarea
-            name="content"
-            required
-            rows={20}
-            defaultValue={post?.content}
-            className={`${inputCls} font-mono text-xs`}
-            placeholder="<h2>Judul Section</h2><p>Isi artikel...</p>"
-          />
-          <p className="mt-1 text-xs text-gray-400">
-            Tulis dalam HTML. Gunakan tag: h2, h3, p, ul, ol, li, strong, a, blockquote.
-          </p>
-        </div>
+        <Field label="Konten (HTML) *" hint="Gunakan toolbar atau ketik HTML langsung. Klik Preview untuk melihat hasil.">
+          <RichTextEditor name="content" defaultValue={post?.content} required />
+        </Field>
       </FormSection>
 
       {/* ── Kategori & Meta ────────────────────────────────── */}
       <FormSection title="Kategori & Meta">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>Kategori *</label>
+          <Field label="Kategori *">
             <select name="category" defaultValue={post?.category ?? "Tips Bisnis"} className={inputCls}>
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
-          </div>
-          <div>
-            <label className={labelCls}>Estimasi Baca (menit)</label>
-            <input
-              name="read_time"
-              type="number"
-              min={1}
-              max={60}
-              defaultValue={post?.read_time ?? 5}
-              className={inputCls}
-            />
-          </div>
+          </Field>
+          <Field label="Estimasi Baca (menit)">
+            <input name="read_time" type="number" min={1} max={60} defaultValue={post?.read_time ?? 5} className={inputCls} />
+          </Field>
         </div>
 
-        <div>
-          <label className={labelCls}>Tags (pisahkan dengan koma)</label>
+        <Field label="Tags (pisahkan dengan koma)">
           <input
             name="tags"
             defaultValue={post?.tags?.join(", ") ?? ""}
             className={inputCls}
             placeholder="HPP, bisnis kuliner, harga jual, UMKM"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className={labelCls}>URL Gambar Cover (opsional)</label>
-          <input
-            name="cover_image"
-            type="url"
-            defaultValue={post?.cover_image ?? ""}
-            className={inputCls}
-            placeholder="https://..."
-          />
-        </div>
+        <Field label="URL Gambar Cover (opsional)">
+          <input name="cover_image" type="url" defaultValue={post?.cover_image ?? ""} className={inputCls} placeholder="https://..." />
+        </Field>
       </FormSection>
 
       {/* ── Penulis ────────────────────────────────────────── */}
       <FormSection title="Penulis">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>Nama Penulis</label>
-            <input
-              name="author_name"
-              defaultValue={post?.author_name ?? "Tim Pakarsheet"}
-              className={inputCls}
-            />
-          </div>
-          <div>
-            <label className={labelCls}>URL Avatar Penulis (opsional)</label>
-            <input
-              name="author_avatar"
-              type="url"
-              defaultValue={post?.author_avatar ?? ""}
-              className={inputCls}
-              placeholder="https://..."
-            />
-          </div>
+          <Field label="Nama Penulis">
+            <input name="author_name" defaultValue={post?.author_name ?? "Tim Pakarsheet"} className={inputCls} />
+          </Field>
+          <Field label="URL Avatar Penulis (opsional)">
+            <input name="author_avatar" type="url" defaultValue={post?.author_avatar ?? ""} className={inputCls} placeholder="https://..." />
+          </Field>
         </div>
       </FormSection>
 
       {/* ── Internal Links ─────────────────────────────────── */}
       <FormSection title="Internal Links (SEO)">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>Link ke Tool (opsional)</label>
-            <select
-              name="related_tool_slug"
-              defaultValue={post?.related_tool_slug ?? ""}
-              className={inputCls}
-            >
+          <Field label="Link ke Tool (opsional)" hint="Akan tampil sebagai CTA di akhir artikel.">
+            <select name="related_tool_slug" defaultValue={post?.related_tool_slug ?? ""} className={inputCls}>
               <option value="">— Tidak ada —</option>
               {ALL_TOOLS.map((t) => (
                 <option key={t.slug} value={t.slug}>{t.shortTitle}</option>
               ))}
             </select>
-            <p className="mt-1 text-xs text-gray-400">Akan tampil sebagai CTA di akhir artikel.</p>
-          </div>
-          <div>
-            <label className={labelCls}>Link ke Produk Shop (opsional)</label>
-            <input
-              name="related_shop_slug"
-              defaultValue={post?.related_shop_slug ?? ""}
-              className={inputCls}
-              placeholder="content-planner-instagram-pro"
-            />
-            <p className="mt-1 text-xs text-gray-400">Slug produk dari halaman /shop.</p>
-          </div>
+          </Field>
+          <Field label="Link ke Produk Shop (opsional)" hint="Slug produk dari halaman /shop.">
+            <input name="related_shop_slug" defaultValue={post?.related_shop_slug ?? ""} className={inputCls} placeholder="content-planner-instagram-pro" />
+          </Field>
         </div>
       </FormSection>
 
       {/* ── Publikasi ──────────────────────────────────────── */}
       <FormSection title="Publikasi">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>Status</label>
+          <Field label="Status">
             <select name="status" defaultValue={post?.status ?? "draft"} className={inputCls}>
               <option value="published">Tayang (publik)</option>
               <option value="draft">Draft (tersembunyi)</option>
             </select>
-          </div>
-          <div>
-            <label className={labelCls}>Tanggal Publikasi</label>
+          </Field>
+          <Field label="Tanggal Publikasi">
             <input
               name="published_at"
               type="datetime-local"
@@ -265,7 +206,7 @@ export function PostForm({ post }: Props) {
               }
               className={inputCls}
             />
-          </div>
+          </Field>
         </div>
 
         <label className="flex cursor-pointer items-center gap-2.5">
@@ -273,16 +214,16 @@ export function PostForm({ post }: Props) {
             type="checkbox"
             name="featured"
             defaultChecked={post?.featured ?? false}
-            className="h-4 w-4 rounded border-gray-300 accent-gray-900"
+            className="h-4 w-4 rounded border-line accent-cobalt"
           />
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-ink">
             Tandai sebagai Pilihan Editor (tampil lebih besar di blog)
           </span>
         </label>
       </FormSection>
 
       {/* ── Submit ─────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 border-t border-line pt-6">
+      <div className="flex items-center gap-3 border-t border-line pt-5">
         <button
           type="submit"
           disabled={isPending || isDeleting}
@@ -342,11 +283,28 @@ export function PostForm({ post }: Props) {
   );
 }
 
+// ── Shared styles ─────────────────────────────────────────────────────────────
+
+const inputCls =
+  "w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-cobalt focus:ring-2 focus:ring-cobalt/15";
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-5 text-base font-semibold text-gray-900">{title}</h2>
+    <div className="rounded-2xl border border-line bg-white p-6 shadow-card">
+      <h2 className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted">{title}</h2>
       <div className="space-y-4">{children}</div>
+    </div>
+  );
+}
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-ink">{label}</label>
+      {children}
+      {hint && <p className="mt-1 text-xs text-muted/70">{hint}</p>}
     </div>
   );
 }

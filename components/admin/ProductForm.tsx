@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createProduct, updateProduct, uploadProductImage, deleteProduct } from "@/app/admin/actions";
 import type { Product } from "@/lib/supabase/types";
 import { Loader2, Plus, Trash2, Upload, X, AlertTriangle } from "lucide-react";
+import { toast } from "@/components/admin/Toast";
 
 const CATEGORIES = ["Finance", "Sales", "Operasional", "Bundle", "Marketing", "Project"];
 const ACCENTS = [
@@ -26,32 +27,11 @@ export function ProductForm({ product }: Props) {
   const [uploading, setUploading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  function handleDelete() {
-    if (!product) return;
-    startDeleteTransition(async () => {
-      const result = await deleteProduct(product.id);
-      if (result?.error) {
-        setError("Gagal menghapus produk: " + result.error);
-        setShowDeleteConfirm(false);
-      } else {
-        router.push("/admin/products");
-      }
-    });
-  }
-
-  // Dynamic list states
-  const [features, setFeatures] = useState<string[]>(
-    product?.features ?? [""]
-  );
-  const [whatsIncluded, setWhatsIncluded] = useState<string[]>(
-    product?.whats_included ?? [""]
-  );
-  const [images, setImages] = useState<string[]>(
-    product?.preview_images ?? [""]
-  );
-
-  // Auto-generate slug from title
+  const [features, setFeatures] = useState<string[]>(product?.features ?? [""]);
+  const [whatsIncluded, setWhatsIncluded] = useState<string[]>(product?.whats_included ?? [""]);
+  const [images, setImages] = useState<string[]>(product?.preview_images ?? [""]);
   const [slug, setSlug] = useState(product?.slug ?? "");
+
   function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!product) {
       const generated = e.target.value
@@ -61,6 +41,20 @@ export function ProductForm({ product }: Props) {
         .replace(/-+/g, "-");
       setSlug(generated);
     }
+  }
+
+  function handleDelete() {
+    if (!product) return;
+    startDeleteTransition(async () => {
+      const result = await deleteProduct(product.id);
+      if (result?.error) {
+        setError("Gagal menghapus produk: " + result.error);
+        setShowDeleteConfirm(false);
+      } else {
+        toast.success("Produk berhasil dihapus.");
+        router.push("/admin/products");
+      }
+    });
   }
 
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -89,8 +83,6 @@ export function ProductForm({ product }: Props) {
     e.preventDefault();
     setError(null);
     const formData = new FormData(e.currentTarget);
-
-    // Override dynamic lists with current state
     formData.set("features", features.filter(Boolean).join("\n"));
     formData.set("whats_included", whatsIncluded.filter(Boolean).join("\n"));
     formData.set("preview_images", images.filter(Boolean).join("\n"));
@@ -103,28 +95,25 @@ export function ProductForm({ product }: Props) {
       if (result?.error) {
         setError(result.error);
       } else {
+        toast.success(product ? "Produk berhasil diperbarui." : "Produk baru berhasil dibuat.");
         router.push("/admin/products");
       }
     });
   }
 
-  const inputCls =
-    "w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
-  const labelCls = "mb-1.5 block text-sm font-medium text-gray-700";
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
           {error}
         </div>
       )}
 
-      {/* ── Section: Info Dasar ─────────────────────────────── */}
+      {/* ── Info Dasar ─────────────────────────────────────── */}
       <FormSection title="Info Dasar">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>Title *</label>
+          <Field label="Title *">
             <input
               name="title"
               required
@@ -133,9 +122,8 @@ export function ProductForm({ product }: Props) {
               className={inputCls}
               placeholder="Content Planner Instagram Pro"
             />
-          </div>
-          <div>
-            <label className={labelCls}>Short Title *</label>
+          </Field>
+          <Field label="Short Title *">
             <input
               name="short_title"
               required
@@ -143,11 +131,10 @@ export function ProductForm({ product }: Props) {
               className={inputCls}
               placeholder="Content Planner IG"
             />
-          </div>
+          </Field>
         </div>
 
-        <div>
-          <label className={labelCls}>Slug *</label>
+        <Field label="Slug *" hint={`URL: /shop/${slug || "..."}`}>
           <input
             name="slug"
             required
@@ -156,13 +143,9 @@ export function ProductForm({ product }: Props) {
             className={inputCls}
             placeholder="content-planner-instagram-pro"
           />
-          <p className="mt-1 text-xs text-gray-400">
-            URL: /shop/{slug || "..."}
-          </p>
-        </div>
+        </Field>
 
-        <div>
-          <label className={labelCls}>Deskripsi Pendek *</label>
+        <Field label="Deskripsi Pendek *">
           <textarea
             name="description"
             required
@@ -171,10 +154,9 @@ export function ProductForm({ product }: Props) {
             className={inputCls}
             placeholder="Satu kalimat deskripsi untuk card di toko."
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className={labelCls}>Deskripsi Panjang *</label>
+        <Field label="Deskripsi Panjang *">
           <textarea
             name="long_description"
             required
@@ -183,22 +165,20 @@ export function ProductForm({ product }: Props) {
             className={inputCls}
             placeholder="Deskripsi lengkap yang muncul di halaman detail produk."
           />
-        </div>
+        </Field>
       </FormSection>
 
-      {/* ── Section: Kategori & Badge ───────────────────────── */}
+      {/* ── Kategori & Tampilan ─────────────────────────────── */}
       <FormSection title="Kategori & Tampilan">
         <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className={labelCls}>Kategori *</label>
+          <Field label="Kategori *">
             <select name="category" defaultValue={product?.category ?? "Finance"} className={inputCls}>
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
-          </div>
-          <div>
-            <label className={labelCls}>Badge *</label>
+          </Field>
+          <Field label="Badge *">
             <input
               name="badge"
               required
@@ -206,131 +186,66 @@ export function ProductForm({ product }: Props) {
               className={inputCls}
               placeholder="Marketing"
             />
-          </div>
-          <div>
-            <label className={labelCls}>Accent Color</label>
+          </Field>
+          <Field label="Accent Color">
             <select name="accent" defaultValue={product?.accent ?? "bg-sky text-cobalt"} className={inputCls}>
               {ACCENTS.map((a) => (
                 <option key={a.value} value={a.value}>{a.label}</option>
               ))}
             </select>
-          </div>
+          </Field>
         </div>
 
         <div className="flex flex-wrap gap-6">
-          <label className="flex cursor-pointer items-center gap-2.5">
-            <input
-              type="checkbox"
-              name="is_new"
-              defaultChecked={product?.is_new ?? false}
-              className="h-4 w-4 rounded border-gray-300 accent-gray-900"
-            />
-            <span className="text-sm font-medium text-gray-700">Tandai sebagai Baru</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-2.5">
-            <input
-              type="checkbox"
-              name="is_best_seller"
-              defaultChecked={product?.is_best_seller ?? false}
-              className="h-4 w-4 rounded border-gray-300 accent-gray-900"
-            />
-            <span className="text-sm font-medium text-gray-700">Tandai sebagai Terlaris</span>
-          </label>
+          <CheckboxField name="is_new" defaultChecked={product?.is_new ?? false} label="Tandai sebagai Baru" />
+          <CheckboxField name="is_best_seller" defaultChecked={product?.is_best_seller ?? false} label="Tandai sebagai Terlaris" />
         </div>
       </FormSection>
 
-      {/* ── Section: Harga ──────────────────────────────────── */}
+      {/* ── Harga ───────────────────────────────────────────── */}
       <FormSection title="Harga">
         <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className={labelCls}>Harga Tampil *</label>
-            <input
-              name="price"
-              required
-              defaultValue={product?.price}
-              className={inputCls}
-              placeholder="Rp99rb"
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Harga Raw (angka) *</label>
-            <input
-              name="price_raw"
-              type="number"
-              required
-              min={0}
-              defaultValue={product?.price_raw ?? 0}
-              className={inputCls}
-              placeholder="99000"
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Harga Coret (opsional)</label>
-            <input
-              name="original_price"
-              defaultValue={product?.original_price ?? ""}
-              className={inputCls}
-              placeholder="Rp149rb"
-            />
-          </div>
+          <Field label="Harga Tampil *">
+            <input name="price" required defaultValue={product?.price} className={inputCls} placeholder="Rp99rb" />
+          </Field>
+          <Field label="Harga Raw (angka) *">
+            <input name="price_raw" type="number" required min={0} defaultValue={product?.price_raw ?? 0} className={inputCls} placeholder="99000" />
+          </Field>
+          <Field label="Harga Coret (opsional)">
+            <input name="original_price" defaultValue={product?.original_price ?? ""} className={inputCls} placeholder="Rp149rb" />
+          </Field>
         </div>
       </FormSection>
 
-      {/* ── Section: CTA & Status ───────────────────────────── */}
+      {/* ── CTA & Status ────────────────────────────────────── */}
       <FormSection title="CTA & Status">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={labelCls}>CTA URL *</label>
-            <input
-              name="cta_url"
-              type="url"
-              required
-              defaultValue={product?.cta_url}
-              className={inputCls}
-              placeholder="https://lynkd.id/pakarsheet"
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Urutan Tampil</label>
-            <input
-              name="sort_order"
-              type="number"
-              min={0}
-              defaultValue={product?.sort_order ?? 0}
-              className={inputCls}
-            />
-          </div>
+          <Field label="CTA URL *">
+            <input name="cta_url" type="url" required defaultValue={product?.cta_url} className={inputCls} placeholder="https://lynkd.id/pakarsheet" />
+          </Field>
+          <Field label="Urutan Tampil">
+            <input name="sort_order" type="number" min={0} defaultValue={product?.sort_order ?? 0} className={inputCls} />
+          </Field>
         </div>
-        <div>
-          <label className={labelCls}>Status</label>
+        <Field label="Status">
           <select name="status" defaultValue={product?.status ?? "draft"} className={inputCls}>
             <option value="active">Aktif (tampil di toko)</option>
             <option value="draft">Draft (tersembunyi)</option>
           </select>
-        </div>
+        </Field>
       </FormSection>
 
-      {/* ── Section: Features ───────────────────────────────── */}
+      {/* ── Fitur Utama ─────────────────────────────────────── */}
       <FormSection title="Fitur Utama">
-        <DynamicList
-          items={features}
-          onChange={setFeatures}
-          placeholder="Kalender konten bulanan"
-          addLabel="Tambah fitur"
-        />
+        <DynamicList items={features} onChange={setFeatures} placeholder="Kalender konten bulanan" addLabel="Tambah fitur" />
       </FormSection>
 
-      {/* ── Section: What's Included ────────────────────────── */}
+      {/* ── What's Included ─────────────────────────────────── */}
       <FormSection title="Yang Kamu Dapat (What's Included)">
-        <DynamicList
-          items={whatsIncluded}
-          onChange={setWhatsIncluded}
-          placeholder="1 file Google Sheets siap pakai"
-          addLabel="Tambah item"
-        />
+        <DynamicList items={whatsIncluded} onChange={setWhatsIncluded} placeholder="1 file Google Sheets siap pakai" addLabel="Tambah item" />
       </FormSection>
 
-      {/* ── Section: Gambar ─────────────────────────────────── */}
+      {/* ── Gambar Preview ──────────────────────────────────── */}
       <FormSection title="Gambar Preview">
         <div className="space-y-3">
           {images.map((img, i) => (
@@ -349,7 +264,7 @@ export function ProductForm({ product }: Props) {
                 <button
                   type="button"
                   onClick={() => setImages(images.filter((_, j) => j !== i))}
-                  className="shrink-0 rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                  className="shrink-0 rounded-lg p-2 text-muted hover:bg-red-50 hover:text-red-500"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -360,35 +275,25 @@ export function ProductForm({ product }: Props) {
             <button
               type="button"
               onClick={() => setImages([...images, ""])}
-              className="flex items-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-500 transition hover:border-gray-400 hover:text-gray-700"
+              className="flex items-center gap-1.5 rounded-lg border border-dashed border-line px-3 py-2 text-sm text-muted transition hover:border-ink/30 hover:text-ink"
             >
               <Plus className="h-3.5 w-3.5" />
               Tambah URL
             </button>
-            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-blue-300 px-3 py-2 text-sm text-blue-600 transition hover:border-blue-400 hover:bg-blue-50">
-              {uploading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Upload className="h-3.5 w-3.5" />
-              )}
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-cobalt/30 px-3 py-2 text-sm text-cobalt transition hover:border-cobalt hover:bg-sky">
+              {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
               {uploading ? "Mengupload..." : "Upload Gambar"}
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-                disabled={uploading}
-              />
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
             </label>
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted/70">
             Gambar diupload ke Supabase Storage. Pastikan slug sudah diisi sebelum upload.
           </p>
         </div>
       </FormSection>
 
       {/* ── Submit ──────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 border-t border-line pt-6">
+      <div className="flex items-center gap-3 border-t border-line pt-5">
         <button
           type="submit"
           disabled={isPending || isDeleting}
@@ -406,7 +311,6 @@ export function ProductForm({ product }: Props) {
           Batal
         </button>
 
-        {/* Tombol hapus — hanya muncul saat edit */}
         {product && (
           <div className="ml-auto">
             {!showDeleteConfirm ? (
@@ -449,14 +353,43 @@ export function ProductForm({ product }: Props) {
   );
 }
 
+// ── Shared styles ─────────────────────────────────────────────────────────────
+
+const inputCls =
+  "w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-cobalt focus:ring-2 focus:ring-cobalt/15";
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-5 text-base font-semibold text-gray-900">{title}</h2>
+    <div className="rounded-2xl border border-line bg-white p-6 shadow-card">
+      <h2 className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted">{title}</h2>
       <div className="space-y-4">{children}</div>
     </div>
+  );
+}
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-medium text-ink">{label}</label>
+      {children}
+      {hint && <p className="mt-1 text-xs text-muted/70">{hint}</p>}
+    </div>
+  );
+}
+
+function CheckboxField({ name, defaultChecked, label }: { name: string; defaultChecked: boolean; label: string }) {
+  return (
+    <label className="flex cursor-pointer items-center gap-2.5">
+      <input
+        type="checkbox"
+        name={name}
+        defaultChecked={defaultChecked}
+        className="h-4 w-4 rounded border-line accent-cobalt"
+      />
+      <span className="text-sm font-medium text-ink">{label}</span>
+    </label>
   );
 }
 
@@ -482,14 +415,14 @@ function DynamicList({
               next[i] = e.target.value;
               onChange(next);
             }}
-            className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            className={inputCls}
             placeholder={placeholder}
           />
           {items.length > 1 && (
             <button
               type="button"
               onClick={() => onChange(items.filter((_, j) => j !== i))}
-              className="shrink-0 rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+              className="shrink-0 rounded-lg p-2 text-muted hover:bg-red-50 hover:text-red-500"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -499,7 +432,7 @@ function DynamicList({
       <button
         type="button"
         onClick={() => onChange([...items, ""])}
-        className="flex items-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-3 py-2 text-sm text-gray-500 transition hover:border-gray-400 hover:text-gray-700"
+        className="flex items-center gap-1.5 rounded-lg border border-dashed border-line px-3 py-2 text-sm text-muted transition hover:border-ink/30 hover:text-ink"
       >
         <Plus className="h-3.5 w-3.5" />
         {addLabel}
