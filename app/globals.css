@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: "InterDisplay";
-  src: url("https://cdn.prod.website-files.com/69056cbc60565704e832897d/69056cbc60565704e8328984_InterDisplay-Regular.ttf") format("truetype");
+  src: url("/fonts/InterDisplay-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -37,7 +37,7 @@
 
 @font-face {
   font-family: "InterDisplay";
-  src: url("https://cdn.prod.website-files.com/69056cbc60565704e832897d/69056cbc60565704e8328987_InterDisplay-Medium.ttf") format("truetype");
+  src: url("/fonts/InterDisplay-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -45,7 +45,7 @@
 
 @font-face {
   font-family: "InterDisplay";
-  src: url("https://cdn.prod.website-files.com/69056cbc60565704e832897d/69056cbc60565704e8328985_InterDisplay-SemiBold.ttf") format("truetype");
+  src: url("/fonts/InterDisplay-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -53,7 +53,7 @@
 
 @font-face {
   font-family: "InterDisplay";
-  src: url("https://cdn.prod.website-files.com/69056cbc60565704e832897d/69056cbc60565704e8328986_InterDisplay-Bold.ttf") format("truetype");
+  src: url("/fonts/InterDisplay-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;

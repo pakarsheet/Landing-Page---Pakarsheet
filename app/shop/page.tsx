@@ -5,7 +5,7 @@ import { ShopHero } from "@/components/ShopHero";
 import { TemplateGrid } from "@/components/TemplateGrid";
 import { BgTransition } from "@/components/BgTransition";
 import { site } from "@/lib/site";
-import { getActiveProducts } from "@/lib/supabase/queries";
+import { getActiveProducts, getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
 
 export const revalidate = 60;
 
@@ -22,7 +22,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
-  const products = await getActiveProducts();
+  const [products, settings] = await Promise.all([
+    getActiveProducts(),
+    getSiteSettings(),
+  ]);
+  const waUrl = buildWaUrl(settings) || site.contactUrl;
 
   // Strip fields not needed by client component (no functions to pass)
   const templates = products.map((p) => ({
@@ -51,7 +55,7 @@ export default async function ShopPage() {
       <Navbar />
       <main id="main-content">
         <ShopHero />
-        <TemplateGrid templates={templates} />
+        <TemplateGrid templates={templates} contactUrl={waUrl} />
       </main>
       <Footer />
     </>

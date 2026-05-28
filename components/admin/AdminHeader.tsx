@@ -93,15 +93,13 @@ export function AdminHeader({ user }: Props) {
         </div>
 
         {/* Logout */}
-        <form action="/admin-logout" method="POST">
-          <button
-            type="submit"
-            className="flex items-center gap-1.5 rounded-xl border border-ink/10 bg-ink/3 px-3 py-1.5 text-xs font-medium text-ink/55 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Keluar</span>
-          </button>
-        </form>
+        <a
+          href="/admin-logout"
+          className="flex items-center gap-1.5 rounded-xl border border-ink/10 bg-ink/3 px-3 py-1.5 text-xs font-medium text-ink/55 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Keluar</span>
+        </a>
       </div>
     </header>
   );

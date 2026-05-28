@@ -25,6 +25,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className="scroll-smooth">
+      <head>
+        {/* Preload the two most-used InterDisplay weights to avoid FOUT on hero text */}
+        <link rel="preload" href="/fonts/InterDisplay-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/InterDisplay-SemiBold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+      </head>
       <body
         className={`${GeistSans.variable} font-secondary antialiased`}
         style={{ "--font-inter": "InterDisplay" } as React.CSSProperties}

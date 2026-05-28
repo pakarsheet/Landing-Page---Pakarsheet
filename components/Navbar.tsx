@@ -7,8 +7,6 @@ import { Menu, X } from "lucide-react";
 import { navItems } from "@/lib/data";
 import { site } from "@/lib/site";
 
-const visibleNavItems = navItems.filter((item) => item.label !== "Template");
-
 export function Navbar() {
   const [open, setOpen] = useState(false);
 
@@ -21,7 +19,7 @@ export function Navbar() {
         </Link>
 
         <div className="hidden min-w-0 items-center gap-6 lg:flex">
-          {visibleNavItems.map((item) =>
+          {navItems.map((item) =>
             item.href.startsWith("/") ? (
               <Link key={item.href} href={item.href} className="whitespace-nowrap text-[15px] font-medium text-ink transition hover:text-cobalt">
                 {item.label}
@@ -62,7 +60,7 @@ export function Navbar() {
         }`}
       >
         <div className="space-y-2 px-4 py-4 sm:px-5">
-          {visibleNavItems.map((item) =>
+          {navItems.map((item) =>
             item.href.startsWith("/") ? (
               <Link
                 key={item.href}

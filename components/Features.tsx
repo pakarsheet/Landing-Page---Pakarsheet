@@ -123,15 +123,12 @@ function SyncVisual() {
           { icon: DatabaseZap, label: "Input", bg: "bg-leaf text-cobalt" },
           { icon: RefreshCw, label: "Sync", bg: "bg-sheet text-ink" },
           { icon: LayoutDashboard, label: "Pantau", bg: "bg-sky text-cobalt" },
-        ].map(({ icon: Icon, label, bg }, i) => (
+        ].map(({ icon: Icon, label, bg }) => (
           <div key={label} className="flex flex-1 flex-col items-center gap-2">
             <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${bg}`}>
               <Icon size={16} />
             </div>
             <span className="font-secondary text-[10px] font-semibold text-muted">{label}</span>
-            {i < 2 && (
-              <div className="absolute" />
-            )}
           </div>
         ))}
       </div>
@@ -139,26 +136,13 @@ function SyncVisual() {
   );
 }
 
-function GrowthVisual() {
-  const items = [
-    { label: "Template siap pakai", pct: 100, color: "bg-sheet" },
-    { label: "Custom & kembangkan", pct: 65, color: "bg-cobalt" },
-  ];
-  return (
-    <div className="mt-auto pt-5 flex flex-col gap-3">
-      {items.map((item) => (
-        <div key={item.label}>
-          <div className="mb-1.5 flex justify-between">
-            <span className="font-secondary text-xs font-semibold text-ink">{item.label}</span>
-            <span className="font-secondary text-xs font-bold text-muted">{item.pct}%</span>
-          </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-line">
-            <div className={`h-full rounded-full ${item.color}`} style={{ width: `${item.pct}%` }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+function Visual({ id }: { id: string }) {
+  if (id === "sheet") return <SheetVisual />;
+  if (id === "dashboard") return <DashboardVisual />;
+  if (id === "auto") return <AutoVisual />;
+  if (id === "team") return <TeamVisual />;
+  if (id === "sync") return <SyncVisual />;
+  return null;
 }
 
 /* ── Card definitions ─────────────────────────────────── */
@@ -212,16 +196,6 @@ const CARDS = [
     visual: "growth",
   },
 ];
-
-function Visual({ id }: { id: string }) {
-  if (id === "sheet") return <SheetVisual />;
-  if (id === "dashboard") return <DashboardVisual />;
-  if (id === "auto") return <AutoVisual />;
-  if (id === "team") return <TeamVisual />;
-  if (id === "sync") return <SyncVisual />;
-  if (id === "growth") return <GrowthVisual />;
-  return null;
-}
 
 /* ── Main component ───────────────────────────────────── */
 export function Features() {

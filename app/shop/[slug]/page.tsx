@@ -12,11 +12,11 @@ import {
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
-import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/Button";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
+import { MobileStickyCTA } from "@/components/MobileStickyCTA";
 import { site } from "@/lib/site";
-import { getProductBySlug, getAllProductSlugs } from "@/lib/supabase/queries";
+import { getProductBySlug, getAllProductSlugs, getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
 
 export const revalidate = 60;
 
@@ -81,8 +81,12 @@ function buildProductJsonLd(product: Awaited<ReturnType<typeof getProductBySlug>
 
 export default async function TemplateDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, settings] = await Promise.all([
+    getProductBySlug(slug),
+    getSiteSettings(),
+  ]);
   if (!product) notFound();
+  const waUrl = buildWaUrl(settings) || site.contactUrl;
 
   const jsonLd = buildProductJsonLd(product);
 
@@ -121,7 +125,6 @@ export default async function TemplateDetailPage({ params }: Props) {
         />
       )}
       <BgTransition />
-      <Navbar />
       <main id="main-content" className="bg-white">
 
         {/* ── Breadcrumb ─────────────────────────────────────────── */}
@@ -155,6 +158,15 @@ export default async function TemplateDetailPage({ params }: Props) {
                 isNew={isNew}
                 isBestSeller={isBestSeller}
                 discountPct={discountPct}
+              />
+
+              {/* Sentinel + sticky CTA — mobile only, appears after carousel scrolls out */}
+              <MobileStickyCTA
+                price={price}
+                originalPrice={originalPrice}
+                discountPct={discountPct}
+                ctaUrl={ctaUrl}
+                contactUrl={waUrl}
               />
 
               <div className="mt-12">
@@ -260,7 +272,7 @@ export default async function TemplateDetailPage({ params }: Props) {
                     <ArrowRight className="h-4 w-4 transition duration-300 group-hover:translate-x-1" />
                   </a>
                   <a
-                    href={site.contactUrl}
+                    href={waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-line bg-white font-secondary text-sm font-semibold text-ink transition duration-300 hover:-translate-y-0.5 hover:border-ink"

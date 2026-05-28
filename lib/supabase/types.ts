@@ -94,6 +94,29 @@ export interface Database {
         >;
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
       };
+      custom_orders: {
+        Row: {
+          id: string;
+          name: string;
+          whatsapp: string;
+          business_name: string | null;
+          business_type: string;
+          package: string;
+          description: string;
+          has_old_file: boolean;
+          team_size: string | null;
+          urgency: string | null;
+          status: "baru" | "dihubungi" | "negosiasi" | "deal" | "tidak-jadi";
+          admin_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["custom_orders"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["custom_orders"]["Insert"]>;
+      };
     };
   };
 }
@@ -106,3 +129,6 @@ export type SiteSettings = Database["public"]["Tables"]["site_settings"]["Row"];
 export type Post = Database["public"]["Tables"]["posts"]["Row"];
 export type PostInsert = Database["public"]["Tables"]["posts"]["Insert"];
 export type PostUpdate = Database["public"]["Tables"]["posts"]["Update"];
+export type CustomOrder = Database["public"]["Tables"]["custom_orders"]["Row"];
+export type CustomOrderInsert = Database["public"]["Tables"]["custom_orders"]["Insert"];
+export type CustomOrderUpdate = Database["public"]["Tables"]["custom_orders"]["Update"];

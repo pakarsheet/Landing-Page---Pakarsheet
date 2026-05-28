@@ -2,11 +2,24 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import type { PostInsert, PostUpdate, ProductInsert, ProductUpdate } from "@/lib/supabase/types";
+
+// ── Auth guard ────────────────────────────────────────────────────────────────
+
+async function requireAuth() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized: login required.");
+  return user;
+}
 
 // ── Products ──────────────────────────────────────────────────────────────────
 
 export async function createProduct(formData: FormData) {
+  await requireAuth();
   const supabase = createAdminClient();
   const payload = parseProductForm(formData);
 
@@ -19,6 +32,7 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = createAdminClient();
   const payload = parseProductForm(formData);
 
@@ -36,6 +50,7 @@ export async function updateProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
+  await requireAuth();
   const supabase = createAdminClient();
 
   const { data: product } = await supabase
@@ -54,6 +69,7 @@ export async function deleteProduct(id: string) {
 }
 
 export async function duplicateProduct(id: string) {
+  await requireAuth();
   const supabase = createAdminClient();
 
   const { data: product, error: fetchError } = await supabase
@@ -86,6 +102,7 @@ export async function duplicateProduct(id: string) {
 }
 
 export async function toggleProductStatus(id: string, currentStatus: string) {
+  await requireAuth();
   const supabase = createAdminClient();
   const newStatus = currentStatus === "active" ? "draft" : "active";
 
@@ -103,6 +120,7 @@ export async function toggleProductStatus(id: string, currentStatus: string) {
 // ── Site Settings ─────────────────────────────────────────────────────────────
 
 export async function updateSiteSettings(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = createAdminClient();
 
   const whatsapp_number = (formData.get("whatsapp_number") as string).trim();
@@ -126,6 +144,7 @@ export async function updateSiteSettings(id: string, formData: FormData) {
 // ── Image Upload ──────────────────────────────────────────────────────────────
 
 export async function uploadProductImage(formData: FormData) {
+  await requireAuth();
   const supabase = createAdminClient();
   const file = formData.get("file") as File;
   const slug = formData.get("slug") as string;
@@ -147,6 +166,7 @@ export async function uploadProductImage(formData: FormData) {
 }
 
 export async function deleteProductImage(path: string) {
+  await requireAuth();
   const supabase = createAdminClient();
   const url = new URL(path);
   const storagePath = url.pathname.split("/product-images/")[1];
@@ -163,6 +183,7 @@ export async function deleteProductImage(path: string) {
 // ── Blog Posts ────────────────────────────────────────────────────────────────
 
 export async function createPost(formData: FormData) {
+  await requireAuth();
   const supabase = createAdminClient();
   const payload = parsePostForm(formData);
 
@@ -176,6 +197,7 @@ export async function createPost(formData: FormData) {
 }
 
 export async function updatePost(id: string, formData: FormData) {
+  await requireAuth();
   const supabase = createAdminClient();
   const payload = parsePostForm(formData);
 
@@ -194,6 +216,7 @@ export async function updatePost(id: string, formData: FormData) {
 }
 
 export async function deletePost(id: string) {
+  await requireAuth();
   const supabase = createAdminClient();
   const { error } = await supabase.from("posts").delete().eq("id", id);
   if (error) return { error: error.message };
@@ -204,6 +227,7 @@ export async function deletePost(id: string) {
 }
 
 export async function togglePostStatus(id: string, currentStatus: string) {
+  await requireAuth();
   const supabase = createAdminClient();
   const newStatus = currentStatus === "published" ? "draft" : "published";
   const published_at = newStatus === "published" ? new Date().toISOString() : null;

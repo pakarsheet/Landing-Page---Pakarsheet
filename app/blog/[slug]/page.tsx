@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Clock, Calendar, Tag } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
 import { site } from "@/lib/site";
+import { sanitizeHtml } from "@/lib/sanitize";
 import {
   getPostBySlug,
   getAllPostSlugs,
@@ -107,6 +108,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   const related = await getRelatedPosts(slug, post.category, 3);
   const jsonLd = buildJsonLd(post);
+  const safeContent = sanitizeHtml(post.content);
 
   return (
     <>
@@ -205,7 +207,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* ── Article body ─────────────────────────────────── */}
           <div
             className="prose-blog mt-8"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: safeContent }}
           />
 
           {/* Tags */}

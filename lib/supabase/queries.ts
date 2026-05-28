@@ -1,8 +1,7 @@
 /**
  * Server-side data fetching helpers — used by public pages.
- * Uses anon client (respects RLS: only active products visible).
+ * Uses admin client (bypasses cookies(), safe for SSG/ISR).
  */
-import { createClient } from "./server";
 import type { Post, Product, SiteSettings } from "./types";
 
 export async function getActiveProducts(): Promise<Product[]> {

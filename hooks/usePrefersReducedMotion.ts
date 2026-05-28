@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 
 export function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  // Default true (safe) — prevents flash of animation for users who prefer reduced motion.
+  // Updated to false on mount if the media query does not match.
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(true);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");

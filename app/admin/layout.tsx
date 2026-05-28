@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { ToastProvider } from "@/components/admin/Toast";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -15,19 +14,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   if (!user) redirect("/admin-login");
 
   return (
-    <div className="flex min-h-screen bg-[#f7f8fc]">
-      <AdminSidebar />
-      <div className="flex flex-1 flex-col min-w-0">
-        {/* Desktop header */}
-        <div className="hidden lg:block sticky top-0 z-30">
-          <AdminHeader user={user} />
-        </div>
-        {/* Mobile spacer for fixed topbar */}
-        <div className="h-14 lg:hidden" />
-        <main className="flex-1 p-5 lg:p-7 max-w-[1200px] w-full mx-auto">
+    <div className="flex min-h-screen bg-[#f4f6fb]">
+      <AdminSidebar user={user} />
+      {/* Mobile spacer for fixed top bar */}
+      <div className="h-12 w-full lg:hidden" />
+      <main className="flex-1 min-w-0 px-5 py-7 lg:px-8 lg:py-8">
+        <div className="mx-auto w-full max-w-[1200px]">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
       <ToastProvider />
     </div>
   );

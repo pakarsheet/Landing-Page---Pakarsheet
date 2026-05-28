@@ -1,6 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SettingsForm } from "@/components/admin/SettingsForm";
-import { Settings } from "lucide-react";
 
 export const metadata = { title: "Pengaturan — Admin Pakarsheet" };
 
@@ -20,16 +19,11 @@ export default async function AdminSettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {/* Page header */}
       <div>
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-line">
-            <Settings className="h-4.5 w-4.5 text-muted" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Pengaturan</h1>
-        </div>
-        <p className="mt-2 text-sm text-ink/50">
+        <h1 className="text-3xl font-bold tracking-tight text-ink">Pengaturan</h1>
+        <p className="mt-1.5 text-base text-muted">
           Perubahan langsung berlaku di landing page.
         </p>
       </div>

@@ -4,8 +4,11 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
 import { site } from "@/lib/site";
+import { getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const settings = await getSiteSettings();
+  const waUrl = buildWaUrl(settings) || site.contactUrl;
   return (
     <>
       <BgTransition />
@@ -63,7 +66,7 @@ export default function NotFound() {
               {[
                 { label: "Toko Template",       href: "/shop",  desc: "Template Google Sheets premium siap pakai." },
                 { label: "Tools Kalkulator",    href: "/tools", desc: "Kalkulator bisnis gratis, tanpa login." },
-                { label: "Konsultasi via WA",   href: site.contactUrl, desc: "Tanya langsung ke tim Pakarsheet." },
+                { label: "Konsultasi via WA",   href: waUrl, desc: "Tanya langsung ke tim Pakarsheet." },
               ].map(({ label, href, desc }) => (
                 <Link
                   key={href}

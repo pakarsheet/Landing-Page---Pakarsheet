@@ -410,16 +410,6 @@ export const worksheets: ToolMeta[] = [
 export const inputClass =
   "flex items-center rounded-2xl border border-line bg-white px-4 py-3 shadow-card focus-within:border-cobalt focus-within:ring-1 focus-within:ring-cobalt/20";
 
-/** Typed field config for calculator input grids */
-export type CalcField = {
-  id: string;
-  label: string;
-  prefix?: string;
-  suffix?: string;
-  min?: number;
-  max?: number;
-};
-
 /** Marketplace platform presets */
 export type Platform = {
   label: string;

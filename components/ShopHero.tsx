@@ -3,8 +3,11 @@ import { shopTemplates } from "@/lib/data";
 import { Button } from "./ui/Button";
 import { SheetGrid } from "./SheetGrid";
 import { site } from "@/lib/site";
+import { getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
 
-export function ShopHero() {
+export async function ShopHero() {
+  const settings = await getSiteSettings();
+  const waUrl = buildWaUrl(settings) || site.contactUrl;
   const total = shopTemplates.length;
 
   return (
@@ -35,7 +38,7 @@ export function ShopHero() {
             <Button href="#templates" size="lg">
               Lihat Template
             </Button>
-            <Button href={site.contactUrl} variant="secondary" size="lg">
+            <Button href={waUrl} variant="secondary" size="lg">
               Konsultasi Kebutuhan
             </Button>
           </div>

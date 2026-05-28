@@ -14,6 +14,7 @@ import {
   Minus,
   Eye,
 } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface Props {
   name: string;
@@ -157,7 +158,7 @@ export function RichTextEditor({ name, defaultValue = "", required }: Props) {
         <div
           className="prose-blog min-h-[400px] px-4 py-3"
           dangerouslySetInnerHTML={{
-            __html: value || "<p style='color:#4c5a73;font-style:italic'>Belum ada konten.</p>",
+            __html: sanitizeHtml(value) || "<p style='color:#4c5a73;font-style:italic'>Belum ada konten.</p>",
           }}
         />
       ) : (
