@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { site } from "@/lib/site";
+import { getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = {
   title: `Kebijakan Pengembalian Dana — ${site.name}`,
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 
 const LAST_UPDATED = "24 Mei 2026";
 
-export default function RefundPolicyPage() {
+export default async function RefundPolicyPage() {
+  const settings = await getSiteSettings();
+  const waUrl = buildWaUrl(settings) || site.contactUrl;
   return (
     <>
       <main id="main-content" className="bg-white">
@@ -98,7 +101,7 @@ export default function RefundPolicyPage() {
                   </p>
                   <ul>
                     <li>Email: <a href="mailto:hello@pakarsheet.com" className="text-cobalt hover:underline">hello@pakarsheet.com</a></li>
-                    <li>WhatsApp: <a href={site.contactUrl} className="text-cobalt hover:underline">Chat via WhatsApp</a></li>
+                    <li>WhatsApp: <a href={waUrl} className="text-cobalt hover:underline">Chat via WhatsApp</a></li>
                   </ul>
                 </Section>
 

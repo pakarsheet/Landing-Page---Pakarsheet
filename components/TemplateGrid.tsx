@@ -5,7 +5,6 @@ import { Store } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { type ClientProduct, type ShopCategory, type SortOption } from "@/lib/types";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { site } from "@/lib/site";
 import { Button } from "./ui/Button";
 import { FilterBar } from "./FilterBar";
 import { TemplateCard } from "./ui/TemplateCard";
@@ -14,9 +13,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 type Props = {
   templates: ClientProduct[];
+  contactUrl: string;
 };
 
-export function TemplateGrid({ templates }: Props) {
+export function TemplateGrid({ templates, contactUrl }: Props) {
   const [activeCategory, setActiveCategory] = useState<ShopCategory>("Semua");
   const [activeSort, setActiveSort] = useState<SortOption>("terbaru");
   const gridRef = useRef<HTMLDivElement>(null);
@@ -105,7 +105,7 @@ export function TemplateGrid({ templates }: Props) {
                 Mau template spesifik? Konsultasikan kebutuhan kamu.
               </p>
               <div className="mt-7">
-                <Button href={site.contactUrl} size="md">
+                <Button href={contactUrl} size="md">
                   Konsultasi Kebutuhan
                 </Button>
               </div>
