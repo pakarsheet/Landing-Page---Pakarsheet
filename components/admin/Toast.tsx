@@ -22,10 +22,10 @@ export function toast(type: ToastType, message: string) {
 }
 
 toast.success = (message: string) => toast("success", message);
-toast.error = (message: string) => toast("error", message);
+toast.error   = (message: string) => toast("error", message);
 toast.warning = (message: string) => toast("warning", message);
 
-// ── Provider component ────────────────────────────────────────────────────────
+// ── Provider ──────────────────────────────────────────────────────────────────
 
 export function ToastProvider() {
   const [items, setItems] = useState<ToastItem[]>([]);
@@ -57,41 +57,39 @@ export function ToastProvider() {
   );
 }
 
-// ── Single toast card ─────────────────────────────────────────────────────────
+// ── Config ────────────────────────────────────────────────────────────────────
 
-const config = {
+const config: Record<ToastType, {
+  icon: React.ElementType;
+  iconColor: string;
+  border: string;
+}> = {
   success: {
     icon: CheckCircle2,
-    bar: "bg-sheet",
     iconColor: "text-ink",
-    bg: "bg-white",
-    border: "border-ink/10",
+    border: "border-l-4 border-l-sheet border-ink/10",
   },
   error: {
     icon: XCircle,
-    bar: "bg-red-500",
     iconColor: "text-red-500",
-    bg: "bg-white",
-    border: "border-ink/10",
+    border: "border-l-4 border-l-red-400 border-ink/10",
   },
   warning: {
     icon: AlertTriangle,
-    bar: "bg-cobalt",
     iconColor: "text-cobalt",
-    bg: "bg-white",
-    border: "border-ink/10",
+    border: "border-l-4 border-l-cobalt border-ink/10",
   },
 };
 
+// ── Toast Card ────────────────────────────────────────────────────────────────
+
 function ToastCard({ item, onClose }: { item: ToastItem; onClose: () => void }) {
-  const { icon: Icon, bar, iconColor, bg, border } = config[item.type];
+  const { icon: Icon, iconColor, border } = config[item.type];
 
   return (
     <div
-      className={`relative flex min-w-[300px] max-w-sm items-start gap-3 overflow-hidden rounded-2xl border px-4 py-3.5 shadow-soft ${bg} ${border} animate-in slide-in-from-bottom-3 fade-in duration-200`}
+      className={`flex min-w-[300px] max-w-sm items-start gap-3 rounded-2xl border bg-white px-4 py-3.5 shadow-soft ${border} animate-in slide-in-from-bottom-3 fade-in duration-200`}
     >
-      {/* Colored left bar */}
-      <span className={`absolute left-0 top-0 h-full w-1 rounded-l-2xl ${bar}`} />
       <Icon className={`mt-0.5 h-4 w-4 shrink-0 ${iconColor}`} />
       <p className="flex-1 text-sm font-medium text-ink">{item.message}</p>
       <button

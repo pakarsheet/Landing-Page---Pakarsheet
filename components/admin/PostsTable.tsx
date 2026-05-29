@@ -4,30 +4,19 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Edit2,
-  Trash2,
-  Eye,
-  EyeOff,
-  ExternalLink,
-  Star,
-  Search,
-  X,
-  FileText,
+  Edit2, Trash2, Eye, EyeOff, ExternalLink,
+  Star, Search, X, FileText,
 } from "lucide-react";
 import { deletePost, togglePostStatus } from "@/app/admin/actions";
 import { toast } from "@/components/admin/Toast";
 import type { Post } from "@/lib/supabase/types";
 
-interface Props {
-  posts: Post[];
-}
+interface Props { posts: Post[] }
 
 function formatDate(dateStr: string | null) {
   if (!dateStr) return "—";
   return new Date(dateStr).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
+    day: "numeric", month: "short", year: "numeric",
   });
 }
 
@@ -37,7 +26,6 @@ export function PostsTable({ posts }: Props) {
   const [, startToggleTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
-
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "published" | "draft">("all");
 
@@ -85,12 +73,12 @@ export function PostsTable({ posts }: Props) {
   }
 
   const publishedCount = posts.filter((p) => p.status === "published").length;
-  const draftCount = posts.filter((p) => p.status === "draft").length;
+  const draftCount     = posts.filter((p) => p.status === "draft").length;
 
   const filterTabs = [
-    { key: "all" as const, label: "Semua", count: posts.length },
-    { key: "published" as const, label: "Tayang", count: publishedCount },
-    { key: "draft" as const, label: "Draft", count: draftCount },
+    { key: "all"       as const, label: "Semua",  count: posts.length    },
+    { key: "published" as const, label: "Tayang",  count: publishedCount  },
+    { key: "draft"     as const, label: "Draft",   count: draftCount      },
   ];
 
   return (
@@ -114,26 +102,21 @@ export function PostsTable({ posts }: Props) {
             </button>
           )}
         </div>
-
-        <div className="flex h-11 items-center gap-1 overflow-x-auto rounded-xl border border-ink/10 bg-white px-1 shadow-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-wrap gap-1.5">
           {filterTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setFilterStatus(tab.key)}
-              className={`shrink-0 flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition ${
+              className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition ${
                 filterStatus === tab.key
                   ? "bg-ink text-white shadow-sm"
-                  : "text-ink/50 hover:bg-ink/5 hover:text-ink"
+                  : "border border-ink/10 bg-white text-ink/50 hover:bg-ink/5 hover:text-ink"
               }`}
             >
               {tab.label}
-              <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
-                  filterStatus === tab.key
-                    ? "bg-white/20 text-white"
-                    : "bg-ink/8 text-ink/50"
-                }`}
-              >
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
+                filterStatus === tab.key ? "bg-white/20 text-white" : "bg-ink/8 text-ink/50"
+              }`}>
                 {tab.count}
               </span>
             </button>
@@ -158,7 +141,7 @@ export function PostsTable({ posts }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ink/6 bg-ink/2">
+                <tr className="border-b border-ink/6 bg-ink/[0.02]">
                   <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-ink/40">
                     Artikel
                   </th>
@@ -178,33 +161,29 @@ export function PostsTable({ posts }: Props) {
               </thead>
               <tbody className="divide-y divide-ink/5">
                 {filtered.map((p) => (
-                  <tr key={p.id} className="group transition hover:bg-ink/2">
+                  <tr key={p.id} className="group transition hover:bg-[#f4f6fb]">
                     <td className="px-5 py-3.5">
-                      <div className="flex items-start gap-2.5">
+                      <div className="flex items-start gap-2">
                         {p.featured && (
                           <Star className="mt-0.5 h-3.5 w-3.5 shrink-0 fill-sheet text-sheet" />
                         )}
                         <div>
-                          <p className="font-medium text-ink line-clamp-1">
-                            {p.title}
-                          </p>
+                          <p className="font-medium text-ink line-clamp-1">{p.title}</p>
                           <p className="text-xs text-ink/35">{p.slug}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3.5">
-                      <span className="rounded-lg bg-blush px-2.5 py-1 text-xs font-semibold text-cobalt">
+                      <span className="inline-flex items-center rounded-lg bg-blush px-2.5 py-1 text-xs font-semibold text-cobalt">
                         {p.category}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
-                      <span
-                        className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${
-                          p.status === "published"
-                            ? "bg-sheet/25 text-ink"
-                            : "bg-ink/6 text-ink/45"
-                        }`}
-                      >
+                      <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold ${
+                        p.status === "published"
+                          ? "bg-sheet/25 text-ink"
+                          : "bg-ink/6 text-ink/45"
+                      }`}>
                         {p.status === "published" ? "Tayang" : "Draft"}
                       </span>
                     </td>
@@ -228,17 +207,11 @@ export function PostsTable({ posts }: Props) {
                           onClick={() => handleToggle(p.id, p.status, p.title)}
                           disabled={togglingId === p.id || deletingId === p.id}
                           className="rounded-lg p-1.5 text-ink/50 transition hover:bg-ink/8 hover:text-ink disabled:opacity-30"
-                          title={
-                            p.status === "published"
-                              ? "Jadikan draft"
-                              : "Publikasikan"
-                          }
+                          title={p.status === "published" ? "Jadikan draft" : "Publikasikan"}
                         >
-                          {p.status === "published" ? (
-                            <EyeOff className="h-3.5 w-3.5" />
-                          ) : (
-                            <Eye className="h-3.5 w-3.5" />
-                          )}
+                          {p.status === "published"
+                            ? <EyeOff className="h-3.5 w-3.5" />
+                            : <Eye className="h-3.5 w-3.5" />}
                         </button>
                         <Link
                           href={`/admin/blog/${p.id}`}
@@ -262,7 +235,7 @@ export function PostsTable({ posts }: Props) {
               </tbody>
             </table>
           </div>
-          <div className="border-t border-ink/6 bg-ink/1 px-5 py-3">
+          <div className="border-t border-ink/6 bg-ink/[0.02] px-5 py-3">
             <p className="text-xs text-ink/40">
               Menampilkan {filtered.length} dari {posts.length} artikel
             </p>

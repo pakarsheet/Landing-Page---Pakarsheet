@@ -7,7 +7,7 @@ import { Check, ChevronDown } from "lucide-react";
 export interface SelectOption {
   value: string;
   label: string;
-  /** Optional dot/swatch color class e.g. "bg-cobalt" */
+  /** Optional dot color class e.g. "bg-cobalt" */
   color?: string;
 }
 
@@ -58,7 +58,6 @@ export function CustomSelect({
     setOpen(false);
   }
 
-  // Close on scroll
   useEffect(() => {
     if (!open) return;
     const close = () => setOpen(false);
@@ -68,7 +67,6 @@ export function CustomSelect({
 
   return (
     <>
-      {/* Hidden native input for form submission */}
       <input type="hidden" name={name} value={value} required={required} />
 
       <button
@@ -83,9 +81,9 @@ export function CustomSelect({
       >
         <span className="flex items-center gap-2 truncate">
           {selected?.color && (
-            <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${selected.color}`} />
+            <span className={`h-2 w-2 shrink-0 rounded-full ${selected.color}`} />
           )}
-          <span className={`font-secondary text-sm ${selected ? "text-ink" : "text-ink/35"}`}>
+          <span className={`text-sm ${selected ? "text-ink" : "text-ink/35"}`}>
             {selected?.label ?? placeholder}
           </span>
         </span>
@@ -115,11 +113,11 @@ export function CustomSelect({
                     }`}
                   >
                     {opt.color ? (
-                      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${opt.color}`} />
+                      <span className={`h-2 w-2 shrink-0 rounded-full ${opt.color}`} />
                     ) : (
-                      <span className="h-2.5 w-2.5 shrink-0" />
+                      <span className="h-2 w-2 shrink-0" />
                     )}
-                    <span className="flex-1 font-secondary text-sm font-medium text-ink">{opt.label}</span>
+                    <span className="flex-1 text-sm font-medium text-ink">{opt.label}</span>
                     {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-cobalt" />}
                   </button>
                 );

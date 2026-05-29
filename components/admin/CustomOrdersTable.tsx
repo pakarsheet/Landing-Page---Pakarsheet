@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   MessageCircle, ChevronDown, Search, X,
   StickyNote, Check, Clock, Handshake, XCircle,
-  Inbox, Building2, Users, Zap, Calendar,
-  FolderOpen,
+  Inbox, Building2, Users, Zap, Calendar, FolderOpen,
 } from "lucide-react";
 import { updateCustomOrderStatus, saveCustomOrderNotes } from "@/app/admin/custom-orders/actions";
 import { toast } from "@/components/admin/Toast";
@@ -19,11 +18,11 @@ const STATUS_CONFIG: Record<
   CustomOrder["status"],
   { label: string; bg: string; text: string; dot: string; icon: React.ElementType }
 > = {
-  baru:         { label: "Baru",       bg: "bg-cobalt/10", text: "text-cobalt",  dot: "bg-cobalt",  icon: Inbox       },
+  baru:         { label: "Baru",       bg: "bg-cobalt/10", text: "text-cobalt",  dot: "bg-cobalt",  icon: Inbox        },
   dihubungi:    { label: "Dihubungi",  bg: "bg-sky",       text: "text-cobalt",  dot: "bg-cobalt",  icon: MessageCircle },
-  negosiasi:    { label: "Negosiasi",  bg: "bg-sheet/40",  text: "text-ink",     dot: "bg-sheet",   icon: Clock       },
-  deal:         { label: "Deal ✓",     bg: "bg-leaf",      text: "text-cobalt",  dot: "bg-cobalt",  icon: Handshake   },
-  "tidak-jadi": { label: "Tidak Jadi", bg: "bg-ink/6",     text: "text-ink/40",  dot: "bg-ink/20",  icon: XCircle     },
+  negosiasi:    { label: "Negosiasi",  bg: "bg-sheet/40",  text: "text-ink",     dot: "bg-sheet",   icon: Clock        },
+  deal:         { label: "Deal ✓",     bg: "bg-leaf",      text: "text-cobalt",  dot: "bg-cobalt",  icon: Handshake    },
+  "tidak-jadi": { label: "Tidak Jadi", bg: "bg-ink/6",     text: "text-ink/40",  dot: "bg-ink/20",  icon: XCircle      },
 };
 
 const STATUS_ORDER: CustomOrder["status"][] = [
@@ -31,11 +30,11 @@ const STATUS_ORDER: CustomOrder["status"][] = [
 ];
 
 const PACKAGE_CONFIG: Record<string, { label: string; color: string }> = {
-  modifikasi:   { label: "Modifikasi",           color: "bg-sky text-cobalt"    },
-  total:        { label: "Custom Total",          color: "bg-sheet text-ink"     },
-  "sistem-tim": { label: "Sistem + Otomatisasi",  color: "bg-lilac text-ink"     },
-  rekomendasi:  { label: "Minta Rekomendasi",     color: "bg-blush text-cobalt"  },
-  "belum-tahu": { label: "Belum tahu",            color: "bg-blush text-cobalt"  },
+  modifikasi:   { label: "Modifikasi",          color: "bg-sky text-cobalt"   },
+  total:        { label: "Custom Total",         color: "bg-sheet text-ink"    },
+  "sistem-tim": { label: "Sistem + Otomatisasi", color: "bg-lilac text-ink"    },
+  rekomendasi:  { label: "Minta Rekomendasi",    color: "bg-blush text-cobalt" },
+  "belum-tahu": { label: "Belum tahu",           color: "bg-blush text-cobalt" },
 };
 
 const URGENCY_LABEL: Record<string, string> = {
@@ -57,7 +56,7 @@ function formatDate(iso: string) {
   });
 }
 
-// ── Status badge ──────────────────────────────────────────────────────────────
+// ── Status Badge ──────────────────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: CustomOrder["status"] }) {
   const cfg = STATUS_CONFIG[status];
@@ -69,7 +68,7 @@ function StatusBadge({ status }: { status: CustomOrder["status"] }) {
   );
 }
 
-// ── Status dropdown (portal) ──────────────────────────────────────────────────
+// ── Status Dropdown (portal) ──────────────────────────────────────────────────
 
 function StatusDropdown({
   order,
@@ -132,7 +131,7 @@ function StatusDropdown({
   );
 }
 
-// ── Inline notes editor ───────────────────────────────────────────────────────
+// ── Notes Editor ──────────────────────────────────────────────────────────────
 
 function NotesEditor({ order }: { order: CustomOrder }) {
   const [editing, setEditing] = useState(false);
@@ -185,7 +184,7 @@ function NotesEditor({ order }: { order: CustomOrder }) {
   return (
     <button
       onClick={() => setEditing(true)}
-      className="group flex w-full items-start gap-2 rounded-xl border border-dashed border-ink/12 bg-ink/2 px-3 py-2.5 text-left transition hover:border-cobalt/30 hover:bg-sky/20"
+      className="group flex w-full items-start gap-2 rounded-xl border border-dashed border-ink/12 bg-ink/[0.02] px-3 py-2.5 text-left transition hover:border-cobalt/30 hover:bg-sky/20"
     >
       <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink/25 transition group-hover:text-cobalt" />
       <span className={`text-sm leading-relaxed ${notes ? "text-ink/70" : "italic text-ink/30"}`}>
@@ -195,7 +194,7 @@ function NotesEditor({ order }: { order: CustomOrder }) {
   );
 }
 
-// ── Order card ────────────────────────────────────────────────────────────────
+// ── Order Card ────────────────────────────────────────────────────────────────
 
 function OrderCard({
   order,
@@ -208,32 +207,29 @@ function OrderCard({
   const isNew = order.status === "baru";
 
   return (
-    <div className={`group rounded-2xl border bg-white p-5 shadow-sm transition duration-200 hover:shadow-card ${
+    <div className={`rounded-2xl border bg-white p-5 shadow-sm transition duration-200 hover:shadow-card ${
       isNew ? "border-cobalt/25" : "border-ink/8"
     }`}>
-      {/* ── Top row ── */}
+      {/* Top row */}
       <div className="flex flex-wrap items-start justify-between gap-3">
-        {/* Left: name + WA */}
         <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-primary text-base font-bold ${
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base font-bold ${
             isNew ? "bg-cobalt text-white" : "bg-ink/8 text-ink"
           }`}>
             {order.name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-primary text-base font-semibold text-ink">{order.name}</p>
-            <p className="font-secondary text-xs text-muted">+{order.whatsapp}</p>
+            <p className="text-base font-semibold text-ink">{order.name}</p>
+            <p className="text-xs text-muted">+{order.whatsapp}</p>
           </div>
         </div>
-
-        {/* Right: status dropdown + WA button */}
         <div className="flex items-center gap-2">
           <StatusDropdown order={order} onUpdate={onStatusUpdate} />
           <a
             href={`https://wa.me/${order.whatsapp}?text=${encodeURIComponent(`Halo ${order.name}, kami dari Pakarsheet ingin menindaklanjuti permintaan custom order kamu.`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-leaf px-3.5 py-2 font-secondary text-sm font-semibold text-cobalt transition hover:bg-sheet"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-leaf px-3.5 py-2 text-sm font-semibold text-cobalt transition hover:bg-sheet"
           >
             <MessageCircle className="h-4 w-4" />
             Chat WA
@@ -241,29 +237,25 @@ function OrderCard({
         </div>
       </div>
 
-      {/* ── Meta chips ── */}
+      {/* Meta chips */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        {/* Paket */}
-        <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-secondary text-xs font-semibold ${pkg.color}`}>
+        <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold ${pkg.color}`}>
           {pkg.label}
         </span>
-        {/* Bisnis */}
         {(order.business_name || order.business_type) && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink/5 px-2.5 py-1 font-secondary text-xs font-semibold text-ink/60">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink/5 px-2.5 py-1 text-xs font-semibold text-ink/60">
             <Building2 className="h-3 w-3" />
             {order.business_name ? `${order.business_name} · ` : ""}{order.business_type}
           </span>
         )}
-        {/* Tim */}
         {order.team_size && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink/5 px-2.5 py-1 font-secondary text-xs font-semibold text-ink/60">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink/5 px-2.5 py-1 text-xs font-semibold text-ink/60">
             <Users className="h-3 w-3" />
             {TEAM_LABEL[order.team_size] ?? order.team_size}
           </span>
         )}
-        {/* Urgensi */}
         {order.urgency && (
-          <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-secondary text-xs font-semibold ${
+          <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold ${
             order.urgency === "segera" ? "bg-red-50 text-red-500" :
             order.urgency === "normal" ? "bg-sheet/30 text-ink" :
             "bg-ink/5 text-ink/50"
@@ -272,30 +264,26 @@ function OrderCard({
             {URGENCY_LABEL[order.urgency] ?? order.urgency}
           </span>
         )}
-        {/* File lama */}
         {order.has_old_file && (
-          <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink/5 px-2.5 py-1 font-secondary text-xs font-semibold text-ink/60">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink/5 px-2.5 py-1 text-xs font-semibold text-ink/60">
             <FolderOpen className="h-3 w-3" />
             Ada file lama
           </span>
         )}
-        {/* Tanggal */}
-        <span className="ml-auto inline-flex items-center gap-1.5 font-secondary text-xs text-muted">
+        <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted">
           <Calendar className="h-3 w-3" />
           {formatDate(order.created_at)}
         </span>
       </div>
 
-      {/* ── Deskripsi ── */}
+      {/* Description */}
       {order.description && (
-        <div className="mt-4 rounded-xl bg-ink/3 px-4 py-3">
-          <p className="font-secondary text-sm leading-relaxed text-ink/70 line-clamp-3">
-            {order.description}
-          </p>
+        <div className="mt-4 rounded-xl bg-ink/[0.02] px-4 py-3">
+          <p className="text-sm leading-relaxed text-ink/70 line-clamp-3">{order.description}</p>
         </div>
       )}
 
-      {/* ── Catatan admin ── */}
+      {/* Notes */}
       <div className="mt-3">
         <NotesEditor order={order} />
       </div>
@@ -305,9 +293,7 @@ function OrderCard({
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-interface Props {
-  orders: CustomOrder[];
-}
+interface Props { orders: CustomOrder[] }
 
 export function CustomOrdersTable({ orders }: Props) {
   const router = useRouter();
@@ -351,9 +337,8 @@ export function CustomOrdersTable({ orders }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* ── Toolbar ── */}
+      {/* Toolbar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search */}
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/35" />
           <input
@@ -363,35 +348,26 @@ export function CustomOrdersTable({ orders }: Props) {
             className="h-11 w-full rounded-xl border border-ink/12 bg-white pl-10 pr-9 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12"
           />
           {search && (
-            <button
-              onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-ink/35 transition hover:text-ink"
-            >
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-ink/35 transition hover:text-ink">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
-
-        {/* Status tabs */}
-        <div className="flex h-11 items-center gap-1 overflow-x-auto rounded-xl border border-ink/10 bg-white px-1 shadow-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-wrap gap-1.5">
           {filterTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setFilterStatus(tab.key)}
-              className={`shrink-0 flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition ${
+              className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition ${
                 filterStatus === tab.key
                   ? "bg-ink text-white shadow-sm"
-                  : "text-ink/50 hover:bg-ink/5 hover:text-ink"
+                  : "border border-ink/10 bg-white text-ink/50 hover:bg-ink/5 hover:text-ink"
               }`}
             >
               {tab.label}
-              <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
-                  filterStatus === tab.key
-                    ? "bg-white/20 text-white"
-                    : "bg-ink/8 text-ink/50"
-                }`}
-              >
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
+                filterStatus === tab.key ? "bg-white/20 text-white" : "bg-ink/8 text-ink/50"
+              }`}>
                 {tab.count}
               </span>
             </button>
@@ -399,9 +375,9 @@ export function CustomOrdersTable({ orders }: Props) {
         </div>
       </div>
 
-      {/* ── Cards ── */}
+      {/* Cards */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink/15 bg-white py-20 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink/15 bg-white py-16 text-center">
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-ink/5">
             <Inbox className="h-6 w-6 text-ink/30" />
           </div>

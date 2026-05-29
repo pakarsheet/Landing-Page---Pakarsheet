@@ -3,43 +3,26 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  createProduct,
-  updateProduct,
-  uploadProductImage,
-  deleteProduct,
+  createProduct, updateProduct, uploadProductImage, deleteProduct,
 } from "@/app/admin/actions";
 import type { Product } from "@/lib/supabase/types";
 import {
-  Loader2,
-  Plus,
-  Trash2,
-  Upload,
-  X,
-  AlertTriangle,
-  Save,
-  ArrowLeft,
-  Info,
-  Image as ImageIcon,
-  Tag,
-  DollarSign,
-  Zap,
-  List,
+  Loader2, Plus, Trash2, Upload, X, AlertTriangle,
+  Save, ArrowLeft, Info, Image as ImageIcon, Tag,
+  DollarSign, Zap, List,
 } from "lucide-react";
 import { toast } from "@/components/admin/Toast";
-
 import { CustomSelect } from "@/components/admin/CustomSelect";
 
 const CATEGORIES = ["Finance", "Sales", "Operasional", "Bundle", "Marketing", "Project"];
 const ACCENTS = [
-  { label: "Blue (sky)",    value: "bg-sky text-cobalt",   color: "bg-cobalt"  },
-  { label: "Green (leaf)",  value: "bg-leaf text-cobalt",  color: "bg-leaf"    },
-  { label: "Purple (lilac)",value: "bg-lilac text-cobalt", color: "bg-lilac"   },
-  { label: "Sheet (green)", value: "bg-sheet text-ink",    color: "bg-sheet"   },
+  { label: "Blue (sky)",     value: "bg-sky text-cobalt",   color: "bg-cobalt" },
+  { label: "Green (leaf)",   value: "bg-leaf text-cobalt",  color: "bg-leaf"   },
+  { label: "Purple (lilac)", value: "bg-lilac text-cobalt", color: "bg-lilac"  },
+  { label: "Sheet (green)",  value: "bg-sheet text-ink",    color: "bg-sheet"  },
 ];
 
-interface Props {
-  product?: Product;
-}
+interface Props { product?: Product }
 
 export function ProductForm({ product }: Props) {
   const router = useRouter();
@@ -50,9 +33,7 @@ export function ProductForm({ product }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const [features, setFeatures] = useState<string[]>(product?.features ?? [""]);
-  const [whatsIncluded, setWhatsIncluded] = useState<string[]>(
-    product?.whats_included ?? [""]
-  );
+  const [whatsIncluded, setWhatsIncluded] = useState<string[]>(product?.whats_included ?? [""]);
   const [images, setImages] = useState<string[]>(product?.preview_images ?? [""]);
   const [slug, setSlug] = useState(product?.slug ?? "");
 
@@ -96,10 +77,7 @@ export function ProductForm({ product }: Props) {
     if (result.error) {
       alert("Upload gagal: " + result.error);
     } else if (result.url) {
-      setImages((prev) => {
-        const filtered = prev.filter(Boolean);
-        return [...filtered, result.url!];
-      });
+      setImages((prev) => [...prev.filter(Boolean), result.url!]);
     }
   }
 
@@ -111,7 +89,6 @@ export function ProductForm({ product }: Props) {
     formData.set("whats_included", whatsIncluded.filter(Boolean).join("\n"));
     formData.set("preview_images", images.filter(Boolean).join("\n"));
     formData.set("slug", slug);
-
     startTransition(async () => {
       const result = product
         ? await updateProduct(product.id, formData)
@@ -119,16 +96,14 @@ export function ProductForm({ product }: Props) {
       if (result?.error) {
         setError(result.error);
       } else {
-        toast.success(
-          product ? "Produk berhasil diperbarui." : "Produk baru berhasil dibuat."
-        );
+        toast.success(product ? "Produk berhasil diperbarui." : "Produk baru berhasil dibuat.");
         router.push("/admin/products");
       }
     });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 max-w-3xl">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-3xl">
       {error && (
         <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -164,7 +139,6 @@ export function ProductForm({ product }: Props) {
             />
           </Field>
         </div>
-
         <Field label="Slug *" hint={`URL: /shop/${slug || "…"}`}>
           <input
             name="slug"
@@ -175,7 +149,6 @@ export function ProductForm({ product }: Props) {
             placeholder="content-planner-instagram-pro"
           />
         </Field>
-
         <Field label="Deskripsi Pendek *">
           <textarea
             name="description"
@@ -186,7 +159,6 @@ export function ProductForm({ product }: Props) {
             placeholder="Satu kalimat deskripsi untuk card di toko."
           />
         </Field>
-
         <Field label="Deskripsi Panjang *">
           <textarea
             name="long_description"
@@ -231,18 +203,9 @@ export function ProductForm({ product }: Props) {
             />
           </Field>
         </div>
-
         <div className="flex flex-wrap gap-5">
-          <CheckboxField
-            name="is_new"
-            defaultChecked={product?.is_new ?? false}
-            label="Tandai sebagai Baru"
-          />
-          <CheckboxField
-            name="is_best_seller"
-            defaultChecked={product?.is_best_seller ?? false}
-            label="Tandai sebagai Terlaris"
-          />
+          <CheckboxField name="is_new"         defaultChecked={product?.is_new ?? false}         label="Tandai sebagai Baru"     />
+          <CheckboxField name="is_best_seller" defaultChecked={product?.is_best_seller ?? false} label="Tandai sebagai Terlaris" />
         </div>
       </FormSection>
 
@@ -255,32 +218,13 @@ export function ProductForm({ product }: Props) {
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Harga Tampil *">
-            <input
-              name="price"
-              required
-              defaultValue={product?.price}
-              className={inputCls}
-              placeholder="Rp99rb"
-            />
+            <input name="price" required defaultValue={product?.price} className={inputCls} placeholder="Rp99rb" />
           </Field>
           <Field label="Harga Raw (angka) *">
-            <input
-              name="price_raw"
-              type="number"
-              required
-              min={0}
-              defaultValue={product?.price_raw ?? 0}
-              className={inputCls}
-              placeholder="99000"
-            />
+            <input name="price_raw" type="number" required min={0} defaultValue={product?.price_raw ?? 0} className={inputCls} placeholder="99000" />
           </Field>
           <Field label="Harga Coret (opsional)">
-            <input
-              name="original_price"
-              defaultValue={product?.original_price ?? ""}
-              className={inputCls}
-              placeholder="Rp149rb"
-            />
+            <input name="original_price" defaultValue={product?.original_price ?? ""} className={inputCls} placeholder="Rp149rb" />
           </Field>
         </div>
       </FormSection>
@@ -294,23 +238,10 @@ export function ProductForm({ product }: Props) {
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="CTA URL *">
-            <input
-              name="cta_url"
-              type="url"
-              required
-              defaultValue={product?.cta_url}
-              className={inputCls}
-              placeholder="https://lynkd.id/pakarsheet"
-            />
+            <input name="cta_url" type="url" required defaultValue={product?.cta_url} className={inputCls} placeholder="https://lynkd.id/pakarsheet" />
           </Field>
           <Field label="Urutan Tampil">
-            <input
-              name="sort_order"
-              type="number"
-              min={0}
-              defaultValue={product?.sort_order ?? 0}
-              className={inputCls}
-            />
+            <input name="sort_order" type="number" min={0} defaultValue={product?.sort_order ?? 0} className={inputCls} />
           </Field>
         </div>
         <Field label="Status">
@@ -332,12 +263,7 @@ export function ProductForm({ product }: Props) {
         title="Fitur Utama"
         desc="Daftar fitur yang ditampilkan di halaman produk."
       >
-        <DynamicList
-          items={features}
-          onChange={setFeatures}
-          placeholder="Kalender konten bulanan"
-          addLabel="Tambah fitur"
-        />
+        <DynamicList items={features} onChange={setFeatures} placeholder="Kalender konten bulanan" addLabel="Tambah fitur" />
       </FormSection>
 
       {/* ── What's Included ─────────────────────────────────── */}
@@ -347,12 +273,7 @@ export function ProductForm({ product }: Props) {
         title="Yang Kamu Dapat"
         desc="Isi paket yang didapat pembeli."
       >
-        <DynamicList
-          items={whatsIncluded}
-          onChange={setWhatsIncluded}
-          placeholder="1 file Google Sheets siap pakai"
-          addLabel="Tambah item"
-        />
+        <DynamicList items={whatsIncluded} onChange={setWhatsIncluded} placeholder="1 file Google Sheets siap pakai" addLabel="Tambah item" />
       </FormSection>
 
       {/* ── Gambar Preview ──────────────────────────────────── */}
@@ -390,30 +311,18 @@ export function ProductForm({ product }: Props) {
             <button
               type="button"
               onClick={() => setImages([...images, ""])}
-              className="flex items-center gap-1 font-secondary text-xs font-semibold text-ink/40 transition hover:text-cobalt"
+              className="flex items-center gap-1 text-xs font-semibold text-ink/40 transition hover:text-cobalt"
             >
               <Plus className="h-3 w-3" />
               Tambah URL
             </button>
-            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-cobalt/25 px-3 py-1.5 font-secondary text-xs font-semibold text-cobalt/70 transition hover:border-cobalt/50 hover:bg-blush hover:text-cobalt">
-              {uploading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Upload className="h-3.5 w-3.5" />
-              )}
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-cobalt/25 px-3 py-1.5 text-xs font-semibold text-cobalt/70 transition hover:border-cobalt/50 hover:bg-blush hover:text-cobalt">
+              {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
               {uploading ? "Mengupload…" : "Upload Gambar"}
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-                disabled={uploading}
-              />
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
             </label>
           </div>
-          <p className="text-xs text-ink/35">
-            Pastikan slug sudah diisi sebelum upload gambar.
-          </p>
+          <p className="text-xs text-ink/35">Pastikan slug sudah diisi sebelum upload gambar.</p>
         </div>
       </FormSection>
 
@@ -424,11 +333,7 @@ export function ProductForm({ product }: Props) {
           disabled={isPending || isDeleting}
           className="flex items-center gap-2 rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cobalt disabled:opacity-60"
         >
-          {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
+          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           {isPending ? "Menyimpan…" : product ? "Simpan Perubahan" : "Buat Produk"}
         </button>
         <button
@@ -456,9 +361,7 @@ export function ProductForm({ product }: Props) {
             ) : (
               <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
                 <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
-                <span className="text-sm font-medium text-red-700">
-                  Yakin hapus produk ini?
-                </span>
+                <span className="text-sm font-medium text-red-700">Yakin hapus produk ini?</span>
                 <button
                   type="button"
                   onClick={handleDelete}
@@ -496,11 +399,7 @@ const textareaCls =
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function FormSection({
-  icon,
-  iconBg,
-  title,
-  desc,
-  children,
+  icon, iconBg, title, desc, children,
 }: {
   icon: React.ReactNode;
   iconBg: string;
@@ -510,7 +409,7 @@ function FormSection({
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-sm">
-      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/1 px-5 py-4">
+      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/[0.02] px-5 py-4">
         <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${iconBg}`}>
           {icon}
         </span>
@@ -524,11 +423,7 @@ function FormSection({
   );
 }
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
+function Field({ label, hint, children }: {
   label: string;
   hint?: string;
   children: React.ReactNode;
@@ -542,11 +437,7 @@ function Field({
   );
 }
 
-function CheckboxField({
-  name,
-  defaultChecked,
-  label,
-}: {
+function CheckboxField({ name, defaultChecked, label }: {
   name: string;
   defaultChecked: boolean;
   label: string;
@@ -564,12 +455,7 @@ function CheckboxField({
   );
 }
 
-function DynamicList({
-  items,
-  onChange,
-  placeholder,
-  addLabel,
-}: {
+function DynamicList({ items, onChange, placeholder, addLabel }: {
   items: string[];
   onChange: (items: string[]) => void;
   placeholder: string;
@@ -586,7 +472,7 @@ function DynamicList({
               next[i] = e.target.value;
               onChange(next);
             }}
-            className="h-9 w-full rounded-lg border border-ink/12 bg-white px-3 font-secondary text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/30 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12"
+            className="h-9 w-full rounded-lg border border-ink/12 bg-white px-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/30 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12"
             placeholder={placeholder}
           />
           {items.length > 1 && (
@@ -603,7 +489,7 @@ function DynamicList({
       <button
         type="button"
         onClick={() => onChange([...items, ""])}
-        className="flex items-center gap-1 font-secondary text-xs font-semibold text-ink/40 transition hover:text-cobalt"
+        className="flex items-center gap-1 text-xs font-semibold text-ink/40 transition hover:text-cobalt"
       >
         <Plus className="h-3 w-3" />
         {addLabel}

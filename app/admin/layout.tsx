@@ -8,9 +8,7 @@ export const metadata = { title: "Admin — Pakarsheet" };
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/admin-login");
 
   return (

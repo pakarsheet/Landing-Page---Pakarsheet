@@ -5,17 +5,8 @@ import { useRouter } from "next/navigation";
 import { createPost, updatePost, deletePost } from "@/app/admin/actions";
 import type { Post } from "@/lib/supabase/types";
 import {
-  Loader2,
-  Trash2,
-  AlertTriangle,
-  Save,
-  ArrowLeft,
-  Info,
-  FileText,
-  Tag,
-  User,
-  Link2,
-  Globe,
+  Loader2, Trash2, AlertTriangle, Save, ArrowLeft,
+  Info, FileText, Tag, User, Link2, Globe,
 } from "lucide-react";
 import { tools, worksheets } from "@/lib/tools";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
@@ -23,19 +14,13 @@ import { toast } from "@/components/admin/Toast";
 import { CustomSelect } from "@/components/admin/CustomSelect";
 
 const CATEGORIES = [
-  "Tips Bisnis",
-  "Keuangan Bisnis",
-  "Jualan Online",
-  "Marketing",
-  "Google Sheets Tips",
-  "Manajemen Bisnis",
+  "Tips Bisnis", "Keuangan Bisnis", "Jualan Online",
+  "Marketing", "Google Sheets Tips", "Manajemen Bisnis",
 ];
 
 const ALL_TOOLS = [...tools, ...worksheets];
 
-interface Props {
-  post?: Post;
-}
+interface Props { post?: Post }
 
 export function PostForm({ post }: Props) {
   const router = useRouter();
@@ -75,7 +60,6 @@ export function PostForm({ post }: Props) {
     setError(null);
     const formData = new FormData(e.currentTarget);
     formData.set("slug", slug);
-
     startTransition(async () => {
       const result = post
         ? await updatePost(post.id, formData)
@@ -83,16 +67,14 @@ export function PostForm({ post }: Props) {
       if (result?.error) {
         setError(result.error);
       } else {
-        toast.success(
-          post ? "Artikel berhasil diperbarui." : "Artikel baru berhasil dibuat."
-        );
+        toast.success(post ? "Artikel berhasil diperbarui." : "Artikel baru berhasil dibuat.");
         router.push("/admin/blog");
       }
     });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 max-w-3xl">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-3xl">
       {error && (
         <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -117,7 +99,6 @@ export function PostForm({ post }: Props) {
             placeholder="Cara Hitung HPP Produk Makanan dari Nol"
           />
         </Field>
-
         <Field label="Slug *" hint={`URL: /blog/${slug || "…"}`}>
           <input
             name="slug"
@@ -128,11 +109,7 @@ export function PostForm({ post }: Props) {
             placeholder="cara-hitung-hpp-produk-makanan"
           />
         </Field>
-
-        <Field
-          label="Excerpt (ringkasan) *"
-          hint="Ideal 120–160 karakter untuk SEO."
-        >
+        <Field label="Excerpt *" hint="Ideal 120–160 karakter untuk SEO.">
           <textarea
             name="excerpt"
             required
@@ -151,10 +128,7 @@ export function PostForm({ post }: Props) {
         title="Konten Artikel"
         desc="Gunakan toolbar atau ketik HTML langsung."
       >
-        <Field
-          label="Konten (HTML) *"
-          hint="Klik Preview untuk melihat hasil render."
-        >
+        <Field label="Konten (HTML) *" hint="Klik Preview untuk melihat hasil render.">
           <RichTextEditor name="content" defaultValue={post?.content} required />
         </Field>
       </FormSection>
@@ -185,7 +159,6 @@ export function PostForm({ post }: Props) {
             />
           </Field>
         </div>
-
         <Field label="Tags (pisahkan dengan koma)">
           <input
             name="tags"
@@ -194,7 +167,6 @@ export function PostForm({ post }: Props) {
             placeholder="HPP, bisnis kuliner, harga jual, UMKM"
           />
         </Field>
-
         <Field label="URL Gambar Cover (opsional)">
           <input
             name="cover_image"
@@ -241,10 +213,7 @@ export function PostForm({ post }: Props) {
         desc="Link ke tool atau produk yang relevan dengan artikel ini."
       >
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="Link ke Tool (opsional)"
-            hint="Akan tampil sebagai CTA di akhir artikel."
-          >
+          <Field label="Link ke Tool (opsional)" hint="Akan tampil sebagai CTA di akhir artikel.">
             <CustomSelect
               name="related_tool_slug"
               defaultValue={post?.related_tool_slug ?? ""}
@@ -254,10 +223,7 @@ export function PostForm({ post }: Props) {
               ]}
             />
           </Field>
-          <Field
-            label="Link ke Produk Shop (opsional)"
-            hint="Slug produk dari halaman /shop."
-          >
+          <Field label="Link ke Produk Shop (opsional)" hint="Slug produk dari halaman /shop.">
             <input
               name="related_shop_slug"
               defaultValue={post?.related_shop_slug ?? ""}
@@ -281,8 +247,8 @@ export function PostForm({ post }: Props) {
               name="status"
               defaultValue={post?.status ?? "draft"}
               options={[
-                { value: "published", label: "Tayang (publik)",    color: "bg-cobalt"  },
-                { value: "draft",     label: "Draft (tersembunyi)", color: "bg-ink/20" },
+                { value: "published", label: "Tayang (publik)",     color: "bg-cobalt"  },
+                { value: "draft",     label: "Draft (tersembunyi)", color: "bg-ink/20"  },
               ]}
             />
           </Field>
@@ -299,7 +265,6 @@ export function PostForm({ post }: Props) {
             />
           </Field>
         </div>
-
         <label className="flex cursor-pointer items-center gap-2.5">
           <input
             type="checkbox"
@@ -320,11 +285,7 @@ export function PostForm({ post }: Props) {
           disabled={isPending || isDeleting}
           className="flex items-center gap-2 rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cobalt disabled:opacity-60"
         >
-          {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
+          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           {isPending ? "Menyimpan…" : post ? "Simpan Perubahan" : "Buat Artikel"}
         </button>
         <button
@@ -352,9 +313,7 @@ export function PostForm({ post }: Props) {
             ) : (
               <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
                 <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
-                <span className="text-sm font-medium text-red-700">
-                  Yakin hapus artikel ini?
-                </span>
+                <span className="text-sm font-medium text-red-700">Yakin hapus artikel ini?</span>
                 <button
                   type="button"
                   onClick={handleDelete}
@@ -392,11 +351,7 @@ const textareaCls =
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function FormSection({
-  icon,
-  iconBg,
-  title,
-  desc,
-  children,
+  icon, iconBg, title, desc, children,
 }: {
   icon: React.ReactNode;
   iconBg: string;
@@ -406,7 +361,7 @@ function FormSection({
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-sm">
-      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/1 px-5 py-4">
+      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/[0.02] px-5 py-4">
         <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${iconBg}`}>
           {icon}
         </span>
@@ -420,11 +375,7 @@ function FormSection({
   );
 }
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
+function Field({ label, hint, children }: {
   label: string;
   hint?: string;
   children: React.ReactNode;

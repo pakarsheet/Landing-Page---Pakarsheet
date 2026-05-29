@@ -21,6 +21,7 @@ export default async function EditPostPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Page header */}
       <div>
         <Link
           href="/admin/blog"
@@ -29,13 +30,13 @@ export default async function EditPostPage({ params }: Props) {
           <ArrowLeft className="h-3.5 w-3.5" />
           Kembali ke Blog
         </Link>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blush">
             <Edit2 className="h-4 w-4 text-cobalt" />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-ink">Edit Artikel</h1>
-            <p className="text-sm text-ink/50 truncate max-w-md">{post.title}</p>
+            <p className="max-w-md truncate text-sm text-muted">{post.title}</p>
           </div>
         </div>
       </div>

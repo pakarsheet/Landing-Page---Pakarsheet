@@ -6,9 +6,7 @@ import type { SiteSettings } from "@/lib/supabase/types";
 import { Loader2, AlertTriangle, Save, MessageSquare, Palette, ExternalLink } from "lucide-react";
 import { toast } from "@/components/admin/Toast";
 
-interface Props {
-  settings: SiteSettings | null;
-}
+interface Props { settings: SiteSettings | null }
 
 export function SettingsForm({ settings }: Props) {
   const [isPending, startTransition] = useTransition();
@@ -34,7 +32,7 @@ export function SettingsForm({ settings }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 max-w-2xl">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl">
       {error && (
         <div className="flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -49,10 +47,7 @@ export function SettingsForm({ settings }: Props) {
         title="WhatsApp"
         desc="Nomor dan pesan default untuk tombol WA di website."
       >
-        <Field
-          label="Nomor WhatsApp"
-          hint="Format internasional tanpa + (contoh: 6281234567890)"
-        >
+        <Field label="Nomor WhatsApp" hint="Format internasional tanpa + (contoh: 6281234567890)">
           <input
             name="whatsapp_number"
             required
@@ -67,18 +62,16 @@ export function SettingsForm({ settings }: Props) {
             required
             rows={3}
             defaultValue={settings?.whatsapp_message ?? ""}
-            className={inputCls}
+            className={textareaCls}
             placeholder="Halo Pakarsheet, saya ingin tahu lebih lanjut..."
           />
         </Field>
         {settings?.contact_url && (
-          <div className="flex items-start gap-2.5 rounded-xl border border-ink/8 bg-ink/2 px-4 py-3">
+          <div className="flex items-start gap-2.5 rounded-xl border border-ink/8 bg-ink/[0.02] px-4 py-3">
             <ExternalLink className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink/35" />
             <div>
               <p className="text-xs font-semibold text-ink/45">Preview URL WA</p>
-              <p className="mt-0.5 break-all text-xs text-ink/70">
-                {settings.contact_url}
-              </p>
+              <p className="mt-0.5 break-all text-xs text-ink/70">{settings.contact_url}</p>
             </div>
           </div>
         )}
@@ -111,17 +104,13 @@ export function SettingsForm({ settings }: Props) {
       </FormSection>
 
       {/* Submit */}
-      <div className="flex items-center gap-3 pt-1">
+      <div className="flex items-center gap-3 rounded-2xl border border-ink/8 bg-white p-5 shadow-sm">
         <button
           type="submit"
           disabled={isPending}
           className="flex items-center gap-2 rounded-xl bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cobalt disabled:opacity-60"
         >
-          {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
+          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           {isPending ? "Menyimpan…" : "Simpan Pengaturan"}
         </button>
       </div>
@@ -132,16 +121,15 @@ export function SettingsForm({ settings }: Props) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-xl border border-ink/12 bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
+  "h-11 w-full rounded-xl border border-ink/12 bg-white px-4 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
+
+const textareaCls =
+  "w-full rounded-xl border border-ink/12 bg-white px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function FormSection({
-  icon,
-  iconBg,
-  title,
-  desc,
-  children,
+  icon, iconBg, title, desc, children,
 }: {
   icon: React.ReactNode;
   iconBg: string;
@@ -151,7 +139,7 @@ function FormSection({
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-sm">
-      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/1 px-5 py-4">
+      <div className="flex items-center gap-3 border-b border-ink/6 bg-ink/[0.02] px-5 py-4">
         <span className={`flex h-8 w-8 items-center justify-center rounded-xl ${iconBg}`}>
           {icon}
         </span>
@@ -165,11 +153,7 @@ function FormSection({
   );
 }
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
+function Field({ label, hint, children }: {
   label: string;
   hint?: string;
   children: React.ReactNode;
