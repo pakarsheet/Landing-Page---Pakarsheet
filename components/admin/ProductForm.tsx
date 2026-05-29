@@ -27,12 +27,14 @@ import {
 } from "lucide-react";
 import { toast } from "@/components/admin/Toast";
 
+import { CustomSelect } from "@/components/admin/CustomSelect";
+
 const CATEGORIES = ["Finance", "Sales", "Operasional", "Bundle", "Marketing", "Project"];
 const ACCENTS = [
-  { label: "Blue (sky)", value: "bg-sky text-cobalt" },
-  { label: "Green (leaf)", value: "bg-leaf text-cobalt" },
-  { label: "Purple (lilac)", value: "bg-lilac text-cobalt" },
-  { label: "Sheet (green)", value: "bg-sheet text-ink" },
+  { label: "Blue (sky)",    value: "bg-sky text-cobalt",   color: "bg-cobalt"  },
+  { label: "Green (leaf)",  value: "bg-leaf text-cobalt",  color: "bg-leaf"    },
+  { label: "Purple (lilac)",value: "bg-lilac text-cobalt", color: "bg-lilac"   },
+  { label: "Sheet (green)", value: "bg-sheet text-ink",    color: "bg-sheet"   },
 ];
 
 interface Props {
@@ -180,7 +182,7 @@ export function ProductForm({ product }: Props) {
             required
             rows={2}
             defaultValue={product?.description}
-            className={inputCls}
+            className={textareaCls}
             placeholder="Satu kalimat deskripsi untuk card di toko."
           />
         </Field>
@@ -191,7 +193,7 @@ export function ProductForm({ product }: Props) {
             required
             rows={4}
             defaultValue={product?.long_description}
-            className={inputCls}
+            className={textareaCls}
             placeholder="Deskripsi lengkap yang muncul di halaman detail produk."
           />
         </Field>
@@ -206,17 +208,11 @@ export function ProductForm({ product }: Props) {
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Kategori *">
-            <select
+            <CustomSelect
               name="category"
               defaultValue={product?.category ?? "Finance"}
-              className={inputCls}
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+              options={CATEGORIES.map((c) => ({ value: c, label: c }))}
+            />
           </Field>
           <Field label="Badge *">
             <input
@@ -228,17 +224,11 @@ export function ProductForm({ product }: Props) {
             />
           </Field>
           <Field label="Accent Color">
-            <select
+            <CustomSelect
               name="accent"
               defaultValue={product?.accent ?? "bg-sky text-cobalt"}
-              className={inputCls}
-            >
-              {ACCENTS.map((a) => (
-                <option key={a.value} value={a.value}>
-                  {a.label}
-                </option>
-              ))}
-            </select>
+              options={ACCENTS}
+            />
           </Field>
         </div>
 
@@ -324,14 +314,14 @@ export function ProductForm({ product }: Props) {
           </Field>
         </div>
         <Field label="Status">
-          <select
+          <CustomSelect
             name="status"
             defaultValue={product?.status ?? "draft"}
-            className={inputCls}
-          >
-            <option value="active">Aktif (tampil di toko)</option>
-            <option value="draft">Draft (tersembunyi)</option>
-          </select>
+            options={[
+              { value: "active", label: "Aktif (tampil di toko)", color: "bg-sheet" },
+              { value: "draft",  label: "Draft (tersembunyi)",    color: "bg-ink/20" },
+            ]}
+          />
         </Field>
       </FormSection>
 
@@ -396,20 +386,20 @@ export function ProductForm({ product }: Props) {
               )}
             </div>
           ))}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             <button
               type="button"
               onClick={() => setImages([...images, ""])}
-              className="flex items-center gap-1.5 rounded-xl border border-dashed border-ink/20 px-4 py-2 text-sm text-ink/50 transition hover:border-ink/40 hover:text-ink"
+              className="flex items-center gap-1 font-secondary text-xs font-semibold text-ink/40 transition hover:text-cobalt"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3 w-3" />
               Tambah URL
             </button>
-            <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-dashed border-cobalt/30 px-4 py-2 text-sm text-cobalt transition hover:border-cobalt hover:bg-blush">
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-cobalt/25 px-3 py-1.5 font-secondary text-xs font-semibold text-cobalt/70 transition hover:border-cobalt/50 hover:bg-blush hover:text-cobalt">
               {uploading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <Upload className="h-4 w-4" />
+                <Upload className="h-3.5 w-3.5" />
               )}
               {uploading ? "Mengupload…" : "Upload Gambar"}
               <input
@@ -498,7 +488,10 @@ export function ProductForm({ product }: Props) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-xl border border-ink/12 bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
+  "h-11 w-full rounded-xl border border-ink/12 bg-white px-4 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
+
+const textareaCls =
+  "w-full rounded-xl border border-ink/12 bg-white px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -593,16 +586,16 @@ function DynamicList({
               next[i] = e.target.value;
               onChange(next);
             }}
-            className={inputCls}
+            className="h-9 w-full rounded-lg border border-ink/12 bg-white px-3 font-secondary text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/30 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12"
             placeholder={placeholder}
           />
           {items.length > 1 && (
             <button
               type="button"
               onClick={() => onChange(items.filter((_, j) => j !== i))}
-              className="shrink-0 rounded-lg p-2 text-ink/40 transition hover:bg-red-50 hover:text-red-500"
+              className="shrink-0 rounded-lg p-1.5 text-ink/30 transition hover:bg-red-50 hover:text-red-500"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
@@ -610,9 +603,9 @@ function DynamicList({
       <button
         type="button"
         onClick={() => onChange([...items, ""])}
-        className="flex items-center gap-1.5 rounded-xl border border-dashed border-ink/20 px-4 py-2 text-sm text-ink/50 transition hover:border-ink/40 hover:text-ink"
+        className="flex items-center gap-1 font-secondary text-xs font-semibold text-ink/40 transition hover:text-cobalt"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-3 w-3" />
         {addLabel}
       </button>
     </div>

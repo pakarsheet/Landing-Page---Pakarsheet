@@ -13,14 +13,16 @@ import {
   LogOut,
   Menu,
   X,
+  ClipboardList,
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 const navItems = [
-  { label: "Dashboard",  href: "/admin",          icon: LayoutDashboard, exact: true  },
-  { label: "Produk",     href: "/admin/products",  icon: Package,         exact: false },
-  { label: "Blog",       href: "/admin/blog",      icon: BookOpen,        exact: false },
-  { label: "Pengaturan", href: "/admin/settings",  icon: Settings,        exact: false },
+  { label: "Dashboard",      href: "/admin",                 icon: LayoutDashboard, exact: true  },
+  { label: "Produk",         href: "/admin/products",        icon: Package,         exact: false },
+  { label: "Blog",           href: "/admin/blog",            icon: BookOpen,        exact: false },
+  { label: "Custom Orders",  href: "/admin/custom-orders",   icon: ClipboardList,   exact: false },
+  { label: "Pengaturan",     href: "/admin/settings",        icon: Settings,        exact: false },
 ];
 
 interface Props {
@@ -77,13 +79,13 @@ function SidebarContent({
                 <Link
                   href={item.href}
                   onClick={onClose}
-                  className={`group flex items-center gap-3 rounded-xl px-3 py-3.5 text-[15px] font-medium transition-all duration-150 ${
+                  className={`group flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-medium transition-all duration-150 ${
                     active
                       ? "bg-ink text-white shadow-sm"
                       : "text-muted hover:bg-ink/5 hover:text-ink"
                   }`}
                 >
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${
                     active ? "bg-white/15" : "group-hover:bg-ink/8"
                   }`}>
                     <item.icon className="h-5 w-5" />
@@ -108,7 +110,7 @@ function SidebarContent({
           target="_blank"
           rel="noopener noreferrer"
           onClick={onClose}
-          className="flex items-center gap-3 rounded-xl px-3 py-3 text-[15px] font-medium text-muted transition hover:bg-ink/5 hover:text-ink"
+          className="flex items-center gap-3 rounded-xl px-3 py-2 text-[15px] font-medium text-muted transition hover:bg-ink/5 hover:text-ink"
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
             <ExternalLink className="h-5 w-5" />

@@ -20,6 +20,7 @@ import {
 import { tools, worksheets } from "@/lib/tools";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { toast } from "@/components/admin/Toast";
+import { CustomSelect } from "@/components/admin/CustomSelect";
 
 const CATEGORIES = [
   "Tips Bisnis",
@@ -137,7 +138,7 @@ export function PostForm({ post }: Props) {
             required
             rows={3}
             defaultValue={post?.excerpt}
-            className={inputCls}
+            className={textareaCls}
             placeholder="Ringkasan singkat artikel yang muncul di card dan meta description."
           />
         </Field>
@@ -167,17 +168,11 @@ export function PostForm({ post }: Props) {
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Kategori *">
-            <select
+            <CustomSelect
               name="category"
               defaultValue={post?.category ?? "Tips Bisnis"}
-              className={inputCls}
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+              options={CATEGORIES.map((c) => ({ value: c, label: c }))}
+            />
           </Field>
           <Field label="Estimasi Baca (menit)">
             <input
@@ -250,18 +245,14 @@ export function PostForm({ post }: Props) {
             label="Link ke Tool (opsional)"
             hint="Akan tampil sebagai CTA di akhir artikel."
           >
-            <select
+            <CustomSelect
               name="related_tool_slug"
               defaultValue={post?.related_tool_slug ?? ""}
-              className={inputCls}
-            >
-              <option value="">— Tidak ada —</option>
-              {ALL_TOOLS.map((t) => (
-                <option key={t.slug} value={t.slug}>
-                  {t.shortTitle}
-                </option>
-              ))}
-            </select>
+              options={[
+                { value: "", label: "— Tidak ada —" },
+                ...ALL_TOOLS.map((t) => ({ value: t.slug, label: t.shortTitle })),
+              ]}
+            />
           </Field>
           <Field
             label="Link ke Produk Shop (opsional)"
@@ -286,14 +277,14 @@ export function PostForm({ post }: Props) {
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Status">
-            <select
+            <CustomSelect
               name="status"
               defaultValue={post?.status ?? "draft"}
-              className={inputCls}
-            >
-              <option value="published">Tayang (publik)</option>
-              <option value="draft">Draft (tersembunyi)</option>
-            </select>
+              options={[
+                { value: "published", label: "Tayang (publik)",    color: "bg-cobalt"  },
+                { value: "draft",     label: "Draft (tersembunyi)", color: "bg-ink/20" },
+              ]}
+            />
           </Field>
           <Field label="Tanggal Publikasi">
             <input
@@ -393,7 +384,10 @@ export function PostForm({ post }: Props) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-xl border border-ink/12 bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
+  "h-11 w-full rounded-xl border border-ink/12 bg-white px-4 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
+
+const textareaCls =
+  "w-full rounded-xl border border-ink/12 bg-white px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12";
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 

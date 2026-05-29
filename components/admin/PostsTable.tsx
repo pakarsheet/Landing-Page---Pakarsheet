@@ -103,7 +103,7 @@ export function PostsTable({ posts }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari artikel, slug, kategori…"
-            className="w-full rounded-xl border border-ink/12 bg-white py-2.5 pl-10 pr-9 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12"
+            className="h-11 w-full rounded-xl border border-ink/12 bg-white pl-10 pr-9 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-cobalt focus:ring-2 focus:ring-cobalt/12"
           />
           {search && (
             <button
@@ -115,20 +115,20 @@ export function PostsTable({ posts }: Props) {
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 rounded-xl border border-ink/10 bg-white p-1 shadow-sm">
+        <div className="flex h-11 items-center gap-1 overflow-x-auto rounded-xl border border-ink/10 bg-white px-1 shadow-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {filterTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setFilterStatus(tab.key)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              className={`shrink-0 flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition ${
                 filterStatus === tab.key
                   ? "bg-ink text-white shadow-sm"
-                  : "text-ink/50 hover:text-ink"
+                  : "text-ink/50 hover:bg-ink/5 hover:text-ink"
               }`}
             >
               {tab.label}
               <span
-                className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
                   filterStatus === tab.key
                     ? "bg-white/20 text-white"
                     : "bg-ink/8 text-ink/50"

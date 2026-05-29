@@ -9,6 +9,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BgTransition } from "@/components/BgTransition";
 import { SheetGrid } from "@/components/SheetGrid";
+import { CustomOrderForm } from "./CustomOrderForm";
 import { site } from "@/lib/site";
 import { getSiteSettings } from "@/lib/supabase/queries";
 
@@ -372,6 +373,25 @@ export default async function CustomOrderPage() {
                 </details>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── Order Form ───────────────────────────────────────── */}
+        <section id="order-form" className="bg-white px-5 pb-14 lg:px-10 lg:pb-20">
+          <div className="mx-auto max-w-[760px]">
+            <div className="mb-8 text-center">
+              <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 font-secondary text-sm font-semibold leading-none text-cobalt shadow-card">
+                <MessageCircle className="h-4 w-4" />
+                Mulai Order
+              </p>
+              <h2 className="text-balance font-primary text-[28px] font-semibold leading-[1.15] tracking-[-0.5px] text-ink sm:text-[36px] sm:tracking-[-0.8px]">
+                Isi form, kami langsung hubungi kamu.
+              </h2>
+              <p className="mx-auto mt-3 max-w-md font-secondary text-base leading-[1.6] text-muted">
+                Konsultasi awal gratis. Tidak perlu komitmen — cerita dulu, putuskan belakangan.
+              </p>
+            </div>
+            <CustomOrderForm waNumber={waNumber} />
           </div>
         </section>
 
