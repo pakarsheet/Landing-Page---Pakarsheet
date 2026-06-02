@@ -4,6 +4,7 @@ import "./globals.css";
 import { site } from "@/lib/site";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { GlobalAnnouncement } from "@/components/GlobalAnnouncement";
+import { StoreProvider } from "@/components/StoreProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -42,7 +43,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        {children}
+        <StoreProvider>
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );
