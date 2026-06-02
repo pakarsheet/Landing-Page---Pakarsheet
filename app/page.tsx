@@ -15,6 +15,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { BgTransition } from "@/components/BgTransition";
 import { FloatingWAButton } from "@/components/FloatingWAButton";
 import { ToolsTeaser } from "@/components/ToolsTeaser";
+import { GlobalAnnouncement } from "@/components/GlobalAnnouncement";
 import { getSiteSettings, buildWaUrl } from "@/lib/supabase/queries";
 import { site } from "@/lib/site";
 
@@ -27,6 +28,7 @@ export default async function Home() {
   return (
     <>
       <BgTransition />
+      <GlobalAnnouncement />
       <Navbar />
       <main id="main-content">
         <Hero contactUrl={waUrl} />

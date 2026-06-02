@@ -129,6 +129,7 @@ export async function updateSiteSettings(id: string, formData: FormData) {
   const tagline = (formData.get("tagline") as string).trim();
   const announcement_text = (formData.get("announcement_text") as string)?.trim() || null;
   const is_announcement_active = formData.get("is_announcement_active") === "on";
+
   const contact_url = `https://wa.me/${whatsapp_number}?text=${encodeURIComponent(whatsapp_message)}`;
 
   const { error } = await supabase

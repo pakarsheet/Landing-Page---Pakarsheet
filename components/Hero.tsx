@@ -112,22 +112,22 @@ export function Hero({ contactUrl }: { contactUrl?: string }) {
 
   return (
     <section ref={rootRef} className="relative overflow-x-clip bg-white px-3 pb-16 pt-3 sm:px-5 sm:pt-5 lg:px-10">
-      <div className="hero-panel relative mx-auto max-w-[1380px] rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-0 pt-28 sm:rounded-[32px] sm:px-8 sm:pb-0 sm:pt-36 lg:px-10 lg:pb-0 lg:pt-[165px]">
+      <div className="hero-panel relative mx-auto max-w-[1380px] rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-0 pt-[140px] sm:rounded-[32px] sm:px-8 sm:pb-0 sm:pt-[160px] lg:px-10 lg:pb-0 lg:pt-[210px]">
         <SheetGrid cells={HERO_CELLS} />
 
-        <div className="relative z-10 mx-auto flex max-w-[890px] flex-col items-center text-center">
+        <div className="relative z-10 mx-auto flex max-w-[1000px] flex-col items-center text-center">
           <p className="hero-reveal inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-muted shadow-card">
             <CheckCircle2 className="h-4 w-4" />
             Template rasa sistem kerja
           </p>
-          <h1 className="hero-reveal mt-6 text-balance font-primary text-[36px] font-semibold leading-[1.1] tracking-[-0.5px] text-ink sm:text-[48px] sm:tracking-[-2px] lg:text-[62px] lg:tracking-[-3.5px]">
+          <h1 className="hero-reveal mt-6 text-balance font-primary text-[42px] font-semibold leading-[1.1] tracking-[-1px] text-ink sm:text-[60px] sm:tracking-[-2px] lg:text-[80px] lg:tracking-[-3.5px]">
             {site.tagline.split(" ").map((word) => (
               <span key={word} className="hero-word inline-block origin-bottom pr-[0.18em]">
                 {word}
               </span>
             ))}
           </h1>
-          <p className="hero-reveal mt-6 max-w-2xl text-pretty font-secondary text-[18px] font-normal leading-[1.56] text-muted">
+          <p className="hero-reveal mt-6 max-w-3xl text-pretty font-secondary text-[20px] font-normal leading-[1.56] text-muted sm:text-[22px]">
             Pakarsheet bantu bisnis naik level dari spreadsheet biasa menjadi sistem kerja yang lebih rapi, otomatis, dan mudah dipantau.
           </p>
           <div className="hero-reveal mt-8 flex flex-col justify-center gap-3 sm:flex-row">

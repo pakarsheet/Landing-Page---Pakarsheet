@@ -12,5 +12,9 @@ export async function GlobalAnnouncement() {
     return null;
   }
 
-  return <AnnouncementBar text={settings.announcement_text} />;
+  return (
+    <AnnouncementBar 
+      text={settings.announcement_text} 
+    />
+  );
 }

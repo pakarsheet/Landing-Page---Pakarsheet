@@ -12,7 +12,7 @@ export async function ShopHero() {
 
   return (
     <section className="bg-white px-3 pb-0 pt-3 sm:px-5 sm:pt-5 lg:px-10">
-      <div className="relative mx-auto max-w-[1380px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-16 pt-28 sm:rounded-[32px] sm:px-8 sm:pt-36 lg:px-10 lg:pb-20 lg:pt-[165px]">
+      <div className="relative mx-auto max-w-[1380px] overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#eaf0ff_0%,#f2ffe0_100%)] px-4 pb-16 pt-[140px] sm:rounded-[32px] sm:px-8 sm:pt-[160px] lg:px-10 lg:pb-20 lg:pt-[210px]">
         <SheetGrid className="rounded-[20px] sm:rounded-[32px]" />
 
         <div className="relative z-10 mx-auto flex max-w-[890px] flex-col items-center text-center">
