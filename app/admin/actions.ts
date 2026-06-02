@@ -127,11 +127,21 @@ export async function updateSiteSettings(id: string, formData: FormData) {
   const whatsapp_message = (formData.get("whatsapp_message") as string).trim();
   const site_name = (formData.get("site_name") as string).trim();
   const tagline = (formData.get("tagline") as string).trim();
+  const announcement_text = (formData.get("announcement_text") as string)?.trim() || null;
+  const is_announcement_active = formData.get("is_announcement_active") === "on";
   const contact_url = `https://wa.me/${whatsapp_number}?text=${encodeURIComponent(whatsapp_message)}`;
 
   const { error } = await supabase
     .from("site_settings")
-    .update({ whatsapp_number, whatsapp_message, site_name, tagline, contact_url })
+    .update({ 
+      whatsapp_number, 
+      whatsapp_message, 
+      site_name, 
+      tagline, 
+      contact_url,
+      announcement_text,
+      is_announcement_active
+    })
     .eq("id", id);
 
   if (error) return { error: error.message };

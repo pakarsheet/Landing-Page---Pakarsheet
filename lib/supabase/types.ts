@@ -86,6 +86,8 @@ export interface Database {
           site_name: string;
           tagline: string;
           contact_url: string;
+          announcement_text: string | null;
+          is_announcement_active: boolean;
           updated_at: string;
         };
         Insert: Omit<

@@ -60,6 +60,8 @@ create table if not exists site_settings (
   site_name         text not null default 'Pakarsheet',
   tagline           text not null default 'Bikin Google Sheets kamu naik level.',
   contact_url       text not null default 'https://wa.me/6280000000000',
+  announcement_text text,
+  is_announcement_active boolean not null default false,
   updated_at        timestamptz not null default now()
 );
 

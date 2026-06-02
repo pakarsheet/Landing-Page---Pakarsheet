@@ -103,6 +103,34 @@ export function SettingsForm({ settings }: Props) {
         </Field>
       </FormSection>
 
+      {/* Announcement */}
+      <FormSection
+        icon={<MessageSquare className="h-4 w-4 text-sky" />}
+        iconBg="bg-sky/20"
+        title="Pengumuman"
+        desc="Banner teks di bagian atas halaman."
+      >
+        <Field label="Tampilkan Pengumuman?">
+          <label className="flex items-center gap-2 text-sm text-ink cursor-pointer">
+            <input
+              type="checkbox"
+              name="is_announcement_active"
+              defaultChecked={settings?.is_announcement_active ?? false}
+              className="h-4 w-4 rounded border-ink/20 text-cobalt focus:ring-cobalt"
+            />
+            Aktif
+          </label>
+        </Field>
+        <Field label="Teks Pengumuman">
+          <input
+            name="announcement_text"
+            defaultValue={settings?.announcement_text ?? ""}
+            className={inputCls}
+            placeholder="Diskon spesial hari ini 50%!"
+          />
+        </Field>
+      </FormSection>
+
       {/* Submit */}
       <div className="flex items-center gap-3 rounded-2xl border border-ink/8 bg-white p-5 shadow-sm">
         <button
